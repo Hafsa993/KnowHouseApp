@@ -2,6 +2,7 @@
 KnowHouse Mobile App built out of
 ETH Zurich HCI course project HS2024 High Fidelity Prototype,
 Topic: Mental Load, Household Knowledgebase
+>🔗 [Github of full HCI Project](https://github.com/eth-hci-course/hci-project-2024-hci2024-group-14)
 
 ## Getting Started
 
