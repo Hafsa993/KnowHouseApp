@@ -185,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   'Points: ${currentUser.points}',
                   style: const TextStyle(
                     fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 32, 129, 35),
                   ),
                 ),
@@ -203,7 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const Text(
-                      'Preferred Tasks:',
+                      'Preferred Categories:',
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     Wrap(
@@ -213,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             (task) => Chip(
                               label: Text(
                                 task,
-                                style: TextStyle(color: categoryColor(task)),
+                                style: TextStyle(color: categoryColor(task),fontWeight: FontWeight.bold),
                               ),
                             ),
                           )
@@ -225,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Pie Chart
                 const Text(
-                  'Task Contributions',
+                  'Contributions',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(

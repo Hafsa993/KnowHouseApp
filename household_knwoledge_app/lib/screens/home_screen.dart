@@ -144,7 +144,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 8),
             const SizedBox(height: 16),
             const Text(
-              'Open Tasks',
+              'Open ToDos',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
              Expanded(
