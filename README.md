@@ -12,13 +12,13 @@ These instructions will help you download and run the project locally on your ma
 
 - **Flutter SDK:**  
   Make sure you have the Flutter SDK installed. You can follow the official installation guide here:  
-  [Official Instructions for Intstallation](https://docs.flutter.dev/get-started/install)
+  [Official Instructions for Installation](https://docs.flutter.dev/get-started/install)
 
 - **Dart SDK:**  
   The Dart SDK is bundled with Flutter, so no separate action is required if you followed the Flutter installation steps.
   
 - **A suitable IDE for flutter as described in the official Guide**
-  [Official Instructions for Intstallation](https://docs.flutter.dev/get-started/install)
+  [Official Instructions for Installation](https://docs.flutter.dev/get-started/install)
   
 ## Downloading the Project
 
@@ -50,7 +50,7 @@ From the project's root directory, run:
    Connect your Android device via USB and ensure USB debugging is enabled or connect your chosen Emulator correctly.
   
    For the Emulator see offitial Flutter Guide:
-    [Official Instructions for Intstallation](https://docs.flutter.dev/get-started/install)
+    [Official Instructions for Installation](https://docs.flutter.dev/get-started/install)
   
   choose: "your Operating System" -> Android
    
@@ -59,7 +59,7 @@ From the project's root directory, run:
   Connect your iOS device via USB or connect your chosen Simulator correctly.
   
   For more help see offitial Flutter Guide:
-    [Official Instructions for Intstallation](https://docs.flutter.dev/get-started/install)
+    [Official Instructions for Installation](https://docs.flutter.dev/get-started/install)
   
   choose: MacOs -> iOS
   
