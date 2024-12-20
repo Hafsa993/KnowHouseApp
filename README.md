@@ -20,7 +20,7 @@ These instructions will help you download and run the project locally on your ma
 - **A suitable IDE for flutter as described on the official Guide**
   [Official Instructions for Intstallation](https://docs.flutter.dev/get-started/install)
   
-### Downloading the Project
+## Downloading the Project
 
 1. **Clone the Repository:**
    ```bash
