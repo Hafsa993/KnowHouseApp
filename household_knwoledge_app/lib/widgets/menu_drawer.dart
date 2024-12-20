@@ -63,7 +63,7 @@ class MenuDrawer extends StatelessWidget {
                             Column(children: [
                             SizedBox(height: 20,),  
                             Text(currUser.username, style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0), fontSize: 24)),
-                            Text('${currUser.points} points', style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 18)),
+                            Text('${currUser.points} points', style: TextStyle( color: Color.fromARGB(255, 32, 129, 35), fontSize: 18)),
                             ],)
                             
                           ],
