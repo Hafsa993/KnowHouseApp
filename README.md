@@ -132,7 +132,7 @@ Also in homescreen and in my ToDos there is an add ToDo button where you can add
 In Instruction page are instructions. They are instructions on how to do stuff looking like you see in pictures. One can filter by category or use the searchbar to search for sth. The Instructions are clickable, clicking on an instruction displays it. This display shows the category etc. and the description and also here you can see the delete and edit buttons. You can see in the last picture how it looks when you edit a description.
 
 <p align="left" width="100%">
-<img height="400" src="img/images for high fi/InstructionsA.png">
+<img height="400" src="img/images for high fi/InstructionsA2.png">
 <img height="400" src="img/images for high fi/DisplayInstr.png">
 <img height="400" src="img/images for high fi/editInstr.png">
 </p>
