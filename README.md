@@ -95,8 +95,11 @@ which is why for a Userfor our app:
   
 ### Home Page
   So on the upper half of The home page, there is a leaderboard showing top 3 users with most points on a podium. bottom half of home page has Open tasks: which is the toDos that have been assigned to the User but not yet accepted by them.
+  
   The User can click on a toDo to see description as well and just more info about ToDo. Here the user can see the deadline, reward, category, name etc. of the toDo:
+  
   The User can accept or decline, in each case a pop up pops up making sure the user really wanted this as the action cannot be reversed. For declining a toDo the User has to write a reason, else it will not work.
+  
   When a User accepts a task, a small notification shows up at the bottom of the screen that says, accepted ToDo has now been move to myToDos so User knows.
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/HomeScreen.png">
@@ -113,6 +116,7 @@ The user can navigate from one page to another with the menu.
 
 The myToDos page has the accepted, but not yet completed ToDos and also the completed ToDos in the last 30 days.
 When a User completes a ToDo a small animation pops up.
+
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/MyToDosLeer.png">
 <img height="400" src="img/images for high fi/myToDos.png">
@@ -121,9 +125,14 @@ When a User completes a ToDo a small animation pops up.
 
 ### HouseTodos
 HouseToDos page is where all the ToDos of the household are stored. So the users ToDos as well as any that are assigned to another user, or unassigned. 
+
 A User can take over a toDo from another household member. 
+
 The ToDos are clickable, in homeScreen, in myTodos and in HouseToDos. 
-Also in homescreen and in my ToDos there is an add ToDo button where you can add a ToDo, you have to specify the category, which user assign to can be no one or a particular user. Here the Users that have the category in their preferences are displayed at the top and are marked appropriately. Then after you have to specify title, reward, due date, difficulty, description.
+
+Also in the homescreen and in my ToDos there is an add ToDo button where you can add a ToDo, you have to specify the category, which user assign to can be no one or a particular user.
+
+Here the Users that have the category in their preferences are displayed at the top and are marked appropriately. Then after you have to specify title, reward, due date, difficulty, description.
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/HouseToDos.png">
@@ -133,7 +142,10 @@ Also in homescreen and in my ToDos there is an add ToDo button where you can add
 </p>
 
 ### Instructions
-In the Instructions page are instructions on how to do stuff, as can be seen in the pictures. One can filter by category or use the searchbar to search for sth. The Instructions are clickable, clicking on an instruction displays it. This display shows the category etc. and the description and also here you can see the delete and edit buttons. You can see in the last picture how it looks when you edit a description.
+
+In the Instructions page are instructions on how to do stuff, as can be seen in the pictures. One can filter by category or use the searchbar to search for sth. 
+
+The Instructions are clickable, clicking on an instruction displays it. This display shows the category etc. and the description and also here you can see the delete and edit buttons. You can see in the last picture how it looks when you edit a description.
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/InstructionsA2.png">
@@ -142,14 +154,22 @@ In the Instructions page are instructions on how to do stuff, as can be seen in 
 </p>
 
 ### Calendar
+
 The calendar page is a calendar where for each date, by clicking on it you can see the household ToDos for that day. There is a button for adding ToDos at the bottom as well. The blue points indicate on which date how many ToDos are due (so you see before clicking). 
+
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/Calendar.png">
 <img height="400" src="img/images for high fi/CalendarToDos.png">
 </p>
 
 ### Ranklist, Options and Profile
-The Ranklist Screen shows the ranklist of Users by points. The Options Screen is where you can enable/disable permissions. In the profile screen you can see your profile picture, you can change it and depending on your permissions take a new picture with camera or take one from your gallery, you see the distribution of which kind of tasks you did and other things as shown in picture below:
+
+The Ranklist Screen shows the ranklist of Users by points. 
+
+The Options Screen is where you can enable/disable permissions.
+
+In the profile screen you can see your profile picture, you can change it and depending on your permissions take a new picture with camera or take one from your gallery, you see the distribution of which kind of tasks you did and other things as shown in picture below:
+
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/Ranklist.png">
 <img height="400" src="img/images for high fi/Options.png">
