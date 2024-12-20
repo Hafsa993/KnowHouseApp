@@ -64,7 +64,7 @@ From the project's root directory, run:
   ### Additional Commands
   Here are some useful Flutter commands for building and managing your app:
   
-  Build a Release APK (Android):
+  **Build a Release APK (Android):**
   
 
     flutter build apk --release
