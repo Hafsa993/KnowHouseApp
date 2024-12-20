@@ -141,7 +141,7 @@ In the Instructions page are instructions on how to do stuff, as can be seen in 
 <img height="400" src="img/images for high fi/editInstr.png">
 </p>
 
-### Calenar
+### Calendar
 The calendar page is a calendar where for each date, by clicking on it you can see the household ToDos for that day. There is a button for adding ToDos at the bottom as well. The blue points indicate on which date how many ToDos are due (so you see before clicking). 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/Calendar.png">
