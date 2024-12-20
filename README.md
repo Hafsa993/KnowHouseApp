@@ -49,7 +49,7 @@ From the project's root directory, run:
   
    Connect your Android device via USB and ensure USB debugging is enabled or connect your chosen Emulator correctly.
   
-   For the Emulator see offitial Flutter Guide:
+   For the Emulator see official Flutter Guide:
     [Official Instructions for Installation](https://docs.flutter.dev/get-started/install)
   
   choose: "your Operating System" -> Android
@@ -58,7 +58,7 @@ From the project's root directory, run:
   
   Connect your iOS device via USB or connect your chosen Simulator correctly.
   
-  For more help see offitial Flutter Guide:
+  For more help see official Flutter Guide:
     [Official Instructions for Installation](https://docs.flutter.dev/get-started/install)
   
   choose: MacOs -> iOS
