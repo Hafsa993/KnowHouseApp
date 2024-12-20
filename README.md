@@ -17,7 +17,7 @@ These instructions will help you download and run the project locally on your ma
 - **Dart SDK:**  
   The Dart SDK is bundled with Flutter, so no separate action is required if you followed the Flutter installation steps.
   
-- **A suitable IDE for flutter as described in the official Guide**
+- **A suitable IDE for flutter as described in the official Guide:**
   [Official Instructions for Installation](https://docs.flutter.dev/get-started/install)
   
 ## Downloading the Project
