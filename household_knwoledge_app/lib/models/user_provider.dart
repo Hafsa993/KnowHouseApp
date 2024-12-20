@@ -1,5 +1,3 @@
-// lib/providers/user_provider.dart
-
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
@@ -45,7 +43,6 @@ class UserProvider with ChangeNotifier {
     }
   } */
 
-  // Example method to add points to a user
   void addPointsToUser(int index, int pointsToAdd) {
     if (index >= 0 && index < _currUsers.length) {
       _currUsers[index].addPoints(pointsToAdd);

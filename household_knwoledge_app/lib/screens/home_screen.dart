@@ -58,8 +58,6 @@ class HomeScreen extends StatelessWidget {
               child: Stack(
                 children: [Stack(
                   children: [Positioned(child: Column(
-                    /*children: [Image.asset("lib/assets/leaderboard.png", fit: BoxFit.scaleDown,),
-                    ], */
                       children: [InkWell(
                               onTap: () {
                                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => RankingScreen()));
@@ -80,27 +78,15 @@ class HomeScreen extends StatelessWidget {
                       fontWeight: FontWeight.normal,
                       color: Colors.white,
                       shadows: <Shadow>[
-      
-      Shadow(
-        offset: Offset(1.0, 1.0),
-        blurRadius: 2.0,
-        color: Color.fromARGB(124, 111, 163, 227),
-      ),
-    ],
+                        Shadow(
+                          offset: Offset(1.0, 1.0),
+                          blurRadius: 2.0,
+                          color: Color.fromARGB(124, 111, 163, 227),
+                        ),
+                      ],
                     ),
                   ),
-                ),/* 
-                const Positioned(
-                  top: 120,
-                  left: 10,
-                  child: Text(
-                    "Ends in 2d 23Hours",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ), */
+                ),
                 // Rank 1st
                 Positioned(
                   top: 48,
@@ -352,14 +338,14 @@ class HomeScreen extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: const Text("Are you sure you want to accept this toDo?"),
-          content: const Text("This is a non-reversible action."),
+          content: const Text("This is a non-reversible action.", style: TextStyle(fontWeight: FontWeight.bold ),),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () {
 
                 taskProvider.acceptTask(task, currentUser.username);
                 Navigator.pop(context);
-
                 //show message
                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -391,7 +377,8 @@ class HomeScreen extends StatelessWidget {
       builder: (context) {
         return AlertDialog(
           title: const Text("Are you sure you want to decline this toDo?"),
-          content: const Text("This is a non-reversible action."),
+          content: const Text("This is a non-reversible action.", style: TextStyle(fontWeight: FontWeight.bold ),),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
                 TextButton(
                   onPressed: () {
@@ -399,16 +386,17 @@ class HomeScreen extends StatelessWidget {
                     _showReasoningDialog(context, task, taskProvider);
                   },
                   style: TextButton.styleFrom(
-                    
-                      foregroundColor: Colors.white, backgroundColor: Colors.red),
+                  foregroundColor: Colors.white, backgroundColor: Colors.red),
                   child: const Text('Yes, really decline'),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   style: TextButton.styleFrom(
-                    
+                  
                       foregroundColor: Colors.white,
-                      backgroundColor: Colors.green),
+                      backgroundColor: Colors.green
+                      
+                      ),
                   child: const Text("No, don't"),
                 ),
               ],
