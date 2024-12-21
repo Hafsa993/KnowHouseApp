@@ -8,6 +8,7 @@ import 'models/task_descriptions_provider.dart';
 import 'screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:household_knwoledge_app/signin_page.dart';
 
 void main() async {
    WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +23,16 @@ void main() async {
         ChangeNotifierProvider(create: (_) => TaskDescriptorProvider()),
         ChangeNotifierProvider(create: (_) => PermissionsProvider()),
       ],
-      child: const HouseholdApp(),
+      /*child: const HouseholdApp(),*/
+      child: MaterialApp(
+        title: 'Household Knowledge App',
+        initialRoute: '/sign_in',
+        routes: {
+          '/sign_in': (context) => SignInPage(),
+          '/home': (context) => HouseholdApp(),
+          // if not signed in then sign in
+        },
+      ),
     ),
   );
 }
