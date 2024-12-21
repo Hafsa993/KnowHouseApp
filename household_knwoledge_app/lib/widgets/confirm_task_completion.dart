@@ -38,7 +38,7 @@ class _ConfirmTaskCompletedState extends State<ConfirmTaskCompleted> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    taskProvider.completeTask(widget.taskToComplete);
+                    taskProvider.completeTask(widget.taskToComplete.id);
                     // Add reward points to the user
                     widget.currentUser.addPoints(widget.taskToComplete.rewardPoints);
                     Navigator.pop(context);                    
