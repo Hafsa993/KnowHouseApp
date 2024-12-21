@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "878415536331",
+    "project_id": "knowhouse-87cfc",
+    "storage_bucket": "knowhouse-87cfc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:878415536331:android:742d379989f29dfcacfb4e",
+        "android_client_info": {
+          "package_name": "com.example.household_knwoledge_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGsD9eVYsPJkgNZ9UGr4w7fI4E4qK8wfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

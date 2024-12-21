@@ -6,9 +6,14 @@ import 'package:provider/provider.dart';
 import 'models/task_provider.dart';
 import 'models/task_descriptions_provider.dart';
 import 'screens/home_screen.dart';
-//hi
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 void main() async {
    WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
       providers: [
@@ -16,7 +21,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => TaskDescriptorProvider()),
         ChangeNotifierProvider(create: (_) => PermissionsProvider()),
-        // You can add UserProvider here if needed
       ],
       child: const HouseholdApp(),
     ),
@@ -38,6 +42,7 @@ class HouseholdApp extends StatelessWidget {
           dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
           contrastLevel: 1),
         useMaterial3: true, // Enable Material 3 for a modern design
+
         /*textTheme: TextTheme(
           titleLarge: GoogleFonts.merriweather(),
           bodyMedium: GoogleFonts.merriweather(),
