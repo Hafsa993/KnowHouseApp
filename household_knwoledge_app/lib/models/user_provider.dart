@@ -1,65 +1,84 @@
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProvider with ChangeNotifier {
-  // Initialize currUsers with predefined users
-  final List<User> _currUsers = [
-    User(
-      username: 'JohnDoe',
-      points: 100,
-      role: 'Member',
-      preferences: ['Cleaning', 'Cooking'],
-      contributions: {'Cleaning': 50, 'Gardening': 30, 'Cooking': 20, "Shopping": 0, "Planning" : 0,"Care" : 0,"Maintenance" : 0,"Other" : 0},
-      profilepath: "lib/assets/f.jpeg",
-    ),
-    User(username: 'Sarah',preferences: ["Gardening","Shopping"], points: 122, contributions: {'Cleaning': 50, 'Gardening': 30, 'Cooking': 20, "Shopping": 0, "Planning" : 0,"Care" : 0,"Maintenance" : 0,"Other" : 0}, profilepath: "lib/assets/sarah.jpeg",),
-    User(username: 'Max', preferences: ["Shopping","Planning",],points: 125, contributions: {'Cleaning': 50, 'Gardening': 30, 'Cooking': 20, "Shopping": 0, "Planning" : 0,"Care" : 0,"Maintenance" : 0,"Other" : 0}, profilepath: "lib/assets/max.jpeg",),
-    User(username: 'Anna', preferences: ["Planning","Care",], contributions: {'Cleaning': 50, 'Gardening': 30, 'Cooking': 20, "Shopping": 0, "Planning" : 0,"Care" : 0,"Maintenance" : 0,"Other" : 0}, points: 90),
-    User(username: 'Marie', preferences: ['Cleaning', "Maintenance",], contributions: {'Cleaning': 50, 'Gardening': 30, 'Cooking': 20, "Shopping": 0, "Planning" : 0,"Care" : 0,"Maintenance" : 0,"Other" : 0}, points: 100),
-    User(username: 'Alex', preferences: ['Gardening', 'Cooking'], contributions: {'Cleaning': 50, 'Gardening': 30, 'Cooking': 20, "Shopping": 0, "Planning" : 0,"Care" : 0,"Maintenance" : 0,"Other" : 0}, points: 75),
-  ];
+  User? _currentUser; // Your custom User model
 
-  // Getter to access currUsers
-  List<User> get currUsers => _currUsers;
+  User? get currentUser => _currentUser;
 
-  // Method to add a new user
-  void addUser(User user) {
-    _currUsers.add(user);
-    notifyListeners();
-  }
-
-  // Method to remove a user
-  void removeUser(User user) {
-    _currUsers.remove(user);
-    notifyListeners();
-  }
-
-  // Method to update a user
-/*   void updateUser(int index, User updatedUser) {
-    if (index >= 0 && index < _currUsers.length) {
-      _currUsers[index] = updatedUser;
-      notifyListeners();
-    }
-  } */
-
-  void addPointsToUser(int index, int pointsToAdd) {
-    if (index >= 0 && index < _currUsers.length) {
-      _currUsers[index].addPoints(pointsToAdd);
-      notifyListeners();
-    }
-  }
-  User getCurrUser() {
-    return _currUsers.firstWhere((user) => user.username == 'JohnDoe');
-  }
   
-  ImageProvider<Object> getProfileOfCurrUser() {
-    String p = getCurrUser().profilepath;
-    if ( p == "lib/assets/f.jpeg") {
-      return AssetImage(p);
-    } else {
-      return FileImage(File(p));
+  List<User> familyMembers = [];
+
+  // Call this after user logs in or registers
+  Future<void> loadCurrentUser() async {
+    final auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) {
+      // Not signed in then..
+      return;
+    }
+
+    // Fetch user's document from Firestore
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).get();
+    if (userDoc.exists) {
+      _currentUser = User.fromMap(userDoc.data()!);
+      notifyListeners();
     }
   }
-  // Additional methods as needed...
+
+  // Update current user in Firestore and in local state
+  Future<void> updateUserData(User updatedUser) async {
+    final auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).update(updatedUser.toMap());
+    _currentUser = updatedUser;
+    notifyListeners();
+  }
+
+  // Example method to add points to a user
+  Future<void> addPointsToUser(int pointsToAdd) async {
+    if (_currentUser == null) return;
+    _currentUser!.addPoints(pointsToAdd);
+    await updateUserData(_currentUser!);
+  }
+  Stream<List<User>> getFamilyMembers(User currUser) {
+    if (currUser.familyId == null) {
+      // Return an empty stream or handle as needed
+      return Stream.value([]);
+    }
+
+    return FirebaseFirestore.instance
+        .collection('users')
+        .where('familyId', isEqualTo: currUser.familyId)
+        .snapshots()
+        .map((snapshot) => snapshot.docs
+            .map((doc) => User.fromMap(doc.data()))
+            .toList());
+  }
+void fetchFamilyMembers(User currUser) {
+    if (currUser.familyId == null) return;
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .where('familyId', isEqualTo: currUser.familyId)
+        .snapshots()
+        .listen((snapshot) {
+      familyMembers = snapshot.docs
+          .map((doc) => User.fromMap(doc.data() as Map<String, dynamic>))
+          .toList();
+      notifyListeners();
+    });
+  }
+
+  ImageProvider<Object> getProfileOfCurrUser() {
+    if (_currentUser == null) {
+      return AssetImage('lib/assets/f.jpeg');
+    }
+    String p = _currentUser!.profilepath;
+    return p.startsWith('lib/assets/') ? AssetImage(p) : FileImage(File(p));
+  }
 }

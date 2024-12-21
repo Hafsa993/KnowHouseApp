@@ -121,8 +121,8 @@ class _ToDoFormState extends State<ToDoForm> {
   }
 
   // Method to sort users based on category preferences
-  List<User> _getSortedUsers(UserProvider userProvider) {
-    List<User> users = userProvider.currUsers;
+  List<User> _getSortedUsers(List<User> familyMembers) {
+    List<User> users = familyMembers;
 
     // Separate users with the selected category in their preferences
     List<User> preferredUsers = [];
@@ -361,7 +361,9 @@ class _ToDoFormState extends State<ToDoForm> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    List<User> sortedUsers = _getSortedUsers(userProvider);
+
+    List<User> sortedUsers = _getSortedUsers(userProvider.familyMembers);
+
 
     //add ToDo in steps
     return SingleChildScrollView(

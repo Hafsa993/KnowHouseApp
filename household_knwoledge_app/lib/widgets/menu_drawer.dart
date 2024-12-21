@@ -18,7 +18,7 @@ class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    User currUser = userProvider.getCurrUser();
+    User currUser = userProvider.currentUser!;
 
     return Drawer(
       //backgroundColor: Color.fromARGB(255, 211, 239, 247),
