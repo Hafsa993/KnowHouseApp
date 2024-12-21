@@ -68,7 +68,7 @@ void fetchFamilyMembers(User currUser) {
         .snapshots()
         .listen((snapshot) {
       familyMembers = snapshot.docs
-          .map((doc) => User.fromMap(doc.data() as Map<String, dynamic>))
+          .map((doc) => User.fromMap(doc.data()))
           .toList();
       notifyListeners();
     });

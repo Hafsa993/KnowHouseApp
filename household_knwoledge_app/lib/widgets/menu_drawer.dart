@@ -18,8 +18,18 @@ class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    User currUser = userProvider.currentUser!;
-
+    User? currentUser = Provider.of<UserProvider>(context).currentUser;
+     if (currentUser == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+          title: const Text('Menu'),
+        ),
+        drawer: const MenuDrawer(),
+        body: const Center(child: Text('User not found. Please log in again.')),
+      );
+    }
+    User currUser = currentUser;
     return Drawer(
       //backgroundColor: Color.fromARGB(255, 211, 239, 247),
       child: Column(

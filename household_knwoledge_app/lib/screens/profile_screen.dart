@@ -21,7 +21,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Pick image from Gallery or Camera
   Future<void> _pickImage(ImageSource source) async {
-    User currUser = Provider.of<UserProvider>(context, listen: false).getCurrUser();
+    User currUser = Provider.of<UserProvider>(context, listen: false).currentUser!;
     final permissionsProvider = Provider.of<PermissionsProvider>(context, listen: false);
 
     // Check if the required permission is enabled
@@ -85,7 +85,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Pie Chart
   List<PieChartSectionData> _generatePieChartData(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    User currentUser = userProvider.getCurrUser();
+    User currentUser = userProvider.currentUser!;
     final sum = currentUser.contributions.values.fold<double>(
       0.0,
       (sum, value) => sum + value.toDouble(),
@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    User currentUser = userProvider.getCurrUser();
+    User currentUser = userProvider.currentUser!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 226, 224, 224),

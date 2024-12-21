@@ -18,252 +18,304 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<User> currUsers = Provider.of<UserProvider>(context).currUsers;
-    User currentUser = Provider.of<UserProvider>(context).getCurrUser();
+    
+    User? currentUser = Provider.of<UserProvider>(context).currentUser;
+     if (currentUser == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+          title: const Text('Home'),
+        ),
+        drawer: const MenuDrawer(),
+        body: const Center(child: Text('User not found. Please log in again.')),
+      );
+    }
+    
+
     TaskProvider taskProvider = Provider.of<TaskProvider>(context);
-    List<Task> urgentTasks = taskProvider.pendingTasks(currentUser.username);
+
     
   
-    currUsers.sort((a, b) {
-      if (b.points == a.points) {
-        return a.username.compareTo(b.username); // Tie-breaker: alphabetical order
-      }
-      return b.points.compareTo(a.points); // Primary sorting: points descending
-    });
+    
 
-    return Scaffold(
-      //backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 226, 224, 224),
-        title: Row(
-          children: [
-          const Icon(
-                Icons.home,
-                color: Color.fromARGB(255, 0, 0, 0),
-                size: 40,
-              ),
-          SizedBox(width: 10,),
-          const Text('Home'),
-        ],),
-        
-      ),
-      drawer: const MenuDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            SizedBox(
-              width: 400,
-              height: 255,
-              child: Stack(
-                children: [Stack(
-                  children: [Positioned(child: Column(
-                      children: [InkWell(
-                              onTap: () {
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => RankingScreen()));
-                                },
-                                child: ClipRRect(
-                        borderRadius: BorderRadius.circular(15.0),
-                        child: Image.asset("lib/assets/leaderboard.png", fit: BoxFit.scaleDown,),
+    return StreamBuilder<List<User>>(
+        stream: Provider.of<UserProvider>(context).getFamilyMembers(currentUser),
+        builder: (context, completedSnapshot) {
+        if (completedSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+        } else if (completedSnapshot.hasError) {
+                          return Center(
+                              child:
+                                  Text('Error: ${completedSnapshot.error.toString()}'));
+        } else if (!completedSnapshot.hasData ||
+                            completedSnapshot.data!.isEmpty) {
+          return const Center(
+            child: Text('No ToDos completed in the last 30 days'));
+        }
+        List<User> currUsers = completedSnapshot.data!;
+        currUsers.sort((a, b) {
+          if (b.points == a.points) {
+            return a.username.compareTo(b.username); // Tie-breaker: alphabetical order
+          }
+          return b.points.compareTo(a.points); // Primary sorting: points descending
+        });
+        return Scaffold(
+          //backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+          appBar: AppBar(
+            backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+            title: Row(
+              children: [
+              const Icon(
+                    Icons.home,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    size: 40,
+                  ),
+              SizedBox(width: 10,),
+              const Text('Home'),
+            ],),
+            
+          ),
+          drawer: const MenuDrawer(),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: 400,
+                  height: 255,
+                  child: Stack(
+                    children: [Stack(
+                      children: [Positioned(child: Column(
+                          children: [InkWell(
+                                  onTap: () {
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => RankingScreen()));
+                                    },
+                                    child: ClipRRect(
+                            borderRadius: BorderRadius.circular(15.0),
+                            child: Image.asset("lib/assets/leaderboard.png", fit: BoxFit.scaleDown,),
+                          ))],
                       ))],
-                  ))],
-                ),
-                const Positioned(
-                  top: 8,
-                  right: 125,
-                  child: Text(
-                    "Leaderboard",
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.white,
-                      shadows: <Shadow>[
-                        Shadow(
-                          offset: Offset(1.0, 1.0),
-                          blurRadius: 2.0,
-                          color: Color.fromARGB(124, 111, 163, 227),
-                        ),
-                      ],
                     ),
+                    const Positioned(
+                      top: 8,
+                      right: 125,
+                      child: Text(
+                        "Leaderboard",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                          shadows: <Shadow>[
+                            Shadow(
+                              offset: Offset(1.0, 1.0),
+                              blurRadius: 2.0,
+                              color: Color.fromARGB(124, 111, 163, 227),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // Rank 1st
+                    Positioned(
+                      top: 48,
+                      right: 150,
+                      child: rank(
+                          radius: 30.0,
+                          height: 2,
+                          image: currUsers[0].profilepath,
+                          name: currUsers[0].username,
+                          point: "${currUsers[0].points}",
+                          context: context),
+                    ),
+                    // for rank 2nd
+                    Positioned(
+                      top: 85,
+                      left: 45,
+                      child: rank(
+                          radius: 25.0,
+                          height: 2,
+                          image: currUsers[1].profilepath,
+                          name: currUsers[1].username,
+                          point: "${currUsers[1].points}",
+                          context: context),
+                    ),
+                    // For 3rd rank
+                    Positioned(
+                      top: 115,
+                      right: 48,
+                      child: rank(
+                          radius: 20.0,
+                          height: 2,
+                          image: currUsers[2].profilepath,
+                          name: currUsers[2].username,
+                          point: "${currUsers[2].points}",
+                          context: context),
+                    ),
+                  ],
                   ),
                 ),
-                // Rank 1st
-                Positioned(
-                  top: 48,
-                  right: 150,
-                  child: rank(
-                      radius: 30.0,
-                      height: 2,
-                      image: currUsers[0].profilepath,
-                      name: currUsers[0].username,
-                      point: "${currUsers[0].points}",
-                      context: context),
+                // Rest of the home screen
+                const SizedBox(height: 8),
+                const SizedBox(height: 16),
+                const Text(
+                  'Open ToDos',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                // for rank 2nd
-                Positioned(
-                  top: 85,
-                  left: 45,
-                  child: rank(
-                      radius: 25.0,
-                      height: 2,
-                      image: currUsers[1].profilepath,
-                      name: currUsers[1].username,
-                      point: "${currUsers[1].points}",
-                      context: context),
-                ),
-                // For 3rd rank
-                Positioned(
-                  top: 115,
-                  right: 48,
-                  child: rank(
-                      radius: 20.0,
-                      height: 2,
-                      image: currUsers[2].profilepath,
-                      name: currUsers[2].username,
-                      point: "${currUsers[2].points}",
-                      context: context),
-                ),
-              ],
-              ),
-            ),
-            // Rest of the home screen
-            const SizedBox(height: 8),
-            const SizedBox(height: 16),
-            const Text(
-              'Open ToDos',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-             Expanded(
-                child: urgentTasks.isEmpty
-                    ? const Center(child: Text('No pending tasks!'))
-                    : ListView.builder(
-                        itemCount: urgentTasks.length,
-                        itemBuilder: (context, index) {
-                          Task task = urgentTasks[index];
-                          return Card(
-                            margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => TodoShowScreen(task: task),
-                                  ),
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    // Task Title
-                                    Text(
-                                      task.title,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
-                                      ),
+        
+                //here the part for pending todos
+                 StreamBuilder<List<Task>>(
+                   stream: taskProvider.pendingTasks(currentUser.username),
+                    builder: (context, completedSnapshot) {
+                      if (completedSnapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (completedSnapshot.hasError) {
+                        return Center(
+                            child:
+                                Text('Error: ${completedSnapshot.error.toString()}'));
+                      } else if (!completedSnapshot.hasData ||
+                          completedSnapshot.data!.isEmpty) {
+                        return const Center(
+                            child: Text('No ToDos completed in the last 30 days'));
+                      }
+        
+                      List<Task> urgentTasks = completedSnapshot.data!;
+                     return Expanded(
+                        child: urgentTasks.isEmpty
+                            ? const Center(child: Text('No pending toDos!'))
+                            : ListView.builder(
+                                itemCount: urgentTasks.length,
+                                itemBuilder: (context, index) {
+                                  Task task = urgentTasks[index];
+                                  return Card(
+                                    margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                    elevation: 4,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                    const SizedBox(height: 8),
-                                    // Task Details
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => TodoShowScreen(task: task),
+                                          ),
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
+                                            // Task Title
                                             Text(
-                                              'Due: ${DateFormat('dd-MM-yyyy HH:mm').format(task.deadline)}',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                color: task.deadline.difference(DateTime.now()).inHours < 24
-                                                    ? Colors.red // Red if due in less than 24 hours
-                                                    : Colors.black54,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'Difficulty: ${task.difficulty}',
+                                              task.title,
                                               style: const TextStyle(
-                                                fontSize: 14,
-                                                fontStyle: FontStyle.italic,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
                                                 color: Colors.black87,
                                               ),
                                             ),
-                                            const SizedBox(height: 4),
-                                            Text(
-                                              'Reward: ${task.rewardPoints}',
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.teal,
-                                              ),
+                                            const SizedBox(height: 8),
+                                            // Task Details
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      'Due: ${DateFormat('dd-MM-yyyy HH:mm').format(task.deadline)}',
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        color: task.deadline.difference(DateTime.now()).inHours < 24
+                                                            ? Colors.red // Red if due in less than 24 hours
+                                                            : Colors.black54,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      'Difficulty: ${task.difficulty}',
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontStyle: FontStyle.italic,
+                                                        color: Colors.black87,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 4),
+                                                    Text(
+                                                      'Reward: ${task.rewardPoints}',
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.teal,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                // Buttons Section
+                                                Flexible(
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.end,
+                                                    children: [
+                                                      Flexible(
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            foregroundColor: Colors.white,
+                                                            backgroundColor: Colors.green,
+                                                            padding: const EdgeInsets.symmetric(
+                                                                horizontal: 12, vertical: 8), // Increased padding
+                                                            minimumSize: const Size(70, 40), // Ensures minimum button size
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
+                                                          ),
+                                                          onPressed: () =>
+                                                              _showAcceptDialog(context, task, taskProvider, currentUser),
+                                                          child: const Text('Accept'),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(width: 6),
+                                                      Flexible(
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                            foregroundColor: Colors.white,
+                                                            backgroundColor: Colors.red,
+                                                            padding: const EdgeInsets.symmetric(
+                                                                horizontal: 12, vertical: 8),
+                                                            minimumSize: const Size(70, 40),
+                                                            shape: RoundedRectangleBorder(
+                                                              borderRadius: BorderRadius.circular(8),
+                                                            ),
+                                                          ),
+                                                          onPressed: () =>
+                                                              _showDeclineDialog(context, task, taskProvider),
+                                                          child: const Text('Decline'),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                        // Buttons Section
-                                        Flexible(
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            children: [
-                                              Flexible(
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    foregroundColor: Colors.white,
-                                                    backgroundColor: Colors.green,
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 12, vertical: 8), // Increased padding
-                                                    minimumSize: const Size(70, 40), // Ensures minimum button size
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
-                                                  ),
-                                                  onPressed: () =>
-                                                      _showAcceptDialog(context, task, taskProvider, currentUser),
-                                                  child: const Text('Accept'),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 6),
-                                              Flexible(
-                                                child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                    foregroundColor: Colors.white,
-                                                    backgroundColor: Colors.red,
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 12, vertical: 8),
-                                                    minimumSize: const Size(70, 40),
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
-                                                  ),
-                                                  onPressed: () =>
-                                                      _showDeclineDialog(context, task, taskProvider),
-                                                  child: const Text('Decline'),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
-                                  ],
-                                ),
+                                  );
+                                },
                               ),
-                            ),
-                          );
-                        },
-                      ),
-              ),
-
-          ],
-        ),
-      ),
-      bottomNavigationBar:  ToDoCreator(),
+                      );
+                   }
+                 ),
+        
+              ],
+            ),
+          ),
+          bottomNavigationBar:  ToDoCreator(),
+        );
+      }
     );
   }
 
@@ -278,7 +330,7 @@ class HomeScreen extends StatelessWidget {
   }) {
     ImageProvider<Object> profile;
 
-    String currName = Provider.of<UserProvider>(context).getCurrUser().username;
+    String currName = Provider.of<UserProvider>(context).currentUser!.username;
     if (name == currName) {
       profile = Provider.of<UserProvider>(context).getProfileOfCurrUser();
     } else {
@@ -344,7 +396,7 @@ class HomeScreen extends StatelessWidget {
             TextButton(
               onPressed: () {
 
-                taskProvider.acceptTask(task, currentUser.username);
+                taskProvider.acceptTask(task.id, currentUser.username);
                 Navigator.pop(context);
                 //show message
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -435,7 +487,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 String reasoning = reasoningController.text;
                 if (reasoning.isNotEmpty) {
-                  taskProvider.declineTask(task);
+                  taskProvider.declineTask(task.id);
                   Navigator.pop(context);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
