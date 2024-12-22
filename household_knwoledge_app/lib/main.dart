@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:household_knwoledge_app/auth_wrapper.dart';
 import 'package:household_knwoledge_app/models/permissions_provider.dart';
 import 'package:household_knwoledge_app/models/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,7 @@ import 'firebase_options.dart';
 import 'package:household_knwoledge_app/signin_page.dart';
 
 void main() async {
-   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -23,16 +24,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => TaskDescriptorProvider()),
         ChangeNotifierProvider(create: (_) => PermissionsProvider()),
       ],
-      /*child: const HouseholdApp(),*/
-      child: MaterialApp(
-        title: 'Household Knowledge App',
-        initialRoute: '/sign_in',
-        routes: {
-          '/sign_in': (context) => SignInPage(),
-          '/home': (context) => HouseholdApp(),
-          // if not signed in then sign in
-        },
-      ),
+      child: const HouseholdApp(),
     ),
   );
 }
@@ -43,24 +35,26 @@ class HouseholdApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Household App',
+      title: 'Household Knowledge App',
       theme: ThemeData(
         fontFamily: GoogleFonts.robotoSlab().fontFamily,
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 102, 163, 255),
           primary: const Color.fromARGB(255, 41, 141, 255),
           dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
-          contrastLevel: 1),
-        useMaterial3: true, // Enable Material 3 for a modern design
-
-        /*textTheme: TextTheme(
-          titleLarge: GoogleFonts.merriweather(),
-          bodyMedium: GoogleFonts.merriweather(),
-          displayMedium: GoogleFonts.merriweather(),
-          labelMedium: GoogleFonts.merriweather(),
-        ),*/
+          contrastLevel: 1
+        ),
+        useMaterial3: true,
       ),
-      home: HomeScreen(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const AuthWrapper(),
+        '/sign_in': (context) => SignInPage(),
+        '/home': (context) => HomeScreen(),
+      },
+      onUnknownRoute: (settings) => MaterialPageRoute(
+        builder: (context) => SignInPage(),
+      ),
     );
   }
 }

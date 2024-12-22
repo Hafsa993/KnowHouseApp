@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:household_knwoledge_app/signin_page.dart';
 
 class UserProvider with ChangeNotifier {
   User? _currentUser; // Your custom User model
@@ -16,15 +17,20 @@ class UserProvider with ChangeNotifier {
   // Call this after user logs in or registers
   Future<void> loadCurrentUser() async {
     final auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
-    if (firebaseUser == null) {
-      // Not signed in then..
-      return;
+     // Not signed in then..
+     if (firebaseUser == null) {
+     
+       return;
     }
-
+  
     // Fetch user's document from Firestore
     final userDoc = await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).get();
     if (userDoc.exists) {
       _currentUser = User.fromMap(userDoc.data()!);
+      notifyListeners();
+    } else {
+      // User document does not exist; handle accordingly
+      _currentUser = null;
       notifyListeners();
     }
   }
@@ -59,6 +65,7 @@ class UserProvider with ChangeNotifier {
             .map((doc) => User.fromMap(doc.data()))
             .toList());
   }
+  
 void fetchFamilyMembers(User currUser) {
     if (currUser.familyId == null) return;
 
