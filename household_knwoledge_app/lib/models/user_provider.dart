@@ -27,6 +27,8 @@ class UserProvider with ChangeNotifier {
     final userDoc = await FirebaseFirestore.instance.collection('users').doc(auth.FirebaseAuth.instance.currentUser!.uid).get();
     if (userDoc.exists) {
       _currentUser = User.fromMap(userDoc.data()!);
+      print(_currentUser);
+      print("HHHHHHHHJWJWKJW");
       notifyListeners();
     } else {
       // User document does not exist; handle accordingly

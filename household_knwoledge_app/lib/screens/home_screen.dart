@@ -29,7 +29,7 @@ class HomeScreen extends StatelessWidget {
     TaskProvider taskProvider = Provider.of<TaskProvider>(context);
 
     
-  
+  print("HHHHHHHHHHHHEREBBBBBB");
     
 
     return StreamBuilder<List<User>>(
@@ -48,12 +48,14 @@ class HomeScreen extends StatelessWidget {
             child: Text('No ToDos completed in the last 30 days'));
         }
         List<User> currUsers = completedSnapshot.data!;
+          print("1HHHHHHHHHHHHEREBBBBBB");
         currUsers.sort((a, b) {
           if (b.points == a.points) {
             return a.username.compareTo(b.username); // Tie-breaker: alphabetical order
           }
           return b.points.compareTo(a.points); // Primary sorting: points descending
         });
+          print("22HHHHHHHHHHHHEREBBBBBB");
         return Scaffold(
           //backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           appBar: AppBar(
@@ -111,41 +113,44 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     // Rank 1st
-                    Positioned(
-                      top: 48,
-                      right: 150,
-                      child: rank(
-                          radius: 30.0,
-                          height: 2,
-                          image: currUsers[0].profilepath,
-                          name: currUsers[0].username,
-                          point: "${currUsers[0].points}",
-                          context: context),
-                    ),
+                    if (currUsers.isNotEmpty)
+                      Positioned(
+                        top: 48,
+                        right: 150,
+                        child: rank(
+                            radius: 30.0,
+                            height: 2,
+                            image: currUsers[0].profilepath,
+                            name: currUsers[0].username,
+                            point: "${currUsers[0].points}",
+                            context: context),
+                      ),
                     // for rank 2nd
-                    Positioned(
-                      top: 85,
-                      left: 45,
-                      child: rank(
-                          radius: 25.0,
-                          height: 2,
-                          image: currUsers[1].profilepath,
-                          name: currUsers[1].username,
-                          point: "${currUsers[1].points}",
-                          context: context),
-                    ),
+                    if (currUsers.length > 1)
+                      Positioned(
+                        top: 85,
+                        left: 45,
+                        child: rank(
+                            radius: 25.0,
+                            height: 2,
+                            image: currUsers[1].profilepath,
+                            name: currUsers[1].username,
+                            point: "${currUsers[1].points}",
+                            context: context),
+                      ),
                     // For 3rd rank
-                    Positioned(
-                      top: 115,
-                      right: 48,
-                      child: rank(
-                          radius: 20.0,
-                          height: 2,
-                          image: currUsers[2].profilepath,
-                          name: currUsers[2].username,
-                          point: "${currUsers[2].points}",
-                          context: context),
-                    ),
+                    if (currUsers.length > 2)
+                      Positioned(
+                        top: 115,
+                        right: 48,
+                        child: rank(
+                            radius: 20.0,
+                            height: 2,
+                            image: currUsers[2].profilepath,
+                            name: currUsers[2].username,
+                            point: "${currUsers[2].points}",
+                            context: context),
+                      ),
                   ],
                   ),
                 ),
@@ -156,28 +161,28 @@ class HomeScreen extends StatelessWidget {
                   'Open ToDos',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-        
+                
                 //here the part for pending todos
                  StreamBuilder<List<Task>>(
                    stream: taskProvider.pendingTasks(currentUser.username),
-                    builder: (context, completedSnapshot) {
-                      if (completedSnapshot.connectionState ==
+                    builder: (context, pendingTasksStream) {
+                      if (pendingTasksStream.connectionState ==
                           ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
-                      } else if (completedSnapshot.hasError) {
+                      } else if (pendingTasksStream.hasError) {
                         return Center(
                             child:
-                                Text('Error: ${completedSnapshot.error.toString()}'));
-                      } else if (!completedSnapshot.hasData ||
-                          completedSnapshot.data!.isEmpty) {
+                                Text('Error: $pendingTasksStream.error.toString()}'));
+                      } /* else if (!pendingTasksStream.hasData) {
                         return const Center(
-                            child: Text('No ToDos completed in the last 30 days'));
-                      }
+                            child: Text('No pending Todos'));
+                      } */
         
-                      List<Task> urgentTasks = completedSnapshot.data!;
+                      List<Task> urgentTasks = pendingTasksStream.data!;
+                      print("33HHHHHHHHHHh");
                      return Expanded(
                         child: urgentTasks.isEmpty
-                            ? const Center(child: Text('No pending toDos!'))
+                            ? const Center(child: Text('No open toDos!'))
                             : ListView.builder(
                                 itemCount: urgentTasks.length,
                                 itemBuilder: (context, index) {

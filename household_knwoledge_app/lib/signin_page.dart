@@ -67,7 +67,7 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  Future<void> _handleSubmit() async {
+  Future<void> _handleSigninSubmit() async {
     if (!_validateInputs()) return;
 
     setState(() {
@@ -85,7 +85,7 @@ class _SignInPageState extends State<SignInPage> {
       if (isRegisterMode) {
         auth.UserCredential cred = await auth.FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
-
+         print("1LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
         //for testing purposes justs fam und so simple
         await FirebaseFirestore.instance.collection('users').doc(cred.user!.uid).set({
           'username': username,
@@ -108,10 +108,16 @@ class _SignInPageState extends State<SignInPage> {
         });
         await auth.FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
         await userProvider.loadCurrentUser();
+         print("33LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+         print(userProvider.currentUser);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       } else {
+         print("444LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
         await auth.FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+         print("55LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
         await userProvider.loadCurrentUser();
+         print("666LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+         print(userProvider.currentUser);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       }
     } catch (e) {
@@ -194,7 +200,7 @@ class _SignInPageState extends State<SignInPage> {
                   const CircularProgressIndicator()
                 else
                   ElevatedButton(
-                    onPressed: _handleSubmit,
+                    onPressed: _handleSigninSubmit,
                     child: Text(title),
                   ),
                 TextButton(

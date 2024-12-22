@@ -38,11 +38,7 @@ class CalendarScreen extends StatelessWidget {
               // If there's an error, display it
               return Center(child: Text('Error: ${snapshot.error}'));
 
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              // If the stream has no data, inform the user
-              return Center(child: Text('No tasks available.'));
-
-            } else {
+            }  else {
               // Once data is available, process it
               List<Task> allTasks = snapshot.data!;
 
