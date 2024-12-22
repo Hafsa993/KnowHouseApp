@@ -86,9 +86,10 @@ class _SignInPageState extends State<SignInPage> {
         auth.UserCredential cred = await auth.FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
 
+        //for testing purposes justs fam und so simple
         await FirebaseFirestore.instance.collection('users').doc(cred.user!.uid).set({
           'username': username,
-          'familyId': null,
+          'familyId': "h",
           'joinedAt': FieldValue.serverTimestamp(),
           'rankingPoints': 0,
           'preferences': [],
@@ -105,7 +106,7 @@ class _SignInPageState extends State<SignInPage> {
           'role': 'Member',
           'profilepath': 'lib/assets/f.jpeg',
         });
-
+        await auth.FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
         await userProvider.loadCurrentUser();
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       } else {

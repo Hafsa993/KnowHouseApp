@@ -16,15 +16,15 @@ class UserProvider with ChangeNotifier {
 
   // Call this after user logs in or registers
   Future<void> loadCurrentUser() async {
-    final auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
+   
      // Not signed in then..
-     if (firebaseUser == null) {
-     
+     if (auth.FirebaseAuth.instance.currentUser == null) {
+     print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
        return;
     }
   
     // Fetch user's document from Firestore
-    final userDoc = await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).get();
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(auth.FirebaseAuth.instance.currentUser!.uid).get();
     if (userDoc.exists) {
       _currentUser = User.fromMap(userDoc.data()!);
       notifyListeners();

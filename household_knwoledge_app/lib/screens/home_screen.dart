@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/user_provider.dart';
 import 'package:household_knwoledge_app/screens/ranking_screen.dart';
 import 'package:household_knwoledge_app/screens/todo_show.dart';
+import 'package:household_knwoledge_app/signin_page.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/task_model.dart';
@@ -21,14 +22,7 @@ class HomeScreen extends StatelessWidget {
     
     User? currentUser = Provider.of<UserProvider>(context).currentUser;
      if (currentUser == null) {
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 226, 224, 224),
-          title: const Text('Home'),
-        ),
-        drawer: const MenuDrawer(),
-        body: const Center(child: Text('User not found. Please log in again.')),
-      );
+      return SignInPage();
     }
     
 

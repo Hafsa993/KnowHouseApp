@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/permissions_provider.dart';
 import 'package:provider/provider.dart';
@@ -61,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Do you want to exit your account?"),
+          title: const Text("Are you sure you want to exit your account?"),
           actions: [
             TextButton(
               child: const Text("Cancel"),
@@ -73,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: const Text("Logout"),
               onPressed: () {
                 // logout doesnt happen, just do nothing
-                Navigator.of(context).pop();
+                auth.FirebaseAuth.instance.signOut();
               },
             ),
           ],

@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:household_knwoledge_app/auth_wrapper.dart';
 import 'package:household_knwoledge_app/models/permissions_provider.dart';
 import 'package:household_knwoledge_app/models/user_provider.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +46,7 @@ class HouseholdApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/',
+      /*initialRoute: '/',
       routes: {
         '/': (context) => const AuthWrapper(),
         '/sign_in': (context) => SignInPage(),
@@ -54,7 +54,25 @@ class HouseholdApp extends StatelessWidget {
       },
       onUnknownRoute: (settings) => MaterialPageRoute(
         builder: (context) => SignInPage(),
-      ),
+      ),*/
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.idTokenChanges(),
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting){
+
+            return const Center(
+              child: CircularProgressIndicator(),
+              );
+          }
+
+          if(snapshot.data != null){
+
+            return const HomeScreen();
+          }
+
+          return const SignInPage();
+        }
+      )
     );
   }
 }
