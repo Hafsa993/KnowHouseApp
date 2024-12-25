@@ -17,6 +17,15 @@ class ToDoForm extends StatefulWidget {
 }
 
 class _ToDoFormState extends State<ToDoForm> {
+  @override
+  void initState() {
+    super.initState();
+    // Load current user when the widget initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).fetchFamilyMembers(Provider.of<UserProvider>(context, listen: false).currentUser!);
+    });
+  }
+
   // Stepper current step
   int _currentStep = 0;
 
@@ -361,8 +370,12 @@ class _ToDoFormState extends State<ToDoForm> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    //userProvider.fetchFamilyMembers(userProvider.currentUser!);
+   // List<User> sortedUsers = _getSortedUsers(Provider.of<UserProvider>(context).familyMembers);
+    Stream<List<User>> familyMembersStream = userProvider.getFamilyMembers(userProvider.currentUser!);
 
-    List<User> sortedUsers = _getSortedUsers(userProvider.familyMembers);
+    // Transform the stream by applying the sorting function
+    Stream<List<User>> sortedFamilyMembersStream = familyMembersStream.map(_getSortedUsers);
 
 
     //add ToDo in steps
@@ -427,105 +440,119 @@ class _ToDoFormState extends State<ToDoForm> {
               state: _currentStep > 1 ? StepState.complete : StepState.editing,
               content: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: 'Assign To',
-                    border: OutlineInputBorder(),
-                  ),
-                  value: _selectedUser,
-                  //drop Down menu to select User
-                  items: [
-                    ...sortedUsers.map((User user) {
-                      return DropdownMenuItem<String>(
-                        value: user.username,
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: _getUserColor(user),
-                                radius: 5,
-                              ),
-                              SizedBox(width: 8),
-                              Text(user.username),
-                              if (isPreferred(user))
-                                Text(
-                                  " prefers this category",
-                                  style: TextStyle(
-                                    color: Colors.green,
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 16,
+                child: StreamBuilder<List<User>>(
+                  stream: sortedFamilyMembersStream,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(
+                        child:
+                            Text('Error: ${snapshot.error.toString()}'));
+                  }
+                    List<User> sortedUsers = snapshot.data!;
+                    return DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: 'Assign To',
+                        border: OutlineInputBorder(),
+                      ),
+                      value: _selectedUser,
+                      //drop Down menu to select User
+                      items: [
+                        ...sortedUsers.map((User user) {
+                          return DropdownMenuItem<String>(
+                            value: user.username,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: _getUserColor(user),
+                                    radius: 5,
                                   ),
-                                ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
-                    DropdownMenuItem<String>(
-                      value: '',
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Wrap(
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Colors.blueGrey,
-                              radius: 5,
+                                  SizedBox(width: 8),
+                                  Text(user.username),
+                                  if (isPreferred(user))
+                                    Text(
+                                      " prefers this category",
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                            SizedBox(width: 8),
-                            Text('No One'),
-                            SizedBox(width: 8),
-                            SizedBox(width: 8),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                  // Customize the displayed item when collapsed so that prefer this doesnt peek outside
-                  selectedItemBuilder: (BuildContext context) {
-                    return [
-                      ...sortedUsers.map((User user) {
-                        return DropdownMenuItem<String>(
-                          value: user.username,
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: _getUserColor(user),
-                                radius: 5,
-                              ),
-                              SizedBox(width: 8),
-                              Text(user.username),
-                            ],
-                          ),
-                        );
-                      }),
-                      DropdownMenuItem<String>(
-                        value: '',
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(),
-                          child: Wrap(
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: Colors.blueGrey,
-                                radius: 5,
-                              ),
-                              SizedBox(width: 8),
-                              Text('No One'),
-                            ],
+                          );
+                        }),
+                        DropdownMenuItem<String>(
+                          value: '',
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.blueGrey,
+                                  radius: 5,
+                                ),
+                                SizedBox(width: 8),
+                                Text('No One'),
+                                SizedBox(width: 8),
+                                SizedBox(width: 8),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ];
-                  },
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedUser = newValue!;
-                    });
-                  },
+                      ],
+                      // Customize the displayed item when collapsed so that prefer this doesnt peek outside
+                      selectedItemBuilder: (BuildContext context) {
+                        return [
+                          ...sortedUsers.map((User user) {
+                            return DropdownMenuItem<String>(
+                              value: user.username,
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: _getUserColor(user),
+                                    radius: 5,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(user.username),
+                                ],
+                              ),
+                            );
+                          }),
+                          DropdownMenuItem<String>(
+                            value: '',
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Colors.blueGrey,
+                                    radius: 5,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text('No One'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ];
+                      },
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedUser = newValue!;
+                        });
+                      },
+                    );
+                  }
                 ),
               ),
             ),
