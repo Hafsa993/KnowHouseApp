@@ -139,8 +139,8 @@ class _TaskDescriptionScreenState extends State<TaskDescriptionScreen> {
                                             },
                                           );
                                           if (isDeleted == true) {
-                                            Provider.of<TaskDescriptorProvider>(context, listen: false).removeTaskDescriptor(widget.task);
-                                            Navigator.of(context).pop();
+                                            if (context.mounted) Provider.of<TaskDescriptorProvider>(context, listen: false).removeTaskDescriptor(widget.task);
+                                            if (context.mounted) Navigator.of(context).pop();
                                           }
                                         },
                                         icon: const Icon(Icons.delete, color: Colors.white),

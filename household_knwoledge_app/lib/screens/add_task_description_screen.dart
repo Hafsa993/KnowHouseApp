@@ -8,10 +8,10 @@ class AddTaskDescriptorScreen extends StatefulWidget {
   const AddTaskDescriptorScreen({super.key});
 
   @override
-  _AddTaskDescriptorScreenState createState() => _AddTaskDescriptorScreenState();
+  AddTaskDescriptorScreenState createState() => AddTaskDescriptorScreenState();
 }
 
-class _AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
+class AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _instructionsController = TextEditingController();

@@ -7,10 +7,10 @@ class PasswordResetPage extends StatefulWidget {
   const PasswordResetPage({super.key});
 
   @override
-  _PasswordResetPageState createState() => _PasswordResetPageState();
+  PasswordResetPageState createState() => PasswordResetPageState();
 }
 
-class _PasswordResetPageState extends State<PasswordResetPage> {
+class PasswordResetPageState extends State<PasswordResetPage> {
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isSending = false;

@@ -10,10 +10,10 @@ class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
 
   @override
-  _TasksScreenState createState() => _TasksScreenState();
+  TasksScreenState createState() => TasksScreenState();
 }
 
-class _TasksScreenState extends State<TasksScreen> {
+class TasksScreenState extends State<TasksScreen> {
   String dropdownvalue = 'All Categories';
   String searchQuery = '';
   List<TaskDescriptor> filteredDescriptors = [];

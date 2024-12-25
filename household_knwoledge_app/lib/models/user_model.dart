@@ -22,7 +22,7 @@ class User {
   factory User.fromMap(Map<String, dynamic> data) {
     return User(
       username: data['username'] ?? '',
-      points: data['rankingPoints'] ?? data['points'] ?? 0,
+      points: data['rankingPoints'] ?? 0,
       role: data['role'] ?? 'Member',
       preferences: List<String>.from(data['preferences'] ?? []),
       contributions: Map<String, int>.from(data['contributions'] ?? {}),
@@ -43,7 +43,7 @@ class User {
       'familyId': familyId,
     };
   }
-
+//needs to be saved to firestore , maybe include uid in user obj always
   void addPoints(int pointsToAdd) {
     points += pointsToAdd;
   }

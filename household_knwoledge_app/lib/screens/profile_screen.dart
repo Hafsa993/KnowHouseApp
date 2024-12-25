@@ -42,18 +42,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    try {
+    
+    
       final XFile? image = await _picker.pickImage(source: source);
       if (image != null) {
         setState(() {
           currUser.profilepath = image.path;
         });
       }
-    } on PlatformException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error picking image: $e")),
-      );
-    }
   }
 
   // Exit Button
@@ -73,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             TextButton(
               child: const Text("Logout"),
               onPressed: () {
-                // logout doesnt happen, just do nothing
+               //sign out user then
                 auth.FirebaseAuth.instance.signOut();
               },
             ),
@@ -83,6 +79,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  double sumOfContributions(BuildContext context){
+    final userProvider = Provider.of<UserProvider>(context);
+    User currentUser = userProvider.currentUser!;
+    var sum = currentUser.contributions.values.fold<double>(
+      0.0,
+      (sum, value) => sum + value.toDouble(),
+    );
+    return sum;
+  }
   // Pie Chart
   List<PieChartSectionData> _generatePieChartData(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -119,14 +124,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _pickImage(ImageSource.camera);
+
+                   try {
+                    _pickImage(ImageSource.camera);
+                  } on PlatformException catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error picking image: $e")),
+                    );
+                  }          
                 },
                 child: const Text("Camera"),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _pickImage(ImageSource.gallery);
+                  try {
+                    _pickImage(ImageSource.gallery);
+                  } on PlatformException catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error picking image: $e")),
+                    );
+                  }           
                 },
                 child: const Text("Gallery"),
               ),
@@ -209,7 +227,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Wrap(
                       spacing: 8,
-                      children: currentUser.preferences
+                      children: currentUser.preferences.isEmpty ? [SizedBox(height: 30,),Center(child: Text("No Preferred Categories"))]:
+                      currentUser.preferences
                           .map(
                             (task) => Chip(
                               label: Text(
@@ -226,12 +245,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Pie Chart
                 const Text(
-                  'Contributions',
+                  'Contributions:',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 200,
-                  child: PieChart(
+                  child: 
+                  sumOfContributions(context) == 0.0 ? Center(child: Text("No Contributions to the household made yet")) : 
+                  PieChart(
                     PieChartData(
                       sections: _generatePieChartData(context),
                       centerSpaceRadius: 40,

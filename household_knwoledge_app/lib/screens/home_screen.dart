@@ -28,10 +28,6 @@ class HomeScreen extends StatelessWidget {
 
     TaskProvider taskProvider = Provider.of<TaskProvider>(context);
 
-    
-  print("HHHHHHHHHHHHEREBBBBBB");
-    
-
     return StreamBuilder<List<User>>(
         stream: Provider.of<UserProvider>(context).getFamilyMembers(currentUser),
         builder: (context, completedSnapshot) {
@@ -48,14 +44,14 @@ class HomeScreen extends StatelessWidget {
             child: Text('No ToDos completed in the last 30 days'));
         }
         List<User> currUsers = completedSnapshot.data!;
-          print("1HHHHHHHHHHHHEREBBBBBB");
+      
         currUsers.sort((a, b) {
           if (b.points == a.points) {
             return a.username.compareTo(b.username); // Tie-breaker: alphabetical order
           }
           return b.points.compareTo(a.points); // Primary sorting: points descending
         });
-          print("22HHHHHHHHHHHHEREBBBBBB");
+        
         return Scaffold(
           //backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           appBar: AppBar(
@@ -179,7 +175,7 @@ class HomeScreen extends StatelessWidget {
                       } */
         
                       List<Task> urgentTasks = pendingTasksStream.data!;
-                      print("33HHHHHHHHHHh");
+                      
                      return Expanded(
                         child: urgentTasks.isEmpty
                             ? const Center(child: Text('No open toDos!'))

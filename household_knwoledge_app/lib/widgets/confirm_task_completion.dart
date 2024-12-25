@@ -11,10 +11,10 @@ class ConfirmTaskCompleted extends StatefulWidget {
   const ConfirmTaskCompleted(this.taskToComplete, this.currentUser, {super.key});
 
   @override
-  _ConfirmTaskCompletedState createState() => _ConfirmTaskCompletedState();
+  ConfirmTaskCompletedState createState() => ConfirmTaskCompletedState();
 }
 
-class _ConfirmTaskCompletedState extends State<ConfirmTaskCompleted> {
+class ConfirmTaskCompletedState extends State<ConfirmTaskCompleted> {
   @override
   Widget build(BuildContext context) {
     

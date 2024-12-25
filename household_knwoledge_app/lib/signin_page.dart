@@ -16,10 +16,10 @@ class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
   @override
-  _SignInPageState createState() => _SignInPageState();
+  SignInPageState createState() => SignInPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class SignInPageState extends State<SignInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
@@ -85,7 +85,7 @@ class _SignInPageState extends State<SignInPage> {
       if (isRegisterMode) {
         auth.UserCredential cred = await auth.FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
-         print("1LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+         
         //for testing purposes justs fam und so simple
         await FirebaseFirestore.instance.collection('users').doc(cred.user!.uid).set({
           'username': username,
@@ -106,21 +106,19 @@ class _SignInPageState extends State<SignInPage> {
           'role': 'Member',
           'profilepath': 'lib/assets/f.jpeg',
         });
-        await auth.FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+
         await userProvider.loadCurrentUser();
-         print("33LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-         print(userProvider.currentUser);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+
       } else {
-         print("444LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+
         await auth.FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-         print("55LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
         await userProvider.loadCurrentUser();
-         print("666LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-         print(userProvider.currentUser);
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       }
+
     } catch (e) {
+
       setState(() {
         if (e is auth.FirebaseAuthException) {
           _handleFirebaseAuthError(e);

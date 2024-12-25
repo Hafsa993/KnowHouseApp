@@ -53,7 +53,7 @@ class MyTasksScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 boxShadow: [
       BoxShadow(
-        color: Colors.grey.withOpacity(0.5),
+        color: Colors.grey.withValues(),
         //spreadRadius: 5,
         blurRadius: 5,
         offset: Offset(0, 3), // changes position of shadow
@@ -141,7 +141,7 @@ class MyTasksScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.0),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1), // Shadow color
+                          color: Colors.black.withValues(), // Shadow color
                           blurRadius: 8.0, // Spread of the shadow
                           offset: const Offset(0, 4), // Offset in the X and Y axis
                         ),
@@ -276,7 +276,7 @@ class MyTasksScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.0),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1), // Shadow color
+                          color: Colors.black.withValues(), // Shadow color
                           blurRadius: 8.0, // Spread of the shadow
                           offset: const Offset(0, 4), // Offset in the X and Y axis
                         ),

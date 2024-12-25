@@ -9,10 +9,10 @@ class ChangeTaskDescriptorScreen extends StatefulWidget {
   final TaskDescriptor task;
 
   @override
-  _ChangeTaskDescriptorScreenState createState() => _ChangeTaskDescriptorScreenState();
+  ChangeTaskDescriptorScreenState createState() => ChangeTaskDescriptorScreenState();
 }
 
-class _ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> {
+class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _instructionsController = TextEditingController();

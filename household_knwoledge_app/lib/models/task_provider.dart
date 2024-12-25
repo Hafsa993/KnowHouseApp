@@ -9,7 +9,8 @@ class TaskProvider extends ChangeNotifier {
   Stream<List<Task>> getAllTasks() {
     return FirebaseFirestore.instance
         .collection('tasks')
-        .orderBy('deadline') // Optional: Order tasks by deadline
+        .where('isCompleted', isEqualTo: false)
+        .orderBy('deadline')
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => Task.fromMap(doc.data(), doc.id))
@@ -18,7 +19,7 @@ class TaskProvider extends ChangeNotifier {
 
   // Stream to fetch pending tasks assigned to a user
   Stream<List<Task>> pendingTasks(String username) {
-    print("43HHHHHHHHHHh");
+    
   return FirebaseFirestore.instance
       .collection('tasks')
       .where('assignedTo', isEqualTo: username)

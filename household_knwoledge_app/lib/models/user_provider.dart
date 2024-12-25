@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:household_knwoledge_app/signin_page.dart';
 
 class UserProvider with ChangeNotifier {
   User? _currentUser; // Your custom User model
@@ -19,7 +18,6 @@ class UserProvider with ChangeNotifier {
    
      // Not signed in then..
      if (auth.FirebaseAuth.instance.currentUser == null) {
-     print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
        return;
     }
   
@@ -27,8 +25,7 @@ class UserProvider with ChangeNotifier {
     final userDoc = await FirebaseFirestore.instance.collection('users').doc(auth.FirebaseAuth.instance.currentUser!.uid).get();
     if (userDoc.exists) {
       _currentUser = User.fromMap(userDoc.data()!);
-      print(_currentUser);
-      print("HHHHHHHHJWJWKJW");
+
       notifyListeners();
     } else {
       // User document does not exist; handle accordingly
@@ -68,19 +65,32 @@ class UserProvider with ChangeNotifier {
             .toList());
   }
   
-void fetchFamilyMembers(User currUser) {
-    if (currUser.familyId == null) return;
-
-    FirebaseFirestore.instance
-        .collection('users')
-        .where('familyId', isEqualTo: currUser.familyId)
-        .snapshots()
-        .listen((snapshot) {
-      familyMembers = snapshot.docs
-          .map((doc) => User.fromMap(doc.data()))
-          .toList();
+Future<void> fetchFamilyMembers(User currUser) async {
+    if (currUser.familyId == null) {
+      familyMembers = [];
       notifyListeners();
-    });
+      return;
+    }
+
+    notifyListeners();
+
+    try {
+      // Listen to real-time updates
+      FirebaseFirestore.instance
+          .collection('users')
+          .where('familyId', isEqualTo: currUser.familyId)
+          .snapshots()
+          .listen((snapshot) {
+        familyMembers = snapshot.docs
+            .map((doc) => User.fromMap(doc.data()))
+            .toList();
+        notifyListeners();
+      }, onError: (error) {
+        notifyListeners();
+      });
+    } catch (e) {
+      notifyListeners();
+    }
   }
 
   ImageProvider<Object> getProfileOfCurrUser() {
