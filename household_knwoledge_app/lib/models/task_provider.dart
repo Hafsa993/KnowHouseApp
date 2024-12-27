@@ -18,12 +18,13 @@ class TaskProvider extends ChangeNotifier {
   }
 
   // Stream to fetch pending tasks assigned to a user
-  Stream<List<Task>> pendingTasks(String username) {
+  Stream<List<Task>> openTasks(String username) {
     
   return FirebaseFirestore.instance
       .collection('tasks')
       .where('assignedTo', isEqualTo: username)
-      .where('status', isEqualTo: 'pending')
+      .where('isAccepted', isEqualTo: false)
+      .where('isCompleted', isEqualTo: false)
       .snapshots()
       .map((snapshot) => snapshot.docs
           .map((doc) => Task.fromMap(doc.data(),doc.id))
@@ -49,6 +50,7 @@ class TaskProvider extends ChangeNotifier {
         .collection('tasks')
         .where('acceptedBy', isEqualTo: username)
         .where('isCompleted', isEqualTo: true)
+        .where('completionTime', isGreaterThanOrEqualTo:  DateTime.now().subtract(const Duration(days: 30)))
         .snapshots()
         .map((snapshot) => snapshot.docs
             .map((doc) => Task.fromMap(doc.data(), doc.id))
@@ -86,6 +88,7 @@ class TaskProvider extends ChangeNotifier {
   Future<void> completeTask(String taskId) async {
     await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
       'isCompleted': true,
+      'completionTime' : DateTime.now(),
     });
     notifyListeners();
   }

@@ -1,14 +1,18 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class User {
+  String uid;
   String username;
   int points;
   String role; 
   List<String> preferences; 
   Map<String, int> contributions; 
   String profilepath;
-  String? familyId; // Added to link to the family
+  String? familyId; // link to family
 
   User({
+    required this.uid,
     required this.username,
     this.points = 0,
     this.role = 'Member', 
@@ -18,9 +22,10 @@ class User {
     this.familyId,
   });
 
-  // constructor to create a User from Firestore data
-  factory User.fromMap(Map<String, dynamic> data) {
+  // to create a User from Firestore data
+  factory User.fromMap(Map<String, dynamic> data, String documentId) {
     return User(
+      uid: documentId,
       username: data['username'] ?? '',
       points: data['rankingPoints'] ?? 0,
       role: data['role'] ?? 'Member',
@@ -44,19 +49,28 @@ class User {
     };
   }
 //needs to be saved to firestore , maybe include uid in user obj always
-  void addPoints(int pointsToAdd) {
-    points += pointsToAdd;
+  Future<void> addPoints (int pointsToAdd) async {
+     points += pointsToAdd;
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'rankingPoints': points,
+    });
   }
 
-  void updateRole(String newRole) {
-    role = newRole;
+  Future<void> updateRole(String newRole) async {
+     await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'role': newRole,
+    });
   }
 
-  void setPreferences(List<String> newPreferences) {
-    preferences = newPreferences;
+  Future<void> setPreferences(List<String> newPreferences) async {
+     await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'preferences': newPreferences,
+    });
   }
 
-  void updateContributions(Map<String, int> newContributions) {
-    contributions = newContributions;
+  Future<void> updateContributions(Map<String, int> newContributions) async {
+     await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'contributions': newContributions,
+    });
   }
 }

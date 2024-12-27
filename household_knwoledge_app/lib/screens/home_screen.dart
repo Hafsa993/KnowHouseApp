@@ -160,7 +160,7 @@ class HomeScreen extends StatelessWidget {
                 
                 //here the part for pending todos
                  StreamBuilder<List<Task>>(
-                   stream: taskProvider.pendingTasks(currentUser.username),
+                   stream: taskProvider.openTasks(currentUser.username),
                     builder: (context, pendingTasksStream) {
                       if (pendingTasksStream.connectionState ==
                           ConnectionState.waiting) {
@@ -178,7 +178,7 @@ class HomeScreen extends StatelessWidget {
                       
                      return Expanded(
                         child: urgentTasks.isEmpty
-                            ? const Center(child: Text('No open toDos!'))
+                            ? const Center(child: Text('No open toDos!', style: TextStyle(fontSize: 20),))
                             : ListView.builder(
                                 itemCount: urgentTasks.length,
                                 itemBuilder: (context, index) {

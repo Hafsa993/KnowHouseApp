@@ -24,7 +24,7 @@ class UserProvider with ChangeNotifier {
     // Fetch user's document from Firestore
     final userDoc = await FirebaseFirestore.instance.collection('users').doc(auth.FirebaseAuth.instance.currentUser!.uid).get();
     if (userDoc.exists) {
-      _currentUser = User.fromMap(userDoc.data()!);
+      _currentUser = User.fromMap(userDoc.data()!, userDoc.id);
 
       notifyListeners();
     } else {
@@ -35,20 +35,30 @@ class UserProvider with ChangeNotifier {
   }
 
   // Update current user in Firestore and in local state
-  Future<void> updateUserData(User updatedUser) async {
-    final auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
-    if (firebaseUser == null) return;
+  // Future<void> updateUserData(User updatedUser) async {
+  //   final auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
+  //   if (firebaseUser == null) return;
 
-    await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).update(updatedUser.toMap());
-    _currentUser = updatedUser;
-    notifyListeners();
-  }
+  //   await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).update(updatedUser.toMap());
+  //   _currentUser = updatedUser;
+  //   notifyListeners();
+  // }
 
   // Example method to add points to a user
   Future<void> addPointsToUser(int pointsToAdd) async {
     if (_currentUser == null) return;
     _currentUser!.addPoints(pointsToAdd);
-    await updateUserData(_currentUser!);
+    notifyListeners();
+  }
+  Future<void> setPreferencesForUser(List<String> newPreferences) async {
+    if (_currentUser == null) return;
+    _currentUser!.setPreferences(newPreferences);
+    notifyListeners();
+  }
+  Future<void> updateContributionsForUser(Map<String, int> newContributions) async {
+    if (_currentUser == null) return;
+    _currentUser!.updateContributions(newContributions);
+    notifyListeners();
   }
   Stream<List<User>> getFamilyMembers(User currUser) {
     if (currUser.familyId == null) {
@@ -61,7 +71,7 @@ class UserProvider with ChangeNotifier {
         .where('familyId', isEqualTo: currUser.familyId)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => User.fromMap(doc.data()))
+            .map((doc) => User.fromMap(doc.data(), doc.id ))
             .toList());
   }
   
@@ -82,7 +92,7 @@ Future<void> fetchFamilyMembers(User currUser) async {
           .snapshots()
           .listen((snapshot) {
         familyMembers = snapshot.docs
-            .map((doc) => User.fromMap(doc.data()))
+            .map((doc) => User.fromMap(doc.data(), doc.id))
             .toList();
         notifyListeners();
       }, onError: (error) {

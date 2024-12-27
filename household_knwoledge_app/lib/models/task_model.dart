@@ -6,6 +6,7 @@ class Task {
   String id; // Firestore document ID
   String title;
   DateTime deadline;
+  DateTime? completionTime;
   String category;
   String difficulty;
   String description;
@@ -20,6 +21,7 @@ class Task {
     this.id = '',
     required this.title,
     required this.deadline,
+    this.completionTime,
     required this.category,
     required this.difficulty,
     this.description = '',
@@ -37,6 +39,7 @@ class Task {
       id: documentId,
       title: data['title'] ?? '',
       deadline: (data['deadline'] as Timestamp).toDate(),
+      completionTime: data['comletionTime'] == null? null : (data['comletionTime'] as Timestamp).toDate(),
       category: data['category'] ?? '',
       difficulty: data['difficulty'] ?? '',
       description: data['description'] ?? '',
@@ -54,6 +57,7 @@ class Task {
     return {
       'title': title,
       'deadline': deadline,
+      'completionTime' : completionTime,
       'category': category,
       'difficulty': difficulty,
       'description': description,
