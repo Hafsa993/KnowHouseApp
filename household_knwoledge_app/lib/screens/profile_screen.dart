@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:household_knwoledge_app/models/permissions_provider.dart';
+import 'package:household_knwoledge_app/signin_page.dart';
 import 'package:provider/provider.dart';
 import '../models/task_descriptions_model.dart';
 import '../models/user_provider.dart';
@@ -23,10 +23,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Pick image from Gallery or Camera
   Future<void> _pickImage(ImageSource source) async {
     User currUser = Provider.of<UserProvider>(context, listen: false).currentUser!;
-    final permissionsProvider = Provider.of<PermissionsProvider>(context, listen: false);
 
     // Check if the required permission is enabled
-    if (source == ImageSource.camera && !permissionsProvider.cameraPermissionEnabled) {
+    if (source == ImageSource.camera && !currUser.cameraPermissionEnabled) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(backgroundColor: Colors.red, content: Text("Camera permission is disabled, enable in Options")),
@@ -34,7 +33,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    if (source == ImageSource.gallery && !permissionsProvider.galleryPermissionEnabled) {
+    if (source == ImageSource.gallery && !currUser.galleryPermissionEnabled) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(backgroundColor: Colors.red, content:Text("Gallery permission is disabled, enable in Options")),
@@ -46,8 +45,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     
       final XFile? image = await _picker.pickImage(source: source);
       if (image != null) {
+        await Provider.of<UserProvider>(context, listen: false).updateProfilePath(image.path);
         setState(() {
-          currUser.profilepath = image.path;
+          
         });
       }
   }
@@ -68,9 +68,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             TextButton(
               child: const Text("Logout"),
-              onPressed: () {
+              onPressed: () async {
                //sign out user then
-                auth.FirebaseAuth.instance.signOut();
+                try {
+                  await auth.FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignInPage()));
+                } catch (e) {
+                  print("Sign-out error: $e");
+                }
               },
             ),
           ],
@@ -114,7 +119,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Show image picker dialog
   void _showImageDialog(BuildContext context) {
-    Provider.of<PermissionsProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (BuildContext context) {

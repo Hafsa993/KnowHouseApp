@@ -47,19 +47,49 @@ class UserProvider with ChangeNotifier {
   // Example method to add points to a user
   Future<void> addPointsToUser(int pointsToAdd) async {
     if (_currentUser == null) return;
-    _currentUser!.addPoints(pointsToAdd);
+    await _currentUser!.addPoints(pointsToAdd);
     notifyListeners();
   }
+
   Future<void> setPreferencesForUser(List<String> newPreferences) async {
     if (_currentUser == null) return;
-    _currentUser!.setPreferences(newPreferences);
+    await _currentUser!.setPreferences(newPreferences);
     notifyListeners();
   }
   Future<void> updateContributionsForUser(Map<String, int> newContributions) async {
     if (_currentUser == null) return;
-    _currentUser!.updateContributions(newContributions);
+    await _currentUser!.updateContributions(newContributions);
     notifyListeners();
   }
+  
+  Future<void> updateProfilePath(String newPath) async {
+    if (_currentUser == null) return;
+    await _currentUser!.updateProfilePic(newPath);
+    notifyListeners();
+  }
+  Future<void> toggleCameraPermission() async {
+    if (_currentUser == null) return;
+    await _currentUser!.toggleCameraPermissionForUser();
+    notifyListeners();
+  }
+  Future<void> toggleGalleryPermission() async {
+    if (_currentUser == null) return;
+    //try{
+      await _currentUser!.toggleGalleryPermissionForUser();
+    //}catch(e){print(e);}
+    notifyListeners();
+  }
+  Future<void> toggleGeolocationPermission() async {
+    if (_currentUser == null) return;
+    await _currentUser!.toggleGeolocationPermissionForUser();
+    notifyListeners();
+  }
+  Future<void> toggleNotificationsEnabled() async {
+    if (_currentUser == null) return;
+    await _currentUser!.toggleNotificationsEnabledForUser();
+    notifyListeners();
+  }
+
   Stream<List<User>> getFamilyMembers(User currUser) {
     if (currUser.familyId == null) {
       // Return an empty stream or handle as needed

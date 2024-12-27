@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:household_knwoledge_app/models/permissions_provider.dart';
+import 'package:household_knwoledge_app/models/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../widgets/menu_drawer.dart';
 
@@ -20,7 +20,7 @@ class OptionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final permissionsProvider = Provider.of<PermissionsProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 226, 224, 224),
@@ -31,17 +31,22 @@ class OptionsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         children: [
           // Enable Notifications
-          ValueListenableBuilder<bool>(
-            valueListenable: notificationsEnabled,
-            builder: (context, value, child) {
-              return SwitchListTile(
-                title: const Text('Enable Notifications'),
-                value: value,
-                onChanged: (newValue) {
-                  notificationsEnabled.value = newValue;
-                },
-              );
-            },
+          ListTile(
+            title: const Text("Notifications Permission"),
+            trailing: Switch(
+            value: userProvider.currentUser!.notificationsEnabled,
+            onChanged: (newValue) {
+              userProvider.toggleNotificationsEnabled();
+                ScaffoldMessenger.of(context).clearSnackBars();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(newValue
+                        ? 'Notfifcations Enabled'
+                        : 'Notifications Disabled'),
+                  ),
+                );
+            },),
+            
           ),
           const Divider(),
 
@@ -49,9 +54,9 @@ class OptionsScreen extends StatelessWidget {
           ListTile(
             title: const Text('Camera Permission'),
             trailing: Switch(
-              value: permissionsProvider.cameraPermissionEnabled,
+              value: userProvider.currentUser!.cameraPermissionEnabled,
               onChanged: (newValue) {
-                permissionsProvider.toggleCameraPermission();
+                userProvider.toggleCameraPermission();
                 ScaffoldMessenger.of(context).clearSnackBars();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -68,9 +73,9 @@ class OptionsScreen extends StatelessWidget {
           ListTile(
             title: const Text('Gallery Permission'),
             trailing: Switch(
-              value: permissionsProvider.galleryPermissionEnabled,
+              value: userProvider.currentUser!.galleryPermissionEnabled,
               onChanged: (newValue) {
-                permissionsProvider.toggleGalleryPermission();
+                userProvider.toggleGalleryPermission();
                 ScaffoldMessenger.of(context).clearSnackBars();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -87,9 +92,9 @@ class OptionsScreen extends StatelessWidget {
           ListTile(
             title: const Text('Geolocation Permission'),
             trailing: Switch(
-              value: permissionsProvider.geolocationPermissionEnabled,
+              value: userProvider.currentUser!.geolocationPermissionEnabled,
               onChanged: (newValue) {
-                permissionsProvider.toggleGeolocationPermission();
+                userProvider.toggleGeolocationPermission();
                 ScaffoldMessenger.of(context).clearSnackBars();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -103,24 +108,7 @@ class OptionsScreen extends StatelessWidget {
           ),
 
           // Contacts Permission
-          ListTile(
-            title: const Text('Contacts Permission'),
-            trailing: Switch(
-              value: permissionsProvider.contactsPermissionEnabled,
-              onChanged: (newValue) {
-                permissionsProvider.toggleContactsPermission();
-                ScaffoldMessenger.of(context).clearSnackBars();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(newValue
-                        ? 'Contacts Permission Enabled'
-                        : 'Contacts Permission Disabled'),
-                  ),
-                );
-              },
-            ),
-          ),
-
+       
           const Divider(),
 
           // Language Selection (Optional)

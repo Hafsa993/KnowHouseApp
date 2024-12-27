@@ -10,6 +10,11 @@ class User {
   Map<String, int> contributions; 
   String profilepath;
   String? familyId; // link to family
+  bool cameraPermissionEnabled;
+  bool galleryPermissionEnabled;
+  bool geolocationPermissionEnabled;
+  bool notificationsEnabled;
+ 
 
   User({
     required this.uid,
@@ -20,6 +25,10 @@ class User {
     this.contributions = const {},
     this.profilepath = 'lib/assets/f.jpeg',
     this.familyId,
+    this.cameraPermissionEnabled = false,
+    this.galleryPermissionEnabled = false,
+    this.geolocationPermissionEnabled = false,
+    this.notificationsEnabled = false
   });
 
   // to create a User from Firestore data
@@ -33,6 +42,10 @@ class User {
       contributions: Map<String, int>.from(data['contributions'] ?? {}),
       profilepath: data['profilepath'] ?? 'lib/assets/f.jpeg',
       familyId: data['familyId'], // Link to family
+      cameraPermissionEnabled: data['cameraPermissionEnabled'],
+      galleryPermissionEnabled: data['galleryPermissionEnabled'],
+      geolocationPermissionEnabled: data['geolocationPermissionEnabled'],
+      notificationsEnabled: data['notificationsEnabled']
     );
   }
 
@@ -46,29 +59,74 @@ class User {
       'contributions': contributions,
       'profilepath': profilepath,
       'familyId': familyId,
+      'cameraPermissionEnabled' : cameraPermissionEnabled,
+      'galleryPermissionEnabled' : galleryPermissionEnabled,
+      'geolocationPermissionEnabled' : geolocationPermissionEnabled,
+      'notificationsEnabled' : notificationsEnabled
     };
   }
-//needs to be saved to firestore , maybe include uid in user obj always
+
+//functions for permissions
+
+  Future<void> toggleCameraPermissionForUser() async {
+    cameraPermissionEnabled = !cameraPermissionEnabled;
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'cameraPermissionEnabled': cameraPermissionEnabled,
+    });
+  }
+
+  Future<void> toggleGalleryPermissionForUser() async{
+    galleryPermissionEnabled = !galleryPermissionEnabled;
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'galleryPermissionEnabled': galleryPermissionEnabled,
+    });
+  }
+
+  Future<void> toggleGeolocationPermissionForUser() async{
+    geolocationPermissionEnabled = !geolocationPermissionEnabled;
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'geolocationPermissionEnabled': geolocationPermissionEnabled,
+    });
+  }
+
+  Future<void> toggleNotificationsEnabledForUser() async{
+    notificationsEnabled = !notificationsEnabled;
+    await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'notificationsEnabled': notificationsEnabled,
+    });
+  }  
+//functions to change fields in a User locally and on firebase as well
+
   Future<void> addPoints (int pointsToAdd) async {
-     points += pointsToAdd;
+    points += pointsToAdd;
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'rankingPoints': points,
     });
   }
 
   Future<void> updateRole(String newRole) async {
+    role = newRole;
      await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'role': newRole,
     });
   }
 
+  Future<void> updateProfilePic(String newPicPath) async {
+    profilepath = newPicPath;
+     await FirebaseFirestore.instance.collection('users').doc(uid).update({
+      'profilepath': newPicPath,
+    });
+  }
+
   Future<void> setPreferences(List<String> newPreferences) async {
+    preferences = newPreferences;
      await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'preferences': newPreferences,
     });
   }
 
   Future<void> updateContributions(Map<String, int> newContributions) async {
+    contributions = newContributions;
      await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'contributions': newContributions,
     });

@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:household_knwoledge_app/models/permissions_provider.dart';
 import 'package:household_knwoledge_app/models/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'models/task_provider.dart';
@@ -22,7 +21,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => TaskProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => TaskDescriptorProvider()),
-        ChangeNotifierProvider(create: (_) => PermissionsProvider()),
       ],
       child: const HouseholdApp(),
     ),
