@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
-import 'package:household_knwoledge_app/models/task_descriptions_provider.dart';
+import 'package:household_knwoledge_app/providers/task_descriptions_provider.dart';
 import 'package:household_knwoledge_app/screens/add_task_description_screen.dart';
 import 'package:household_knwoledge_app/screens/task_description_screen.dart';
 import 'package:provider/provider.dart';

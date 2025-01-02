@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:household_knwoledge_app/models/user_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:household_knwoledge_app/screens/ranking_screen.dart';
 import 'package:household_knwoledge_app/screens/todo_show.dart';
 import 'package:household_knwoledge_app/signin_page.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/task_model.dart';
-import '../models/task_provider.dart';
+import '../providers/task_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/menu_drawer.dart';
 import 'package:household_knwoledge_app/widgets/todo_creator_button.dart';

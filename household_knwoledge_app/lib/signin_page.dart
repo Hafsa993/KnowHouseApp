@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:household_knwoledge_app/screens/home_screen.dart';
 import 'package:household_knwoledge_app/widgets/password_reset.dart';
 import 'package:provider/provider.dart';
-import 'package:household_knwoledge_app/models/user_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 

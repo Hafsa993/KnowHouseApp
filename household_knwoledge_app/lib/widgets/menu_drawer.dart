@@ -8,7 +8,7 @@ import '../screens/instructions_screen.dart';
 import '../screens/calendar_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/options_screen.dart';
-import 'package:household_knwoledge_app/models/user_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 

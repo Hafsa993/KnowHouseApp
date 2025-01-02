@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_model.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
 import 'package:provider/provider.dart';
-import '../models/task_provider.dart';
+import '../providers/task_provider.dart';
 
 class ConfirmTaskCompleted extends StatefulWidget {
   final Task taskToComplete;

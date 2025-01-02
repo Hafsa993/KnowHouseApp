@@ -44,7 +44,6 @@ class UserProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  // Example method to add points to a user
   Future<void> addPointsToUser(int pointsToAdd) async {
     if (_currentUser == null) return;
     await _currentUser!.addPoints(pointsToAdd);

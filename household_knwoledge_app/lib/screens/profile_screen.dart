@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/signin_page.dart';
 import 'package:provider/provider.dart';
 import '../models/task_descriptions_model.dart';
-import '../models/user_provider.dart';
+import '../providers/user_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/menu_drawer.dart';
 import 'package:image_picker/image_picker.dart';
@@ -74,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   await auth.FirebaseAuth.instance.signOut();
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignInPage()));
                 } catch (e) {
-                  print("Sign-out error: $e");
+                  //print("Sign-out error: $e");
                 }
               },
             ),

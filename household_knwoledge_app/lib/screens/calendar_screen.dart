@@ -6,7 +6,7 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:household_knwoledge_app/models/task_model.dart';
 import 'package:household_knwoledge_app/widgets/todo_creator_button.dart';
 import 'package:provider/provider.dart';
-import 'package:household_knwoledge_app/models/task_provider.dart';
+import 'package:household_knwoledge_app/providers/task_provider.dart';
 import '../widgets/menu_drawer.dart';
 
 class CalendarScreen extends StatelessWidget {
