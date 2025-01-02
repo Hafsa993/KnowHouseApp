@@ -2,6 +2,9 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//IMPORTANT: 
+//ADD familyID field so that users only see family intern tasks
+
 class Task {
   String id; // Firestore document ID
   String title;
