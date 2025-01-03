@@ -97,7 +97,8 @@ From the project's root directory, run:
     flutter install
 ## About The App
 
-Our App has the following functionalities: So the app is supposed to be used in a household/family, sO Users can join or create a Household group. 
+Our App has the following functionalities: So the app is supposed to be used in a household/family
+Users can join or create a Household group. 
 which is why for a Userfor our app:
   One can assign ToDos to a particular other user (in the same household) or no one (meaning this toDo has to be done, so someone should take it on)
   For each ToDo a reward in points, A category, difficulty, a name and a description has to be specified. 
