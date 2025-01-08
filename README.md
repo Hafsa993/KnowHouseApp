@@ -142,8 +142,8 @@ When a User completes a ToDo a small animation pops up.
 <img height="400" src="img/images for high fi/Screenshot_1733313327.png">
 </p>
 
-### HouseTodos
-HouseToDos page is where all the ToDos of the household are stored. So the users ToDos as well as any that are assigned to another user, or unassigned. 
+### House ToDos
+House ToDos page is where all the ToDos of the household are stored. So the users ToDos as well as any that are assigned to another user, or unassigned. 
 
 A User can take over a toDo from another household member. 
 
