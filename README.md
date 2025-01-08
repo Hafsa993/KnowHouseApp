@@ -95,12 +95,15 @@ From the project's root directory, run:
     flutter install
 ## About The App
 
-Our App has the following functionalities: So the app is supposed to be used in a household/family
+Our App has the following functionalities:
+The KnowHouse app is supposed to be used in a household/family
 Users can join or create a Household group. 
-which is why for a Userfor our app:
+Functiionalities:
   One can assign ToDos to a particular other user (in the same household) or no one (meaning this toDo has to be done, so someone should take it on)
-  For each ToDo a reward in points, A category, difficulty, a name and a description has to be specified. 
+  For each ToDo a reward in points, A category, difficulty, a name and a description have to be specified. 
   Users can earn points by completing ToDos.
+  Shared calendar
+  Users have a shared list of instructions, for ex. on how to do laundry etc.  Users can add/edit and delete these instructions
   
 ### Home Page
   So on the upper half of The home page, there is a leaderboard showing top 3 users with most points on a podium. bottom half of home page has Open tasks: which is the toDos that have been assigned to the User but not yet accepted by them.
