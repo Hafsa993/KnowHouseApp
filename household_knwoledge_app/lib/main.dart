@@ -54,23 +54,17 @@ class HouseholdApp extends StatelessWidget {
         builder: (context) => SignInPage(),
       ),*/
       home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.idTokenChanges(),
+        stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
-
-            return const Center(
-              child: CircularProgressIndicator(),
-              );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
-
-          if(snapshot.data != null){
-
+          if (snapshot.hasData) {
             return const HomeScreen();
           }
-
           return const SignInPage();
-        }
-      )
+        },
+      ),
     );
   }
 }
