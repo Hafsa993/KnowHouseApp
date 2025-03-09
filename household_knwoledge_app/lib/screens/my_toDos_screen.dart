@@ -32,14 +32,12 @@ class MyTasksScreen extends StatelessWidget {
     }
      // Fetch the streams for pending and completed tasks
     Stream<List<Task>> pendingTasksStream =
-        taskProvider.myTasks(currentUser.username);
+        taskProvider.myTasks(currentUser.username, currentUser.familyId!);
     Stream<List<Task>> completedTasksStream =
-        taskProvider.myCompletedTasks(currentUser.username);
+        taskProvider.myCompletedTasks(currentUser.username, currentUser.familyId!);
 
     return Scaffold(
-      //backgroundColor:  Color.fromARGB(255, 211, 239, 247),
       appBar: AppBar(
-        //backgroundColor:  Color.fromARGB(255, 6, 193, 240),
         backgroundColor: const Color.fromARGB(255, 226, 224, 224),
         title:  Text('My ToDos'),
       ),

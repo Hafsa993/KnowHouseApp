@@ -58,7 +58,7 @@ class ToDoListScreen extends StatelessWidget {
 
 
     return StreamBuilder<List<Task>>(
-      stream: taskProvider.getAllTasks(),
+      stream: taskProvider.getAllTasks(currentUser.familyId!),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
               // While the stream is loading, show a loading indicator

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:household_knwoledge_app/models/task_model.dart';
+import 'package:household_knwoledge_app/models/user_model.dart';
 import 'package:household_knwoledge_app/widgets/todo_creator_button.dart';
 import 'package:provider/provider.dart';
 import 'package:household_knwoledge_app/providers/task_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import '../widgets/menu_drawer.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -16,7 +18,8 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Access TaskProvider without listening to changes directly, so listen false
     TaskProvider taskProvider = Provider.of<TaskProvider>(context, listen: false);
-
+    final userProvider = Provider.of<UserProvider>(context);
+    User currentUser = userProvider.currentUser!;
     return Scaffold(
       //backgroundColor: Color.fromARGB(255, 220, 227, 230),
       appBar: AppBar(
@@ -28,7 +31,7 @@ class CalendarScreen extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: StreamBuilder<List<Task>>(
           // Listen to the stream of all tasks
-          stream: taskProvider.getAllTasks(),
+          stream: taskProvider.getAllTasks(currentUser.familyId!),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               // While the stream is loading, show a loading indicator

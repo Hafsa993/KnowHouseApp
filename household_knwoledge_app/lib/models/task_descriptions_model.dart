@@ -1,17 +1,22 @@
 
 import 'package:flutter/material.dart';
 
+//IMPORTANT: 
+//TODO: integrate TaskDescriptor into firebase like Tasks 
+
 class TaskDescriptor {
   String title;
   String instructions;
   String category;
   IconData icon;
+  String? familyId; // link to family
 
   TaskDescriptor({
     required this.title,
     this.instructions = '',
     this.category = '',
-    this.icon = Icons.favorite
+    this.icon = Icons.favorite,
+    this.familyId
   });
 }
    

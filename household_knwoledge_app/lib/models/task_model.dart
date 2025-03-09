@@ -2,8 +2,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//IMPORTANT: 
-//ADD familyID field so that users only see family intern tasks
 
 class Task {
   String id; // Firestore document ID
@@ -19,6 +17,7 @@ class Task {
   bool isCompleted;
   String acceptedBy; // Username of the user who accepted the task
   String assignedTo;
+  String? familyId; // link to family
 
   Task({
     this.id = '',
@@ -34,6 +33,7 @@ class Task {
     this.isCompleted = false,
     this.acceptedBy = '',
     this.assignedTo = '',
+    this.familyId
   });
 
   // Factory constructor to create a Task from Firestore data
@@ -52,6 +52,7 @@ class Task {
       isCompleted: data['isCompleted'] ?? false,
       acceptedBy: data['acceptedBy'] ?? '',
       assignedTo: data['assignedTo'] ?? '',
+      familyId: data['familyId'], // Link to family
     );
   }
 
@@ -70,6 +71,7 @@ class Task {
       'isCompleted': isCompleted,
       'acceptedBy': acceptedBy,
       'assignedTo': assignedTo,
+      'familyId': familyId,
     };
   }
 }

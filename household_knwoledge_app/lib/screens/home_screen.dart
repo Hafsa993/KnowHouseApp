@@ -160,7 +160,7 @@ class HomeScreen extends StatelessWidget {
                 
                 //here the part for pending todos
                  StreamBuilder<List<Task>>(
-                   stream: taskProvider.openTasks(currentUser.username),
+                   stream: taskProvider.openTasks(currentUser.username, currentUser.familyId!),
                     builder: (context, pendingTasksStream) {
                       if (pendingTasksStream.connectionState ==
                           ConnectionState.waiting) {
@@ -169,12 +169,9 @@ class HomeScreen extends StatelessWidget {
                         return Center(
                             child:
                                 Text('Error: $pendingTasksStream.error.toString()}'));
-                      } /* else if (!pendingTasksStream.hasData) {
-                        return const Center(
-                            child: Text('No pending Todos'));
-                      } */
-        
-                      List<Task> urgentTasks = pendingTasksStream.data!;
+                      } 
+                      
+                     List<Task> urgentTasks = pendingTasksStream.data!;
                       
                      return Expanded(
                         child: urgentTasks.isEmpty

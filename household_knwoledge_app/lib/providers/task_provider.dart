@@ -4,11 +4,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_model.dart';
 
+//ADD familyID to every method so that it is family specific
 class TaskProvider extends ChangeNotifier {
   
-  Stream<List<Task>> getAllTasks() {
+  Stream<List<Task>> getAllTasks(String familyId) {
     return FirebaseFirestore.instance
         .collection('tasks')
+        .where('familyId', isEqualTo: familyId)
         .where('isCompleted', isEqualTo: false)
         .orderBy('deadline')
         .snapshots()
@@ -18,10 +20,11 @@ class TaskProvider extends ChangeNotifier {
   }
 
   // Stream to fetch pending tasks assigned to a user
-  Stream<List<Task>> openTasks(String username) {
+  Stream<List<Task>> openTasks(String username, String familyId) {
     
   return FirebaseFirestore.instance
       .collection('tasks')
+      .where('familyId', isEqualTo: familyId)
       .where('assignedTo', isEqualTo: username)
       .where('isAccepted', isEqualTo: false)
       .where('isCompleted', isEqualTo: false)
@@ -33,9 +36,10 @@ class TaskProvider extends ChangeNotifier {
 
 
   // Stream to fetch active tasks accepted by a user
-  Stream<List<Task>> myTasks(String username) {
+  Stream<List<Task>> myTasks(String username, String familyId) {
     return FirebaseFirestore.instance
         .collection('tasks')
+        .where('familyId', isEqualTo: familyId)
         .where('acceptedBy', isEqualTo: username)
         .where('isCompleted', isEqualTo: false)
         .snapshots()
@@ -45,9 +49,10 @@ class TaskProvider extends ChangeNotifier {
   }
 
   // Stream to fetch completed tasks accepted by a user
-  Stream<List<Task>> myCompletedTasks(String username) {
+  Stream<List<Task>> myCompletedTasks(String username, String familyId) {
     return FirebaseFirestore.instance
         .collection('tasks')
+        .where('familyId', isEqualTo: familyId)
         .where('acceptedBy', isEqualTo: username)
         .where('isCompleted', isEqualTo: true)
         .where('completionTime', isGreaterThanOrEqualTo:  DateTime.now().subtract(const Duration(days: 30)))
