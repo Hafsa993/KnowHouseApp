@@ -84,11 +84,11 @@ class _ToDoFormState extends State<ToDoForm> {
     },
   );
 
-  if (!mounted) return; // <-- Add this check
+  if (!mounted) return;
 
   if (pickedDate != null) {
     final TimeOfDay? pickedTime = await showTimePicker(
-      context: this.context, // <-- FIXED: use State's context
+      context: this.context, 
       initialTime:
           TimeOfDay.fromDateTime(_selectedDeadline ?? DateTime.now()),
       builder: (context, child) {
@@ -335,7 +335,10 @@ class _ToDoFormState extends State<ToDoForm> {
         description: _description.trim(),
         rewardPoints: _rewardPoints,
         assignedTo:
-            _selectedUser ?? '', // Assigned to selected user or 'No One'
+        _selectedUser ?? '', // Assigned to selected user or 'No One'
+        familyId: Provider.of<UserProvider>(context, listen: false)
+            .currentUser!
+            .familyId,
       );
 
       //print('Task Created: ${newTask.title}, Assigned To: ${newTask.assignedTo}'); // Debug print
