@@ -57,25 +57,47 @@ class _ToDoFormState extends State<ToDoForm> {
 
   // Helper method to select date
   Future<void> _selectDateTime(BuildContext context) async {
-    DateTime initialDate = DateTime.now().add(Duration(days: 1));
-    DateTime firstDate = DateTime.now();
-    DateTime lastDate = DateTime.now().add(Duration(days: 365));
+  DateTime initialDate = DateTime.now().add(Duration(days: 1));
+  DateTime firstDate = DateTime.now();
+  DateTime lastDate = DateTime.now().add(Duration(days: 365));
 
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: _selectedDeadline ?? initialDate,
-      firstDate: firstDate,
-      lastDate: lastDate,
+  final DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: _selectedDeadline ?? initialDate,
+    firstDate: firstDate,
+    lastDate: lastDate,
+    builder: (context, child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          colorScheme: ColorScheme.light(
+            primary: Colors.purple[700]!,
+            onSurface: Colors.indigo[600]!,
+          ),
+          buttonTheme: ButtonThemeData(
+            colorScheme: ColorScheme.light(
+              primary: Colors.green,
+            ),
+          ),
+        ),
+        child: child!,
+      );
+    },
+  );
+
+  if (!mounted) return; // <-- Add this check
+
+  if (pickedDate != null) {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: this.context, // <-- FIXED: use State's context
+      initialTime:
+          TimeOfDay.fromDateTime(_selectedDeadline ?? DateTime.now()),
       builder: (context, child) {
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: ColorScheme.light(
-              // change the border color
               primary: Colors.purple[700]!,
-              // change the text color
               onSurface: Colors.indigo[600]!,
             ),
-            // button colors
             buttonTheme: ButtonThemeData(
               colorScheme: ColorScheme.light(
                 primary: Colors.green,
@@ -87,47 +109,23 @@ class _ToDoFormState extends State<ToDoForm> {
       },
     );
 
-    if (pickedDate != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime:
-            TimeOfDay.fromDateTime(_selectedDeadline ?? DateTime.now()),
-        builder: (context, child) {
-          return Theme(
-            data: ThemeData.light().copyWith(
-              colorScheme: ColorScheme.light(
-                // change the border color
-                primary: Colors.purple[700]!,
-                // change the text color
-                onSurface: Colors.indigo[600]!,
-              ),
-              // button colors
-              buttonTheme: ButtonThemeData(
-                colorScheme: ColorScheme.light(
-                  primary: Colors.green,
-                ),
-              ),
-            ),
-            child: child!,
-          );
-        },
-      );
+    if (!mounted) return; 
 
-      if (pickedTime != null) {
-        setState(() {
-          _selectedDeadline = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
-          _deadlineController.text =
-              DateFormat('yyyy-MM-dd HH:mm').format(_selectedDeadline!);
-        });
-      }
+    if (pickedTime != null) {
+      setState(() {
+        _selectedDeadline = DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        );
+        _deadlineController.text =
+            DateFormat('yyyy-MM-dd HH:mm').format(_selectedDeadline!);
+      });
     }
   }
+}
 
   // Method to sort users based on category preferences
   List<User> _getSortedUsers(List<User> familyMembers) {

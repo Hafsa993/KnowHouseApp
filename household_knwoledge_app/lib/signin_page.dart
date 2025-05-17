@@ -108,12 +108,14 @@ class SignInPageState extends State<SignInPage> {
         });
 
         await userProvider.loadCurrentUser();
+        if (!mounted) return;
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
 
       } else {
 
         await auth.FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
         await userProvider.loadCurrentUser();
+        if (!mounted) return;
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       }
 

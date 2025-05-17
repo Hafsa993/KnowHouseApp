@@ -18,6 +18,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # of the product and file versions while build-number is used as the build suffix.
 version: 1.0.0+1
 
+ 
+
 environment:
   sdk: ^3.5.4
 
@@ -62,6 +64,7 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+
 
 # The following section is specific to Flutter packages.
 flutter:

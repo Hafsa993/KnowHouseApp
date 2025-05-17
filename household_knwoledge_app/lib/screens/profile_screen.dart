@@ -22,67 +22,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Pick image from Gallery or Camera
   Future<void> _pickImage(ImageSource source) async {
-    User currUser = Provider.of<UserProvider>(context, listen: false).currentUser!;
+  User currUser = Provider.of<UserProvider>(context, listen: false).currentUser!;
 
-    // Check if the required permission is enabled
-    if (source == ImageSource.camera && !currUser.cameraPermissionEnabled) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(backgroundColor: Colors.red, content: Text("Camera permission is disabled, enable in Options")),
-      );
-      return;
-    }
-
-    if (source == ImageSource.gallery && !currUser.galleryPermissionEnabled) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(backgroundColor: Colors.red, content:Text("Gallery permission is disabled, enable in Options")),
-      );
-      return;
-    }
-
-    
-    
-      final XFile? image = await _picker.pickImage(source: source);
-      if (image != null) {
-        await Provider.of<UserProvider>(context, listen: false).updateProfilePath(image.path);
-        setState(() {
-          
-        });
-      }
+  // Check permissions
+  if (source == ImageSource.camera && !currUser.cameraPermissionEnabled) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(backgroundColor: Colors.red, content: Text("Camera permission is disabled, enable in Options")),
+    );
+    return;
   }
+
+  if (source == ImageSource.gallery && !currUser.galleryPermissionEnabled) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(backgroundColor: Colors.red, content:Text("Gallery permission is disabled, enable in Options")),
+    );
+    return;
+  }
+
+  final XFile? image = await _picker.pickImage(source: source);
+  if (!mounted) return; // <-- Add this check after await
+
+  if (image != null) {
+    await Provider.of<UserProvider>(context, listen: false).updateProfilePath(image.path);
+    if (!mounted) return; // <-- Add this check after await
+    setState(() {});
+  }
+}
 
   // Exit Button
-  Future<void> _showExitConfirm(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Are you sure you want to exit your account?"),
-          actions: [
-            TextButton(
-              child: const Text("Cancel"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text("Logout"),
-              onPressed: () async {
-               //sign out user then
-                try {
-                  await auth.FirebaseAuth.instance.signOut();
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => SignInPage()));
-                } catch (e) {
-                  //print("Sign-out error: $e");
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  Future<void> _showExitConfirm(BuildContext parentContext) async {
+  showDialog(
+    context: parentContext,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        title: const Text("Are you sure you want to exit your account?"),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+          TextButton(
+            child: const Text("Logout"),
+            onPressed: () async {
+              try {
+                await auth.FirebaseAuth.instance.signOut();
+                // Use parentContext, which is still valid
+                if (!mounted) return;
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => SignInPage()),
+                    (route) => false,
+                  );
+              } catch (e) {
+                // TODO: Handle error
+              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
   double sumOfContributions(BuildContext context){
     final userProvider = Provider.of<UserProvider>(context);
