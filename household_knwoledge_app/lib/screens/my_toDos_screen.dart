@@ -223,6 +223,7 @@ class MyTasksScreen extends StatelessWidget {
                                     // Mark task as completed and show reward popup
                                     taskProvider.completeTask(task.id);
                                     currentUser.contributions.update(task.category, (value) => value + task.rewardPoints );
+                                    currentUser.updateContributions(currentUser.contributions);
                                     currentUser.addPoints(task.rewardPoints);
                                     // Show popup for completed Task
                                     showCompletionDialog(context, task);

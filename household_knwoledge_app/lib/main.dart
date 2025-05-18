@@ -9,6 +9,7 @@ import 'screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:household_knwoledge_app/signin_page.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,8 +28,30 @@ void main() async {
   );
 }
 
-class HouseholdApp extends StatelessWidget {
+class HouseholdApp extends StatefulWidget {
   const HouseholdApp({super.key});
+
+  @override
+  State<HouseholdApp> createState() => _HouseholdAppState();
+}
+
+class _HouseholdAppState extends State<HouseholdApp> {
+  bool _isLoggedIn = false; // Track login status
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus(); // Check login status on app start
+  }
+
+  // Check login status from SharedPreferences
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    setState(() {
+      _isLoggedIn = isLoggedIn;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,23 +67,23 @@ class HouseholdApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      /*initialRoute: '/',
-      routes: {
-        '/': (context) => const AuthWrapper(),
-        '/sign_in': (context) => SignInPage(),
-        '/home': (context) => HomeScreen(),
-      },
-      onUnknownRoute: (settings) => MaterialPageRoute(
-        builder: (context) => SignInPage(),
-      ),*/
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasData) {
-            return const HomeScreen();
+          if (snapshot.hasData || _isLoggedIn) {
+            return FutureBuilder(
+              future: Provider.of<UserProvider>(context, listen: false).loadCurrentUser(),
+              builder: (context, userSnapshot) {
+                if (userSnapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (!mounted) return const SizedBox.shrink();
+                return const HomeScreen();
+              },
+            );
           }
           return const SignInPage();
         },

@@ -8,6 +8,7 @@ import 'package:household_knwoledge_app/widgets/password_reset.dart';
 import 'package:provider/provider.dart';
 import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 //very primitive user sign in to see if it works
@@ -108,6 +109,9 @@ class SignInPageState extends State<SignInPage> {
         });
 
         await userProvider.loadCurrentUser();
+        // Set isLoggedIn flag in SharedPreferences on successful sign-in
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
         if (!mounted) return;
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
 
@@ -115,6 +119,9 @@ class SignInPageState extends State<SignInPage> {
 
         await auth.FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
         await userProvider.loadCurrentUser();
+        // Set isLoggedIn flag in SharedPreferences on successful sign-in
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('isLoggedIn', true);
         if (!mounted) return;
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
       }

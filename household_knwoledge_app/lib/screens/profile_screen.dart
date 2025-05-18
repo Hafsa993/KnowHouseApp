@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/signin_page.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/task_descriptions_model.dart';
 import '../providers/user_provider.dart';
 import '../models/user_model.dart';
@@ -72,6 +73,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () async {
               try {
                 await auth.FirebaseAuth.instance.signOut();
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isLoggedIn', false); // Remove login status
                 // Use parentContext, which is still valid
                 if (!mounted) return;
                   Navigator.of(context).pushAndRemoveUntil(
