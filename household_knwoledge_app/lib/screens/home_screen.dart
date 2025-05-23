@@ -53,7 +53,6 @@ class HomeScreen extends StatelessWidget {
         });
         
         return Scaffold(
-          //backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           appBar: AppBar(
             backgroundColor: const Color.fromARGB(255, 226, 224, 224),
             title: Row(
