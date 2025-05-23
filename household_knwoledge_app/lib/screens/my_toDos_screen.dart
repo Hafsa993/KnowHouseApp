@@ -128,7 +128,7 @@ class MyTasksScreen extends StatelessWidget {
                   } else if (!completedSnapshot.hasData ||
                       completedSnapshot.data!.isEmpty) {
                     return const Center(
-                        child: Text('No ToDos completed in the last 30 days'));
+                        child: Text('No ToDos open from the last 30 days'));
                   }
 
                   List<Task> pendingTasks = completedSnapshot.data!;

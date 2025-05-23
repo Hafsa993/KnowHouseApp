@@ -164,6 +164,7 @@ class ToDoListScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
+                          //TODO: make it more clear if its accepted by you or not also maybe say who taken by
                           onPressed: () => task.isAccepted || task.assignedTo == currentUser.username ? null :  _showAcceptDialog(context, task, taskProvider, currentUser.username) ,
                           child: task.isAccepted ? Text('ToDo is taken') : ( task.assignedTo == currentUser.username ? Text('ToDo is assigned to you') : task.assignedTo == "" ? Text('Take on unassigned ToDo'): Text('Take over from ${task.assignedTo}')),
                         ),
