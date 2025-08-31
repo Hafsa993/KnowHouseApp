@@ -95,7 +95,6 @@ From the project's root directory, run:
     flutter install
 ## About The App
 
-Our App has the following functionalities:
 The KnowHouse app is supposed to be used in a household/family
 Users can join or create a Household group. 
 
