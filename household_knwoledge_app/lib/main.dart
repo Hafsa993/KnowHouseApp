@@ -9,8 +9,7 @@ import 'screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:household_knwoledge_app/signin_page.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
-
+import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -36,21 +35,24 @@ class HouseholdApp extends StatefulWidget {
 }
 
 class _HouseholdAppState extends State<HouseholdApp> {
-  bool _isLoggedIn = false; // Track login status
+  bool _isLoggedIn = false;
 
+  // Check login status on app start
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus(); // Check login status on app start
+    _checkLoginStatus(); 
   }
 
   // Check login status from SharedPreferences
   Future<void> _checkLoginStatus() async {
+
     final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
     setState(() {
-      _isLoggedIn = isLoggedIn;
+      _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     });
+
   }
 
   @override
