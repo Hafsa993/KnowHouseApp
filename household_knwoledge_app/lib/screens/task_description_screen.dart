@@ -139,7 +139,7 @@ class _TaskDescriptionScreenState extends State<TaskDescriptionScreen> {
                                             },
                                           );
                                           if (isDeleted == true) {
-                                            if (context.mounted) Provider.of<TaskDescriptorProvider>(context, listen: false).removeTaskDescriptor(widget.task);
+                                            if (context.mounted) Provider.of<TaskDescriptorProvider>(context, listen: false).removeTaskDescriptor(widget.task.id!);
                                             if (context.mounted) Navigator.of(context).pop();
                                           }
                                         },

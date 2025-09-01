@@ -10,7 +10,8 @@ import '../widgets/menu_drawer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
-
+//TODO: Make contributions show up correctly and be saved correctly
+//TODO: make sure points everywhere connected to firebase so changes see
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 

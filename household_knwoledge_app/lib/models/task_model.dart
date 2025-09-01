@@ -17,7 +17,7 @@ class Task {
   bool isCompleted;
   String acceptedBy; // Username of the user who accepted the task
   String assignedTo;
-  String? familyId; // link to family
+  String? familyId;
 
   Task({
     this.id = '',

@@ -54,7 +54,7 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
   void _editTaskDescriptor() {
     if (_formKey.currentState!.validate() && _selectedIcon != null) {
       Provider.of<TaskDescriptorProvider>(context, listen: false)
-          .editTaskDescriptor(widget.task, _titleController.text, _instructionsController.text, _category!, _selectedIcon!);
+          .editTaskDescriptor(widget.task.id!, _titleController.text, _instructionsController.text, _category!, _selectedIcon!);
 
       Navigator.of(context).pop(widget.task); // Navigate back after saving
     } else if (_selectedIcon == null) {

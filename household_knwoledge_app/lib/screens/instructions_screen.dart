@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
+import 'package:household_knwoledge_app/models/user_model.dart';
 import 'package:household_knwoledge_app/providers/task_descriptions_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:household_knwoledge_app/screens/add_task_description_screen.dart';
 import 'package:household_knwoledge_app/screens/task_description_screen.dart';
 import 'package:provider/provider.dart';
@@ -17,31 +19,14 @@ class TasksScreenState extends State<TasksScreen> {
   String dropdownvalue = 'All Categories';
   String searchQuery = '';
   List<TaskDescriptor> filteredDescriptors = [];
-
-  @override
-  void initState() {
-    super.initState();
-    // Initialize filteredDescriptors with all descriptors from the provider
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final allDescriptors = context.read<TaskDescriptorProvider>().descriptors;
-      setState(() {
-        filteredDescriptors = List.from(allDescriptors);
-      });
-    });
-  }
   
   @override
   Widget build(BuildContext context) {
-    // Listen to changes in the provider
-    final allDescriptors = context.watch<TaskDescriptorProvider>().descriptors;
-
-    // Apply filtering whenever allDescriptors, searchQuery, or dropdownvalue changes
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      filterTasks(searchQuery, dropdownvalue, allDescriptors);
-    });
+    final userProvider = Provider.of<UserProvider>(context);
+    
+    User currentUser = userProvider.currentUser!;
 
     return Scaffold(
-      //backgroundColor: Color.fromARGB(255, 211, 239, 247),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 226, 224, 224),
         title: const Text('Instructions'),
@@ -57,7 +42,7 @@ class TasksScreenState extends State<TasksScreen> {
               onChanged: (value) {
                 setState(() {
                   searchQuery = value;
-                  filterTasks(searchQuery, dropdownvalue, allDescriptors);
+                  //filterTasks(searchQuery, dropdownvalue, allDescriptors ?? []);
                 });
               },
               decoration: InputDecoration(
@@ -108,44 +93,71 @@ class TasksScreenState extends State<TasksScreen> {
                 if (newValue != null) {
                   setState(() {
                     dropdownvalue = newValue;
-                    filterTasks(searchQuery, newValue, allDescriptors);
+                    //filterTasks(searchQuery, newValue, allDescriptors  ?? []);
                   });
                 }
               },
             ),
           ),
           // Task List
-          Expanded(
-            child: filteredDescriptors.isEmpty
-                ? Center(child: Text('No instructions found.'))
-                : ListView.builder(
-                    itemCount: filteredDescriptors.length,
-                    itemBuilder: (context, index) {
-                      TaskDescriptor descriptor = filteredDescriptors[index];
-                      return Card(
-                        child: ListTile(
-                          leading: Icon(Icons.circle),
-                          trailing: Icon(descriptor.icon),
-                          iconColor: categoryColor(descriptor.category),
-                          title: Text(descriptor.title),
-                          subtitle: Text(descriptor.category, style: TextStyle(color: Colors.grey),),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    TaskDescriptionScreen(task: descriptor),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
+          // Replace the Expanded ListView section with:
+  Expanded(
+    child: StreamBuilder<List<TaskDescriptor>>(
+      stream: context.read<TaskDescriptorProvider>().getAllTaskDescriptors(currentUser.familyId!),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+        
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        
+        final allDescriptors = snapshot.data ?? [];
+        
+        // Apply filters
+        List<TaskDescriptor> filtered = allDescriptors;
+        if (dropdownvalue != 'All Categories') {
+          filtered = filtered.where((task) => task.category == dropdownvalue).toList();
+        }
+        if (searchQuery.isNotEmpty) {
+          filtered = filtered.where((task) {
+            return task.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+                task.instructions.toLowerCase().contains(searchQuery.toLowerCase());
+          }).toList();
+        }
+        
+        return filtered.isEmpty
+            ? Center(child: Text('No instructions found.'))
+            : ListView.builder(
+                itemCount: filtered.length,
+                itemBuilder: (context, index) {
+                  TaskDescriptor descriptor = filtered[index];
+                  return Card(
+                    child: ListTile(
+                      leading: Icon(Icons.circle),
+                      trailing: Icon(descriptor.icon),
+                      iconColor: categoryColor(descriptor.category),
+                      title: Text(descriptor.title),
+                      subtitle: Text(descriptor.category, style: TextStyle(color: Colors.grey)),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => TaskDescriptionScreen(task: descriptor),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+            },
           ),
+        ),
           // Add Instruction Button
-        ],
-      ),
+      ],
+    ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Wrap(
@@ -171,27 +183,6 @@ class TasksScreenState extends State<TasksScreen> {
     );
   }
 
-  // Function to filter tasks based on search query and selected category
-  void filterTasks(String query, String category, List<TaskDescriptor> allTasks) {
-    List<TaskDescriptor> tempList = allTasks;
-
-    // Filter by category
-    if (category != 'All Categories') {
-      tempList = tempList.where((task) => task.category == category).toList();
-    }
-
-    // Filter by search query
-    if (query.isNotEmpty) {
-      tempList = tempList.where((task) {
-        return task.title.toLowerCase().contains(query.toLowerCase()) ||
-            task.instructions.toLowerCase().contains(query.toLowerCase());
-      }).toList();
-    }
-
-    setState(() {
-      filteredDescriptors = tempList;
-    });
-  }
 }
 
 Color getCategoryColor(String s) {
