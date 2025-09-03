@@ -12,7 +12,7 @@ class UserProvider with ChangeNotifier {
 
   
   List<User> familyMembers = [];
-
+  //TODO: names of functions should more sense ..forUser when 
   // Call this after user logs in or registers
   Future<void> loadCurrentUser() async {
    

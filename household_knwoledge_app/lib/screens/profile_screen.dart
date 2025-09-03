@@ -105,16 +105,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // Pie Chart
   List<PieChartSectionData> _generatePieChartData(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    
     User currentUser = userProvider.currentUser!;
+
     final sum = currentUser.contributions.values.fold<double>(
       0.0,
       (sum, value) => sum + value.toDouble(),
     );
 
-    return currentUser.contributions.entries.map((entry) {
-      final percentage = (entry.value.toDouble() / sum) * 100.0;
+    final nonZeroContributions = Map<String, int>.fromEntries(
+    currentUser.contributions.entries.where((entry) => entry.value > 0)
+    );
+
+    if (nonZeroContributions.isEmpty) {
+      print("No contributions to display");
+      return []; // Return empty list if no contributions
+    }
+
+    return nonZeroContributions.entries.map((entry) {
+      final percentage = sum == 0 ? 0.0 : (entry.value.toDouble() / sum) * 100.0;
       return PieChartSectionData(
-        value: percentage,
+        value: entry.value.toDouble(),
         title: '${entry.key} (${percentage.toInt()}%)',
         color: categoryColor(entry.key),
         radius: 50,

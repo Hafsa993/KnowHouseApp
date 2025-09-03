@@ -42,10 +42,10 @@ class User {
       contributions: Map<String, int>.from(data['contributions'] ?? {}),
       profilepath: data['profilepath'] ?? 'lib/assets/f.jpeg',
       familyId: data['familyId'], // Link to family
-      cameraPermissionEnabled: data['cameraPermissionEnabled'],
-      galleryPermissionEnabled: data['galleryPermissionEnabled'],
-      geolocationPermissionEnabled: data['geolocationPermissionEnabled'],
-      notificationsEnabled: data['notificationsEnabled']
+      cameraPermissionEnabled: data['cameraPermissionEnabled'] ?? false,
+      galleryPermissionEnabled: data['galleryPermissionEnabled'] ?? false,
+      geolocationPermissionEnabled: data['geolocationPermissionEnabled'] ?? false,
+      notificationsEnabled: data['notificationsEnabled'] ?? false
     );
   }
 

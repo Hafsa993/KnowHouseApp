@@ -106,6 +106,10 @@ class SignInPageState extends State<SignInPage> {
           },
           'role': 'Member',
           'profilepath': 'lib/assets/f.jpeg',
+          'cameraPermissionEnabled': false,
+          'galleryPermissionEnabled': false,
+          'geolocationPermissionEnabled': false,
+          'notificationsEnabled': false,
         });
 
         await userProvider.loadCurrentUser();
