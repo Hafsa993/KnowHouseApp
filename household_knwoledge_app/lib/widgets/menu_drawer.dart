@@ -155,21 +155,9 @@ class MenuDrawer extends StatelessWidget {
                   minVerticalPadding: 20,
                 ),
                 SizedBox(height: 20,),
+                
                 Divider(indent: 20, endIndent: 20, color: const Color.fromARGB(255, 83, 115, 140)),
-                /* // profile as a menu tab 
-                ListTile(
-                  leading: const Icon(
-                      CupertinoIcons.person_crop_circle,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      size: 30,
-                      size: 30,
-                    ),
-                  title: const Text('Profile'),
-                  onTap: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
-                  },
-                ), */
-                // align needed?
+
                 ListTile(
                   leading: const Icon(
                       CupertinoIcons.gear_solid,

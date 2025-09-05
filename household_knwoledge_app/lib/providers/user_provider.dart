@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class UserProvider with ChangeNotifier {
   User? _currentUser; // Your custom User model
