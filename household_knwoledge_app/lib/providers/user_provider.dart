@@ -1,9 +1,12 @@
 
 import 'dart:io';
+import 'dart:convert';
+import 'package:image/image.dart' as img;
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class UserProvider with ChangeNotifier {
   User? _currentUser; // Your custom User model
@@ -34,19 +37,16 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  // Update current user in Firestore and in local state
-  // Future<void> updateUserData(User updatedUser) async {
-  //   final auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
-  //   if (firebaseUser == null) return;
-
-  //   await FirebaseFirestore.instance.collection('users').doc(firebaseUser.uid).update(updatedUser.toMap());
-  //   _currentUser = updatedUser;
-  //   notifyListeners();
-  // }
-
   Future<void> addPointsToUser(int pointsToAdd) async {
     if (_currentUser == null) return;
     await _currentUser!.addPoints(pointsToAdd);
+
+    //also update in fireabase
+    await FirebaseFirestore.instance
+      .collection('users')
+      .doc(_currentUser!.uid)
+      .update({'rankingPoints': _currentUser!.points});
+      
     notifyListeners();
   }
 
@@ -60,17 +60,83 @@ class UserProvider with ChangeNotifier {
     await _currentUser!.updateContributions(newContributions);
     notifyListeners();
   }
-  
-  Future<void> updateProfilePath(String newPath) async {
-    if (_currentUser == null) return;
-    await _currentUser!.updateProfilePic(newPath);
-    notifyListeners();
+
+  Future<String?> uploadProfilePicture(String localImagePath) async {
+    try {
+      final user = auth.FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+
+      final file = File(localImagePath);
+      if (!await file.exists()) return null;
+
+      // Read and decode image
+    final imageBytes = await file.readAsBytes();
+    final image = img.decodeImage(imageBytes);
+    
+    if (image != null) {
+      // Resize to 128x128
+      final resized = img.copyResize(image, width: 128, height: 128);
+      
+      // Compress
+      final compressedBytes = img.encodeJpg(resized, quality: 85);
+      
+      // Convert to base64
+      final base64String = base64Encode(compressedBytes);
+      final dataUrl = 'data:image/jpeg;base64,$base64String';
+      
+      print('Image processed. Size: ${compressedBytes.length} bytes');
+      
+      // Save to Firestore (same database you're already using!)
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({'profilepath': dataUrl});
+
+      // Update local user
+      if (_currentUser != null) {
+        _currentUser!.profilepath = dataUrl;
+        notifyListeners();
+      }
+
+      return dataUrl;
+    }
+      return null;
+    } catch (e) {
+      print('Error uploading profile picture: $e');
+      return null;
+    }
   }
+
+  ImageProvider? getProfileOfCurrUser() {
+  if (_currentUser?.profilepath == null || _currentUser!.profilepath.isEmpty) {
+    return AssetImage('lib/assets/f.jpeg'); // Default picture
+  }
+
+  final profilePath = _currentUser!.profilepath;
+  
+  if (profilePath.startsWith('data:image/jpeg;base64,')) {
+    // Base64 image stored in Firestore
+    try {
+      final base64String = profilePath.split(',')[1];
+      final bytes = base64Decode(base64String);
+      return MemoryImage(bytes);
+    } catch (e) {
+      print('Error decoding base64 image: $e');
+      return AssetImage('assets/f.jpeg');
+    }
+  } else if (profilePath.startsWith('http')) {
+    return NetworkImage(profilePath); // Firebase URL
+  } else {
+    return AssetImage('lib/assets/f.jpeg'); // Default picture
+  }
+}
+
   Future<void> toggleCameraPermission() async {
     if (_currentUser == null) return;
     await _currentUser!.toggleCameraPermissionForUser();
     notifyListeners();
   }
+
   Future<void> toggleGalleryPermission() async {
     if (_currentUser == null) return;
     //try{
@@ -91,7 +157,6 @@ class UserProvider with ChangeNotifier {
 
   Stream<List<User>> getFamilyMembers(User currUser) {
     if (currUser.familyId == null) {
-      // Return an empty stream or handle as needed
       return Stream.value([]);
     }
 
@@ -100,7 +165,7 @@ class UserProvider with ChangeNotifier {
         .where('familyId', isEqualTo: currUser.familyId)
         .snapshots()
         .map((snapshot) => snapshot.docs
-            .map((doc) => User.fromMap(doc.data(), doc.id ))
+           .map((doc) => User.fromMap(doc.data(), doc.id ))
             .toList());
   }
   
@@ -114,7 +179,6 @@ Future<void> fetchFamilyMembers(User currUser) async {
     notifyListeners();
 
     try {
-      // Listen to real-time updates
       FirebaseFirestore.instance
           .collection('users')
           .where('familyId', isEqualTo: currUser.familyId)
@@ -130,13 +194,5 @@ Future<void> fetchFamilyMembers(User currUser) async {
     } catch (e) {
       notifyListeners();
     }
-  }
-
-  ImageProvider<Object> getProfileOfCurrUser() {
-    if (_currentUser == null) {
-      return AssetImage('lib/assets/f.jpeg');
-    }
-    String p = _currentUser!.profilepath;
-    return p.startsWith('lib/assets/') ? AssetImage(p) : FileImage(File(p));
   }
 }

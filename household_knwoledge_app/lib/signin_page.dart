@@ -105,7 +105,7 @@ class SignInPageState extends State<SignInPage> {
             'Other': 0,
           },
           'role': 'Member',
-          'profilepath': 'lib/assets/f.jpeg',
+          'profilepath': null,
           'cameraPermissionEnabled': false,
           'galleryPermissionEnabled': false,
           'geolocationPermissionEnabled': false,

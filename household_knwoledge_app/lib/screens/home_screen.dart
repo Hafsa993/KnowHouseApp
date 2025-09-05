@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/providers/user_provider.dart';
@@ -319,19 +321,34 @@ class HomeScreen extends StatelessWidget {
     required String point,
     required BuildContext context,
   }) {
-    ImageProvider<Object> profile;
+    ImageProvider? profile;
 
     String currName = Provider.of<UserProvider>(context).currentUser!.username;
     if (name == currName) {
       profile = Provider.of<UserProvider>(context).getProfileOfCurrUser();
     } else {
-      profile = AssetImage(image);
+      if (image.isNotEmpty && image.startsWith('data:image/jpeg;base64,')) {
+        try {
+          final base64String = image.split(',')[1];
+          final bytes = base64Decode(base64String);
+          profile = MemoryImage(bytes);
+        } catch (e) {
+          profile = AssetImage('assets/f.jpeg'); // Fixed path
+        }
+      } else if (image.startsWith('http')) {
+        profile = NetworkImage(image); // Future Firebase Storage URLs
+      } else {
+        profile = AssetImage('assets/f.jpeg'); // Fixed path
+      }
     }
     return Column(
       children: [
         CircleAvatar(
           radius: radius,
           backgroundImage: profile,
+          child: profile == null
+              ? Icon(Icons.person, size: radius, color: Colors.grey[400])
+              : null, //show profile picture if available, by not putting anyting on top
         ),
         SizedBox(
           height: height,

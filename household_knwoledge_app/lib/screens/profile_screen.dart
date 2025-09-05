@@ -24,36 +24,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Pick image from Gallery or Camera
   Future<void> _pickImage(ImageSource source) async {
-  User currUser = Provider.of<UserProvider>(context, listen: false).currentUser!;
+    User currUser = Provider.of<UserProvider>(context, listen: false).currentUser!;
 
-  // Check permissions
-  if (source == ImageSource.camera && !currUser.cameraPermissionEnabled) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(backgroundColor: Colors.red, content: Text("Camera permission is disabled, enable in Options")),
-    );
-    return;
+    // Check permissions
+    if (source == ImageSource.camera && !currUser.cameraPermissionEnabled) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(backgroundColor: Colors.red, content: Text("Camera permission is disabled, enable in Options")),
+      );
+      return;
+    }
+
+    if (source == ImageSource.gallery && !currUser.galleryPermissionEnabled) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(backgroundColor: Colors.red, content:Text("Gallery permission is disabled, enable in Options")),
+      );
+      return;
+    }
+
+    final XFile? image = await _picker.pickImage(source: source);
+    if (!mounted) return; // check if widget is still mounted
+
+    if (image != null) {
+
+      ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Uploading profile picture...")),
+      );
+
+      // Upload to Firebase
+      final downloadUrl = await Provider.of<UserProvider>(context, listen: false)
+          .uploadProfilePicture(image.path);
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).clearSnackBars();
+
+      if (downloadUrl != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Profile picture updated successfully!")),
+        );
+        setState(() {}); // Refresh UI
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(backgroundColor: Colors.red, content: Text("Failed to upload profile picture.")),
+        );
+      }
+    }
   }
-
-  if (source == ImageSource.gallery && !currUser.galleryPermissionEnabled) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(backgroundColor: Colors.red, content:Text("Gallery permission is disabled, enable in Options")),
-    );
-    return;
-  }
-
-  final XFile? image = await _picker.pickImage(source: source);
-  if (!mounted) return; // <-- Add this check after await
-
-  if (image != null) {
-    await Provider.of<UserProvider>(context, listen: false).updateProfilePath(image.path);
-    if (!mounted) return; // <-- Add this check after await
-    setState(() {});
-  }
-}
 
   // Exit Button
   Future<void> _showExitConfirm(BuildContext parentContext) async {

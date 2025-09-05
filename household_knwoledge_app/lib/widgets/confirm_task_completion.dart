@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_model.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../providers/task_provider.dart';
 
@@ -40,7 +41,8 @@ class ConfirmTaskCompletedState extends State<ConfirmTaskCompleted> {
                   onPressed: () {
                     taskProvider.completeTask(widget.taskToComplete.id);
                     // Add reward points to the user
-                    widget.currentUser.addPoints(widget.taskToComplete.rewardPoints);
+                     Provider.of<UserProvider>(context, listen: false)
+                      .addPointsToUser(widget.taskToComplete.rewardPoints);
                     Navigator.pop(context);                    
                   },
                   child: const Text("Confirm"),

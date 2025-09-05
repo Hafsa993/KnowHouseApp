@@ -49,6 +49,8 @@ dependencies:
   cloud_firestore: ^6.0.0
   form_field_validator: ^1.1.0
   shared_preferences: ^2.5.3
+  firebase_storage: ^13.0.1
+  image: ^4.3.0
 
 dev_dependencies:
   flutter_test:
