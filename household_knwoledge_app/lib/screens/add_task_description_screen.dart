@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
-import 'package:household_knwoledge_app/models/task_descriptions_provider.dart';
+import 'package:household_knwoledge_app/models/user_model.dart';
+import 'package:household_knwoledge_app/providers/task_descriptions_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../widgets/icon_picker.dart';
 
@@ -8,10 +10,10 @@ class AddTaskDescriptorScreen extends StatefulWidget {
   const AddTaskDescriptorScreen({super.key});
 
   @override
-  _AddTaskDescriptorScreenState createState() => _AddTaskDescriptorScreenState();
+  AddTaskDescriptorScreenState createState() => AddTaskDescriptorScreenState();
 }
 
-class _AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
+class AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _instructionsController = TextEditingController();
@@ -41,9 +43,10 @@ class _AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
     }
   }
 
-  void _saveTaskDescriptor() {
+  void _saveTaskDescriptor(User currentUser) {
     if (_formKey.currentState!.validate() && _selectedIcon != null) {
       final newDescriptor = TaskDescriptor(
+        id: null,
         title: _titleController.text,
         instructions: _instructionsController.text,
         category: _category!,
@@ -51,7 +54,7 @@ class _AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
       );
 
       Provider.of<TaskDescriptorProvider>(context, listen: false)
-          .addTaskDescriptor(newDescriptor);
+          .addTaskDescriptor(newDescriptor, currentUser.familyId!);
 
       Navigator.of(context).pop(); // Navigate back after saving
     } else if (_selectedIcon == null) {
@@ -221,7 +224,9 @@ class _AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
           padding: const EdgeInsets.all(10.0),
           child: ElevatedButton.icon(
             style: ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Color.fromARGB(255, 21, 208, 255))),
-                    onPressed: _saveTaskDescriptor,
+                    onPressed: () {
+                      _saveTaskDescriptor(Provider.of<UserProvider>(context, listen: false).currentUser!);
+                    },
                     label: Text('Save Instruction', style: TextStyle(fontSize: 20, color: Colors.white)),
                     icon: const Icon(Icons.add, size: 20, color: Colors.white,),
                   ),

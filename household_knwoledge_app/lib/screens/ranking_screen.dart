@@ -1,52 +1,109 @@
+// lib/screens/ranking_screen.dart
+
 import 'package:flutter/material.dart';
-import 'package:household_knwoledge_app/models/user_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 import '../widgets/menu_drawer.dart';
 
 class RankingScreen extends StatelessWidget {
-
- 
-
-  const RankingScreen({super.key}); 
+  const RankingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    
-    var currUsers = userProvider.currUsers;
-    User currentUser = Provider.of<UserProvider>(context).getCurrUser();
-    
-    currUsers.sort((a, b) {
-      if (b.points == a.points) {
-        return a.username.compareTo(b.username); // Tie-breaker: alphabetical order
-      }
-      return b.points.compareTo(a.points); // Primary sorting: points descending
-    });
-        // Assign ranks
-    List<Map<String, dynamic>> rankedUsers = [];
-    int rank = 0;
-    int count = 0; // Number of users processed
-    int previousPoints = -1;
-    List<int> uniqueRanks = [];
+    User? currentUser = userProvider.currentUser;
 
-    for (int i = 0; i < currUsers.length; i++) {
-      User user = currUsers[i];
-      count++;
-
-      if (user.points != previousPoints) {
-        rank = count;
-        uniqueRanks.add(rank);
-      }
-
-      rankedUsers.add({
-        'user': user,
-        'rank': rank,
-      });
-
-      previousPoints = user.points;
+    // Handle the case where no User for some reason
+    if (currentUser == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+          title: const Text('Ranking'),
+        ),
+        drawer: const MenuDrawer(),
+        body: const Center(
+          child: Text('User not found. Please log in again.'),
+        ),
+      );
     }
 
+    // Fetch the stream of family members
+    Stream<List<User>> familyMembersStream =
+        userProvider.getFamilyMembers(currentUser);
+
+    return StreamBuilder<List<User>>(
+      stream: familyMembersStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // While the stream is loading, show a loading indicator
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+              title: const Text('Ranking'),
+            ),
+            drawer: const MenuDrawer(),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        } else if (snapshot.hasError) {
+          // If there's an error, display it
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+              title: const Text('Ranking'),
+            ),
+            drawer: const MenuDrawer(),
+            body: Center(child: Text('Error: ${snapshot.error}')),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+
+          // If the stream has no data, inform the user
+          return Scaffold(
+            appBar: AppBar(
+              backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+              title: const Text('Ranking'),
+            ),
+            drawer: const MenuDrawer(),
+            body: const Center(child: Text('No users available.')),
+          );
+        }
+
+        // Once data is available, process it
+        List<User> familyUsers = snapshot.data!;
+
+        // Sort users
+        familyUsers.sort((a, b) {
+          if (b.points == a.points) {
+            return a.username.compareTo(b.username); // Tie-breaker: alphabetical order
+          }
+          return b.points.compareTo(a.points); // Primary sorting: points descending
+        });
+
+        // Assign ranks
+        List<Map<String, dynamic>> rankedUsers = [];
+        int rank = 0;
+        int count = 0; 
+        int previousPoints = -1;
+        List<int> uniqueRanks = [];
+
+        for (int i = 0; i < familyUsers.length; i++) {
+          User user = familyUsers[i];
+          count++;
+
+          if (user.points != previousPoints) {
+            rank = count;
+            uniqueRanks.add(rank);
+          }
+
+          rankedUsers.add({
+            'user': user,
+            'rank': rank,
+          });
+
+          previousPoints = user.points;
+        }
+       
+       
     // Map medal colors to the first three unique ranks, so multiple people can be on any rank
     Map<int, Color> rankMedalColors = {};
     for (int i = 0; i < uniqueRanks.length; i++) {
@@ -61,7 +118,7 @@ class RankingScreen extends StatelessWidget {
         rankMedalColors[uniqueRank] = Colors.transparent; // No medal
       }
     }
-    return Scaffold(
+        return Scaffold(
       //backgroundColor: const Color.fromARGB(255, 211, 239, 247),$
       //backgroundColor: const Color.fromARGB(255, 226, 224, 224),
       appBar: AppBar(
@@ -112,13 +169,6 @@ class RankingScreen extends StatelessWidget {
       ),
     );
   }
-}
-
-List<String> sortUsers(users) {
-
-    var userNames = <String>[];
-    for (User user in users){
-      userNames.add(user.username);
-    }
-    return userNames;
+  );
+  }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
-import 'package:household_knwoledge_app/models/task_descriptions_provider.dart';
+import 'package:household_knwoledge_app/providers/task_descriptions_provider.dart';
 import 'package:provider/provider.dart';
 import '../widgets/icon_picker.dart';
 
@@ -9,10 +9,10 @@ class ChangeTaskDescriptorScreen extends StatefulWidget {
   final TaskDescriptor task;
 
   @override
-  _ChangeTaskDescriptorScreenState createState() => _ChangeTaskDescriptorScreenState();
+  ChangeTaskDescriptorScreenState createState() => ChangeTaskDescriptorScreenState();
 }
 
-class _ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> {
+class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _instructionsController = TextEditingController();
@@ -54,7 +54,7 @@ class _ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen>
   void _editTaskDescriptor() {
     if (_formKey.currentState!.validate() && _selectedIcon != null) {
       Provider.of<TaskDescriptorProvider>(context, listen: false)
-          .editTaskDescriptor(widget.task, _titleController.text, _instructionsController.text, _category!, _selectedIcon!);
+          .editTaskDescriptor(widget.task.id!, _titleController.text, _instructionsController.text, _category!, _selectedIcon!);
 
       Navigator.of(context).pop(widget.task); // Navigate back after saving
     } else if (_selectedIcon == null) {

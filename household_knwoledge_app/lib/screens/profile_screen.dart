@@ -1,14 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:household_knwoledge_app/models/permissions_provider.dart';
+import 'package:household_knwoledge_app/signin_page.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/task_descriptions_model.dart';
-import '../models/user_provider.dart';
+import '../providers/user_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/menu_drawer.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
-
+//TODO: Make contributions show up correctly and be saved correctly
+//TODO: make sure points everywhere connected to firebase so changes see
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -21,11 +24,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Pick image from Gallery or Camera
   Future<void> _pickImage(ImageSource source) async {
-    User currUser = Provider.of<UserProvider>(context, listen: false).getCurrUser();
-    final permissionsProvider = Provider.of<PermissionsProvider>(context, listen: false);
+    User currUser = Provider.of<UserProvider>(context, listen: false).currentUser!;
 
-    // Check if the required permission is enabled
-    if (source == ImageSource.camera && !permissionsProvider.cameraPermissionEnabled) {
+    // Check permissions
+    if (source == ImageSource.camera && !currUser.cameraPermissionEnabled) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(backgroundColor: Colors.red, content: Text("Camera permission is disabled, enable in Options")),
@@ -33,7 +36,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    if (source == ImageSource.gallery && !permissionsProvider.galleryPermissionEnabled) {
+    if (source == ImageSource.gallery && !currUser.galleryPermissionEnabled) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(backgroundColor: Colors.red, content:Text("Gallery permission is disabled, enable in Options")),
@@ -41,60 +45,106 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return;
     }
 
-    try {
-      final XFile? image = await _picker.pickImage(source: source);
-      if (image != null) {
-        setState(() {
-          currUser.profilepath = image.path;
-        });
-      }
-    } on PlatformException catch (e) {
+    final XFile? image = await _picker.pickImage(source: source);
+    if (!mounted) return; // check if widget is still mounted
+
+    if (image != null) {
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error picking image: $e")),
+      const SnackBar(content: Text("Uploading profile picture...")),
       );
+
+      // Upload to Firebase
+      final downloadUrl = await Provider.of<UserProvider>(context, listen: false)
+          .uploadProfilePicture(image.path);
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).clearSnackBars();
+
+      if (downloadUrl != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Profile picture updated successfully!")),
+        );
+        setState(() {}); // Refresh UI
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(backgroundColor: Colors.red, content: Text("Failed to upload profile picture.")),
+        );
+      }
     }
   }
 
   // Exit Button
-  Future<void> _showExitConfirm(BuildContext context) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Do you want to exit your account?"),
-          actions: [
-            TextButton(
-              child: const Text("Cancel"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text("Logout"),
-              onPressed: () {
-                // logout doesnt happen, just do nothing
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+  Future<void> _showExitConfirm(BuildContext parentContext) async {
+  showDialog(
+    context: parentContext,
+    builder: (BuildContext dialogContext) {
+      return AlertDialog(
+        title: const Text("Are you sure you want to exit your account?"),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+          TextButton(
+            child: const Text("Logout"),
+            onPressed: () async {
+              try {
+                await auth.FirebaseAuth.instance.signOut();
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('isLoggedIn', false); // Remove login status
+                // Use parentContext, which is still valid
+                if (!mounted) return;
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => SignInPage()),
+                    (route) => false,
+                  );
+              } catch (e) {
+                // TODO: Handle error
+              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
+  double sumOfContributions(BuildContext context){
+    final userProvider = Provider.of<UserProvider>(context);
+    User currentUser = userProvider.currentUser!;
+    var sum = currentUser.contributions.values.fold<double>(
+      0.0,
+      (sum, value) => sum + value.toDouble(),
+    );
+    return sum;
+  }
   // Pie Chart
   List<PieChartSectionData> _generatePieChartData(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    User currentUser = userProvider.getCurrUser();
+    
+    User currentUser = userProvider.currentUser!;
+
     final sum = currentUser.contributions.values.fold<double>(
       0.0,
       (sum, value) => sum + value.toDouble(),
     );
 
-    return currentUser.contributions.entries.map((entry) {
-      final percentage = (entry.value.toDouble() / sum) * 100.0;
+    final nonZeroContributions = Map<String, int>.fromEntries(
+    currentUser.contributions.entries.where((entry) => entry.value > 0)
+    );
+
+    if (nonZeroContributions.isEmpty) {
+      print("No contributions to display");
+      return []; // Return empty list if no contributions
+    }
+
+    return nonZeroContributions.entries.map((entry) {
+      final percentage = sum == 0 ? 0.0 : (entry.value.toDouble() / sum) * 100.0;
       return PieChartSectionData(
-        value: percentage,
+        value: entry.value.toDouble(),
         title: '${entry.key} (${percentage.toInt()}%)',
         color: categoryColor(entry.key),
         radius: 50,
@@ -108,7 +158,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   // Show image picker dialog
   void _showImageDialog(BuildContext context) {
-    Provider.of<PermissionsProvider>(context, listen: false);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -118,14 +167,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _pickImage(ImageSource.camera);
+
+                   try {
+                    _pickImage(ImageSource.camera);
+                  } on PlatformException catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error picking image: $e")),
+                    );
+                  }          
                 },
                 child: const Text("Camera"),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _pickImage(ImageSource.gallery);
+                  try {
+                    _pickImage(ImageSource.gallery);
+                  } on PlatformException catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Error picking image: $e")),
+                    );
+                  }           
                 },
                 child: const Text("Gallery"),
               ),
@@ -138,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    User currentUser = userProvider.getCurrUser();
+    User currentUser = userProvider.currentUser!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 226, 224, 224),
@@ -208,7 +270,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Wrap(
                       spacing: 8,
-                      children: currentUser.preferences
+                      children: currentUser.preferences.isEmpty ? [SizedBox(height: 30,),Center(child: Text("No Preferred Categories"))]:
+                      currentUser.preferences
                           .map(
                             (task) => Chip(
                               label: Text(
@@ -225,12 +288,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Pie Chart
                 const Text(
-                  'Contributions',
+                  'Contributions:',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(
                   height: 200,
-                  child: PieChart(
+                  child: 
+                  sumOfContributions(context) == 0.0 ? Center(child: Text("No Contributions to the household made yet")) : 
+                  PieChart(
                     PieChartData(
                       sections: _generatePieChartData(context),
                       centerSpaceRadius: 40,

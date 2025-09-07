@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../screens/ranking_screen.dart';
 import '../screens/home_screen.dart';
-import '../screens/todo_list_screen.dart';
-import '../screens/my_toDos_screen.dart';
+import '../screens/house_todos_screen.dart';
+import '../screens/my_todos_screen.dart';
 import '../screens/instructions_screen.dart';
 import '../screens/calendar_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/options_screen.dart';
-import 'package:household_knwoledge_app/models/user_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 
@@ -18,8 +18,18 @@ class MenuDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    User currUser = userProvider.getCurrUser();
-
+    User? currentUser = Provider.of<UserProvider>(context).currentUser;
+     if (currentUser == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+          title: const Text('Menu'),
+        ),
+        drawer: const MenuDrawer(),
+        body: const Center(child: Text('User not found. Please log in again.')),
+      );
+    }
+    User currUser = currentUser;
     return Drawer(
       //backgroundColor: Color.fromARGB(255, 211, 239, 247),
       child: Column(
@@ -145,21 +155,9 @@ class MenuDrawer extends StatelessWidget {
                   minVerticalPadding: 20,
                 ),
                 SizedBox(height: 20,),
+                
                 Divider(indent: 20, endIndent: 20, color: const Color.fromARGB(255, 83, 115, 140)),
-                /* // profile as a menu tab 
-                ListTile(
-                  leading: const Icon(
-                      CupertinoIcons.person_crop_circle,
-                      color: Color.fromARGB(255, 0, 0, 0),
-                      size: 30,
-                      size: 30,
-                    ),
-                  title: const Text('Profile'),
-                  onTap: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
-                  },
-                ), */
-                // align needed?
+
                 ListTile(
                   leading: const Icon(
                       CupertinoIcons.gear_solid,

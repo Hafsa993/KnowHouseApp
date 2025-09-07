@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
-import 'package:household_knwoledge_app/models/task_descriptions_provider.dart';
+import 'package:household_knwoledge_app/providers/task_descriptions_provider.dart';
 import './change_task_descriptor_screen.dart';
 import 'package:provider/provider.dart';
 // This screen displays the description of an instruction, accessed through instructions tab
@@ -139,8 +139,8 @@ class _TaskDescriptionScreenState extends State<TaskDescriptionScreen> {
                                             },
                                           );
                                           if (isDeleted == true) {
-                                            Provider.of<TaskDescriptorProvider>(context, listen: false).removeTaskDescriptor(widget.task);
-                                            Navigator.of(context).pop();
+                                            if (context.mounted) Provider.of<TaskDescriptorProvider>(context, listen: false).removeTaskDescriptor(widget.task.id!);
+                                            if (context.mounted) Navigator.of(context).pop();
                                           }
                                         },
                                         icon: const Icon(Icons.delete, color: Colors.white),

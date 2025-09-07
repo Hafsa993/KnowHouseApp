@@ -7,8 +7,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:household_knwoledge_app/models/task_provider.dart';
-import 'package:household_knwoledge_app/models/user_provider.dart';
+import 'package:household_knwoledge_app/providers/task_provider.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:household_knwoledge_app/screens/calendar_screen.dart';
 import 'package:household_knwoledge_app/screens/home_screen.dart';
 import 'package:household_knwoledge_app/screens/profile_screen.dart';

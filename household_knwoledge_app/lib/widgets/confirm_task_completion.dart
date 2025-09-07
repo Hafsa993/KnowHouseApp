@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_model.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
+import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:provider/provider.dart';
-import '../models/task_provider.dart';
+import '../providers/task_provider.dart';
 
 class ConfirmTaskCompleted extends StatefulWidget {
   final Task taskToComplete;
@@ -11,10 +12,10 @@ class ConfirmTaskCompleted extends StatefulWidget {
   const ConfirmTaskCompleted(this.taskToComplete, this.currentUser, {super.key});
 
   @override
-  _ConfirmTaskCompletedState createState() => _ConfirmTaskCompletedState();
+  ConfirmTaskCompletedState createState() => ConfirmTaskCompletedState();
 }
 
-class _ConfirmTaskCompletedState extends State<ConfirmTaskCompleted> {
+class ConfirmTaskCompletedState extends State<ConfirmTaskCompleted> {
   @override
   Widget build(BuildContext context) {
     
@@ -38,9 +39,10 @@ class _ConfirmTaskCompletedState extends State<ConfirmTaskCompleted> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    taskProvider.completeTask(widget.taskToComplete);
+                    taskProvider.completeTask(widget.taskToComplete.id);
                     // Add reward points to the user
-                    widget.currentUser.addPoints(widget.taskToComplete.rewardPoints);
+                     Provider.of<UserProvider>(context, listen: false)
+                      .addPointsToUser(widget.taskToComplete.rewardPoints);
                     Navigator.pop(context);                    
                   },
                   child: const Text("Confirm"),
