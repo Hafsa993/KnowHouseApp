@@ -93,10 +93,10 @@ class TaskDescriptorProvider with ChangeNotifier{
         }
 
         await batch.commit();
-        print('Initialized family with ${_defaultDescriptors.length} default descriptors');
+        //debugPrint('Initialized family with ${_defaultDescriptors.length} default descriptors');
       }
     } catch (e) {
-      print('Error initializing family defaults: $e');
+      //debugPrint('Error initializing family defaults: $e');
     }
   }
   Stream<List<TaskDescriptor>> getAllTaskDescriptors(String familyId) {
