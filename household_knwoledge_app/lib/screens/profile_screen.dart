@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/signin_page.dart';
@@ -91,7 +92,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           TextButton(
             child: const Text("Logout"),
             onPressed: () async {
-              try {
                 await auth.FirebaseAuth.instance.signOut();
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setBool('isLoggedIn', false); // Remove login status
@@ -101,9 +101,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     MaterialPageRoute(builder: (_) => SignInPage()),
                     (route) => false,
                   );
-              } catch (e) {
-                // TODO: Handle error
-              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+  // Add this method to _ProfileScreenState class
+Future<String?> _showPasswordDialog(BuildContext context) async {
+  final TextEditingController passwordController = TextEditingController();
+  String? password;
+
+  await showDialog<String>(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Confirm Account Deletion'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Please enter your password to confirm account deletion:'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock),
+              ),
+              onSubmitted: (value) {
+                password = value;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              password = passwordController.text;
+              Navigator.of(context).pop();
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete Account', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      );
+    },
+  );
+
+  return password;
+}
+  // Delete Account
+  Future<void> _showDeleteConfirm(BuildContext parentContext) async {
+    showDialog(
+      context: parentContext,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text("Are you sure you want to delete your account?"),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+          TextButton(
+            child: const Text("Permanently Delete Account"),
+            onPressed: () async {
+              Navigator.of(dialogContext).pop(); // Close the dialog
+              await _deleteUserAccount(context);
             },
           ),
         ],
@@ -112,49 +188,179 @@ class _ProfileScreenState extends State<ProfileScreen> {
   );
 }
 
-  double sumOfContributions(BuildContext context){
-    final userProvider = Provider.of<UserProvider>(context);
-    User currentUser = userProvider.currentUser!;
-    var sum = currentUser.contributions.values.fold<double>(
-      0.0,
-      (sum, value) => sum + value.toDouble(),
-    );
-    return sum;
-  }
-  // Pie Chart
-  List<PieChartSectionData> _generatePieChartData(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-    
-    User currentUser = userProvider.currentUser!;
-
-    final sum = currentUser.contributions.values.fold<double>(
-      0.0,
-      (sum, value) => sum + value.toDouble(),
+Future<void> _deleteUserAccount(BuildContext context) async {
+  try {
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 20),
+            Text("Deleting account..."),
+          ],
+        ),
+      ),
     );
 
-    final nonZeroContributions = Map<String, int>.fromEntries(
-    currentUser.contributions.entries.where((entry) => entry.value > 0)
-    );
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userId = auth.FirebaseAuth.instance.currentUser!.uid;
 
-    if (nonZeroContributions.isEmpty) {
-      print("No contributions to display");
-      return []; // Return empty list if no contributions
+    // 1. Delete profile picture from Firebase Storage if Implemented
+    /* if (currentUser.profilepath != null && currentUser.profilepath!.isNotEmpty) {
+      try {
+        await userProvider.deleteProfilePicture();
+      } catch (e) {
+        print('Error deleting profile picture: $e');
+        // Continue even if profile picture deletion fails
+      }
+    } */
+
+    // Re-authenticate with password
+    final password = await _showPasswordDialog(context);
+    if (password == null || password.isEmpty) {
+      // User cancelled password entry
+      return;
     }
 
-    return nonZeroContributions.entries.map((entry) {
-      final percentage = sum == 0 ? 0.0 : (entry.value.toDouble() / sum) * 100.0;
-      return PieChartSectionData(
-        value: entry.value.toDouble(),
-        title: '${entry.key} (${percentage.toInt()}%)',
-        color: categoryColor(entry.key),
-        radius: 50,
-        titleStyle: const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 20),
+            Text("Deleting account..."),
+          ],
+        ),
+      ),
+    );
+    final credential = auth.EmailAuthProvider.credential(
+      email: auth.FirebaseAuth.instance.currentUser!.email!,
+      password: password, // You'll need to prompt user for their password
+    );
+    await auth.FirebaseAuth.instance.currentUser!.reauthenticateWithCredential(credential);
+
+   // change user tasks (if any exist)
+    final userTasks = await FirebaseFirestore.instance
+        .collection('tasks')
+        .where('assignedTo', isEqualTo: userId)
+        .get();
+    
+    for (var doc in userTasks.docs) {
+      await doc.reference.update({'assignedTo': null});
+    }
+
+    // Delete user document from Firestore
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .delete();
+
+   
+
+    // Clear local data
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all data
+    userProvider.clearUser();
+
+
+    // Delete Firebase Auth account (this must be last!)
+    await auth.FirebaseAuth.instance.currentUser!.delete();
+
+    if (!mounted) return;
+
+    // Close loading dialog
+    Navigator.of(context).pop();
+
+    // Navigate to sign-in page on SUCCESS
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => SignInPage()),
+      (route) => false,
+    );
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Account deleted successfully"),
+        backgroundColor: Colors.green,
+      ),
+    );
+    } catch (e) {
+      debugPrint('Error cleaning/deleting user account data: $e');
+      if (!mounted) return;
+
+      // Close loading dialog on ERROR
+      Navigator.of(context).pop();
+
+      String errorMessage = "Failed to delete account";
+      
+      if (e.toString().contains('requires-recent-login')) {
+        errorMessage = "Please sign out and sign back in, then try deleting your account again.";
+      } else if (e.toString().contains('network')) {
+        errorMessage = "Network error. Please check your connection and try again.";
+      }
+
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 4),
         ),
       );
-    }).toList();
-  }
+    }
+  } 
+  
+    double sumOfContributions(BuildContext context){
+      final userProvider = Provider.of<UserProvider>(context);
+      if (userProvider.currentUser == null) return 0.0;
+      User currentUser = userProvider.currentUser!;
+      var sum = currentUser.contributions.values.fold<double>(
+        0.0,
+        (sum, value) => sum + value.toDouble(),
+      );
+      return sum;
+    }
+    // Pie Chart
+    List<PieChartSectionData> _generatePieChartData(BuildContext context) {
+      final userProvider = Provider.of<UserProvider>(context);
+        if (userProvider.currentUser == null) return [];
+      
+      User currentUser = userProvider.currentUser!;
+  
+      final sum = currentUser.contributions.values.fold<double>(
+        0.0,
+        (sum, value) => sum + value.toDouble(),
+      );
+  
+      final nonZeroContributions = Map<String, int>.fromEntries(
+      currentUser.contributions.entries.where((entry) => entry.value > 0)
+      );
+  
+      if (nonZeroContributions.isEmpty) {
+        print("No contributions to display");
+        return []; // Return empty list if no contributions
+      }
+  
+      return nonZeroContributions.entries.map((entry) {
+        final percentage = sum == 0 ? 0.0 : (entry.value.toDouble() / sum) * 100.0;
+        return PieChartSectionData(
+          value: entry.value.toDouble(),
+          title: '${entry.key} (${percentage.toInt()}%)',
+          color: categoryColor(entry.key),
+          radius: 50,
+          titleStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      }).toList();
+    }
 
   // Show image picker dialog
   void _showImageDialog(BuildContext context) {
@@ -197,9 +403,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+
+  void _copyFamilyId(String familyId) {
+    Clipboard.setData(ClipboardData(text: familyId));
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Family ID "$familyId" copied to clipboard!'),
+        backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
+    if (userProvider.currentUser == null) {
+    // User was deleted or logged out, redirect to sign-in
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => SignInPage()),
+        (route) => false,
+      );
+    });
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
     User currentUser = userProvider.currentUser!;
     return Scaffold(
       appBar: AppBar(
@@ -258,6 +491,34 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   'Role: ${currentUser.role}',
                   style: const TextStyle(fontSize: 18, color: Colors.grey),
                 ),
+                //familyId
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Family ID: ${currentUser.familyId ?? "No Family"}',
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                    if (currentUser.familyId != null && currentUser.familyId!.isNotEmpty) ...[
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () => _copyFamilyId(currentUser.familyId!),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Icon(
+                            Icons.copy,
+                            size: 16,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
                 const SizedBox(height: 30),
 
                 // Preferences
@@ -311,6 +572,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                   child: const Text(
                     "Exit Account",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                //delete account Button
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => _showDeleteConfirm(context),
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text(
+                    "Delete Account",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

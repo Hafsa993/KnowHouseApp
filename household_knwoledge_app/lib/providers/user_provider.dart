@@ -14,6 +14,11 @@ class UserProvider with ChangeNotifier {
 
   
   List<User> familyMembers = [];
+
+  void clearUser() {
+    _currentUser = null;
+    notifyListeners();
+  }
  
   Future<void> loadCurrentUser() async {
    
@@ -120,7 +125,7 @@ class UserProvider with ChangeNotifier {
       return MemoryImage(bytes);
     } catch (e) {
       print('Error decoding base64 image: $e');
-      return AssetImage('assets/f.jpeg');
+      return AssetImage('lib/assets/f.jpeg');
     }
   } else if (profilePath.startsWith('http')) {
     return NetworkImage(profilePath); // Firebase URL

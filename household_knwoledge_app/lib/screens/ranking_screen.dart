@@ -14,7 +14,7 @@ class RankingScreen extends StatelessWidget {
     final userProvider = Provider.of<UserProvider>(context);
     User? currentUser = userProvider.currentUser;
 
-    // Handle the case where no User for some reason
+    // Handle the case where no User is found
     if (currentUser == null) {
       return Scaffold(
         appBar: AppBar(

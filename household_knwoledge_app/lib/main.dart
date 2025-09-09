@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:household_knwoledge_app/providers/user_provider.dart';
+import 'package:household_knwoledge_app/screens/family_selection_screen.dart';
 import 'package:provider/provider.dart';
 import 'providers/task_provider.dart';
 import 'providers/task_descriptions_provider.dart';
@@ -54,6 +55,34 @@ class _HouseholdAppState extends State<HouseholdApp> {
     });
 
   }
+  Future<Map<String, dynamic>?> _checkUserSetupStatus(BuildContext context) async {
+  try {
+    // Load current user first
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    await userProvider.loadCurrentUser();
+    
+    final currentUser = userProvider.currentUser;
+    if (currentUser == null) {
+      return null;
+    }
+    
+    // Check if user has family
+    final hasFamily = currentUser.familyId != null && 
+                     currentUser.familyId!.isNotEmpty;
+    
+    debugPrint('User setup check:');
+    debugPrint('  familyId: ${currentUser.familyId}');
+    debugPrint('  hasFamily: $hasFamily');
+
+    return {
+      'hasFamily': hasFamily,
+    };
+    
+  } catch (e) {
+    debugPrint('Error checking user setup: $e');
+    return null;
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -75,18 +104,36 @@ class _HouseholdAppState extends State<HouseholdApp> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+          
           if (snapshot.hasData || _isLoggedIn) {
-            return FutureBuilder(
-              future: Provider.of<UserProvider>(context, listen: false).loadCurrentUser(),
-              builder: (context, userSnapshot) {
-                if (userSnapshot.connectionState == ConnectionState.waiting) {
+            return FutureBuilder<Map<String, dynamic>?>(
+              future: _checkUserSetupStatus(context),
+              builder: (context, setupSnapshot) {
+                if (setupSnapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (!mounted) return const SizedBox.shrink();
-                return const HomeScreen();
+                
+                if (setupSnapshot.hasError || setupSnapshot.data == null) {
+                  debugPrint('Setup check failed, redirecting to SignIn');
+                  return const SignInPage();
+                }
+
+                final setupStatus = setupSnapshot.data!;
+
+                //Check if user has family
+                if (!setupStatus['hasFamily']) {
+                  debugPrint('User has no family, redirecting to FamilySelection');
+                  return const FamilySelectionScreen();
+                } 
+                //User has family, go to homescreen
+                else {
+                  debugPrint('User has family, redirecting to HomeScreen');
+                  return const HomeScreen();
+                }
               },
             );
           }
+          
           return const SignInPage();
         },
       ),

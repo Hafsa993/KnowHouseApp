@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
 import 'package:household_knwoledge_app/providers/user_provider.dart';
+import 'package:household_knwoledge_app/screens/preference_screen.dart';
 import 'package:provider/provider.dart';
 import '../widgets/menu_drawer.dart';
 
@@ -130,6 +132,28 @@ class OptionsScreen extends StatelessWidget {
                       child: Text(language),
                     );
                   }).toList(),
+                ),
+              );
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: Icon(Icons.tune),
+            title: Text('Edit Preferences'),
+            onTap: () {
+              final userProvider = Provider.of<UserProvider>(context, listen: false);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PreferencesScreen(
+                    allCategories: categories,
+                    initialSelected: userProvider.currentUser?.preferences ?? [],
+                    onSave: (prefs) async {
+                      await userProvider.setPreferencesForUser(prefs);
+                      if (!context.mounted) return;
+                      Navigator.pop(context); 
+                    },
+                  ),
                 ),
               );
             },
