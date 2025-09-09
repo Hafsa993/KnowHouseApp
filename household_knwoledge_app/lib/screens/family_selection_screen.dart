@@ -176,6 +176,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
 
   void _goToPreferences() {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final navigator = Navigator.of(context);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -183,19 +184,12 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
           allCategories: categories,
           initialSelected: [],
           onSave: (prefs) async {
-
             await userProvider.setPreferencesForUser(prefs);
-            debugPrint('heeeeeee');
-            
-            if (!mounted) return;
-            debugPrint('Heeeeeeeeey: ${prefs.length}');
-            Navigator.of(context).pushAndRemoveUntil(
+
+            navigator.pushAndRemoveUntil(
               MaterialPageRoute(builder: (_) => const HomeScreen()),
               (route) => false,
             );
-            debugPrint(' Navigation completed');
-            
-
           },
         ),
       ),

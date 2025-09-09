@@ -224,7 +224,7 @@ Future<void> _deleteUserAccount(BuildContext context) async {
       // User cancelled password entry
       return;
     }
-
+    
     // Show loading dialog
     showDialog(
       context: context,
