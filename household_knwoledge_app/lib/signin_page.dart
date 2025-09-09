@@ -3,7 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth; // Aliased import
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
+import 'package:household_knwoledge_app/screens/family_selection_screen.dart';
 import 'package:household_knwoledge_app/screens/home_screen.dart';
+import 'package:household_knwoledge_app/screens/preference_screen.dart';
 import 'package:household_knwoledge_app/widgets/password_reset.dart';
 import 'package:provider/provider.dart';
 import 'package:household_knwoledge_app/providers/user_provider.dart';
@@ -90,7 +93,7 @@ class SignInPageState extends State<SignInPage> {
         //for testing purposes justs fam und so simple
         await FirebaseFirestore.instance.collection('users').doc(cred.user!.uid).set({
           'username': username,
-          'familyId': "h",
+          //familyID created by FamilyselectionScreen
           'joinedAt': FieldValue.serverTimestamp(),
           'rankingPoints': 0,
           'preferences': [],
@@ -117,8 +120,14 @@ class SignInPageState extends State<SignInPage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
         if (!mounted) return;
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
-
+        //Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+       
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const FamilySelectionScreen(),
+          ),
+        );
       } else {
 
         await auth.FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);

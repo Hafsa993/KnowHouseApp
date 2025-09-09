@@ -333,12 +333,12 @@ class HomeScreen extends StatelessWidget {
           final bytes = base64Decode(base64String);
           profile = MemoryImage(bytes);
         } catch (e) {
-          profile = AssetImage('assets/f.jpeg'); // Fixed path
+          profile = AssetImage('lib/assets/f.jpeg'); // Fixed path
         }
       } else if (image.startsWith('http')) {
         profile = NetworkImage(image); // Future Firebase Storage URLs
       } else {
-        profile = AssetImage('assets/f.jpeg'); // Fixed path
+        profile = AssetImage('lib/assets/f.jpeg'); // Fixed path
       }
     }
     return Column(
