@@ -87,7 +87,7 @@ class UserProvider with ChangeNotifier {
       final base64String = base64Encode(compressedBytes);
       final dataUrl = 'data:image/jpeg;base64,$base64String';
       
-      print('Image processed. Size: ${compressedBytes.length} bytes');
+      debugPrint('Image processed. Size: ${compressedBytes.length} bytes');
       
       // Save to Firestore (same database you're already using!)
       await FirebaseFirestore.instance
@@ -105,7 +105,7 @@ class UserProvider with ChangeNotifier {
     }
       return null;
     } catch (e) {
-      print('Error uploading profile picture: $e');
+      debugPrint('Error uploading profile picture: $e');
       return null;
     }
   }
@@ -124,7 +124,7 @@ class UserProvider with ChangeNotifier {
       final bytes = base64Decode(base64String);
       return MemoryImage(bytes);
     } catch (e) {
-      print('Error decoding base64 image: $e');
+      debugPrint('Error decoding base64 image: $e');
       return AssetImage('lib/assets/f.jpeg');
     }
   } else if (profilePath.startsWith('http')) {

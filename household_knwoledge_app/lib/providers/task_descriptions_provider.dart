@@ -3,7 +3,7 @@ import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-//TODO: integrate TaskDescriptor into firebase like Tasks 
+
 class TaskDescriptorProvider with ChangeNotifier{
   
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

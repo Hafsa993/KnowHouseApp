@@ -69,7 +69,7 @@ class ToDoListScreen extends StatelessWidget {
               return Center(child: Text('Error: ${snapshot.error}'));
 
             } 
-              // Once data is available, process it
+              //process data once available
               List<Task> toDoList = snapshot.data!;
 
         return Scaffold(
@@ -79,109 +79,112 @@ class ToDoListScreen extends StatelessWidget {
           ),
           drawer: const MenuDrawer(),
           body: ListView.builder(
-                          itemCount: toDoList.length,
-                          itemBuilder: (context, index) {
-                            Task task = toDoList[index];
-                            return Card(
-            margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TodoShowScreen(task: task),
-                                      ),
-                                    );
-                                  },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Task Title
-            Text(
-              task.title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 8),
-            // Task Details
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Due: ${DateFormat('dd-MM-yyyy HH:mm').format(task.deadline)}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: task.deadline.difference(DateTime.now()).inHours < 24
-                                        ? Colors.red // Red if due in less than 24 hours
-                                        : Colors.black54
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Difficulty: ${task.difficulty}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontStyle: FontStyle.italic,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Reward: ${task.rewardPoints}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
-                      ),
-                    ),
-                  ],
+            itemCount: toDoList.length,
+            itemBuilder: (context, index) {
+              Task task = toDoList[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                // Buttons Section
-                Flexible(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                child: InkWell(
+
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TodoShowScreen(task: task),
+                      ),
+                    );
+                  },
+
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Flexible(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: task.isAccepted ? Colors.grey : task.assignedTo == currentUser.username? const Color.fromARGB(255, 235, 75, 63) : (task.assignedTo == "" ? Color.fromARGB(255, 244, 146, 54) :  Colors.teal),//const Color.fromARGB(255, 254, 117, 75) const Color.fromARGB(255, 35, 188, 209),
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Increase padding
-                            minimumSize: const Size(70, 40), // Ensure minimum button size
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                      // Task Title
+                      Text(
+                        task.title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      // Task Details
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Due: ${DateFormat('dd-MM-yyyy HH:mm').format(task.deadline)}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: task.deadline.difference(DateTime.now()).inHours < 24
+                                                  ? Colors.red // Red if due in less than 24 hours
+                                                  : Colors.black54
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Difficulty: ${task.difficulty}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Reward: ${task.rewardPoints}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal,
+                                ),
+                              ),
+                            ],
+                          ),
+                          // Buttons Section
+                          Flexible(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Flexible(
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: task.isAccepted ? Colors.grey : task.assignedTo == currentUser.username? 
+                                        const Color.fromARGB(255, 235, 75, 63) : (task.assignedTo == "" ? Color.fromARGB(255, 244, 146, 54) :  Colors.teal),
+                                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      minimumSize: const Size(70, 40),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    onPressed: () => task.isAccepted || task.assignedTo == currentUser.username ? null :  _showAcceptDialog(context, task, taskProvider, currentUser.username) ,
+                                    child: task.isAccepted ? Text('ToDo is taken') : (( task.assignedTo == currentUser.username ? 
+                                      Text('ToDo is assigned to you') : (task.assignedTo == "" ? 
+                                      Text('Take on unassigned ToDo') : Text('Take over from ${task.assignedTo}')))),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          //TODO: make it more clear if its accepted by you or not also maybe say who taken by
-                          //TODO: maybe don't make it red whren its assigned to you, maybe make it acceptable
-                          onPressed: () => task.isAccepted || task.assignedTo == currentUser.username ? null :  _showAcceptDialog(context, task, taskProvider, currentUser.username) ,
-                          child: task.isAccepted ? Text('ToDo is taken') : ( task.assignedTo == currentUser.username ? Text('ToDo is assigned to you') : task.assignedTo == "" ? Text('Take on unassigned ToDo'): Text('Take over from ${task.assignedTo}')),
-                        ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-          ],
               ),
-            ),
-          ),
-          );
-                          },
-                        ),
+            );
+          },
+        ),
           bottomNavigationBar:  ToDoCreator(),
         );
       }

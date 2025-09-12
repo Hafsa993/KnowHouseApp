@@ -110,5 +110,4 @@ class TaskProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Additional methods as needed...
 }
