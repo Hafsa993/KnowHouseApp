@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:household_knwoledge_app/screens/home_screen.dart';
 
 class PreferencesScreen extends StatefulWidget {
   final List<String> allCategories;

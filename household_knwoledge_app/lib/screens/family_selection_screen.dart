@@ -8,7 +8,7 @@ import '../screens/home_screen.dart';
 import '../models/task_descriptions_model.dart';
 
 class FamilySelectionScreen extends StatefulWidget {
-  const FamilySelectionScreen({Key? key}) : super(key: key);
+  const FamilySelectionScreen({super.key});
 
   @override
   State<FamilySelectionScreen> createState() => _FamilySelectionScreenState();
