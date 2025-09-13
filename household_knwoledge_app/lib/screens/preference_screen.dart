@@ -63,7 +63,8 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
               },
             ),
           ),
-        // Button right below categories (fixed position)
+
+        // Button to select< preferences
         Padding(
           padding: const EdgeInsets.all(16),
           child: SizedBox(

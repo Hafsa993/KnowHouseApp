@@ -153,6 +153,7 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Error toggling camera permission: $e');
     }
+    notifyListeners();
   }
 
   Future<void> toggleGalleryPermission() async {
@@ -162,6 +163,7 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Error toggling gallery permission: $e');
     }
+    notifyListeners();
   }
   Future<void> toggleGeolocationPermission() async {
     if (_currentUser == null) return;
@@ -170,6 +172,7 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Error toggling geolocation permission: $e');
     }
+    notifyListeners();
   }
   Future<void> toggleNotificationsEnabled() async {
     if (_currentUser == null) return;
@@ -178,6 +181,7 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Error toggling notifications enabled: $e');
     }
+    notifyListeners();
   }
 
   Stream<List<User>> getFamilyMembers(User currUser) {

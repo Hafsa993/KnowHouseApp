@@ -170,6 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return password;
   }
+  
   // Delete Account
   Future<void> _showDeleteConfirm(BuildContext parentContext) async {
     showDialog(

@@ -50,70 +50,71 @@ class _TodoShowScreenState extends State<TodoShowScreen> {
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,),
                   )
                 ],
-                            ),
-                            SizedBox(height:20,),
-                            Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    'Due: ${DateFormat('dd-MM-yyyy HH:mm').format(widget.task.deadline)}',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: widget.task.deadline.difference(DateTime.now()).inHours < 24
-                                          ? Colors.red // Red if due in less than 24 hours
-                                          : Colors.black54,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    'Difficulty: ${widget.task.difficulty}',
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    'Reward: ${widget.task.rewardPoints}',
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.teal,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 20 ,),
-                            Divider(),
-                             SizedBox(height: 10 ,),
-                            Container(decoration: BoxDecoration(border: Border.symmetric()),child: Text(widget.task.description, style: TextStyle(fontSize: 18),),)
-                            ]),
+                ),
+                
+                SizedBox(height:20,),
+
+                //deadline date and time
+                Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        'Due: ${DateFormat('dd-MM-yyyy HH:mm').format(widget.task.deadline)}',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: widget.task.deadline.difference(DateTime.now()).inHours < 24
+                              ? Colors.red // Red if due in less than 24 hours
+                              : Colors.black54,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 4),
+                //difficulty 
+                Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        'Difficulty: ${widget.task.difficulty}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 4),
+
+                //reward points
+                Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        'Reward: ${widget.task.rewardPoints}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.teal,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20 ,),
+                Divider(),
+                  SizedBox(height: 10 ,),
+                Container(decoration: BoxDecoration(border: Border.symmetric()),child: Text(widget.task.description, style: TextStyle(fontSize: 18),),)
+                ]),
               ))),
           ],
         ),
       ),   
     );
   }
-
-   /* _showDeleteDialog(BuildContext context, TaskDescriptor descriptor, TaskDescriptorProvider taskDescriptorProvider) {
-    //bool val = false;
-    
-    //print(val);
-    //return val;
-  }*/
 }
 

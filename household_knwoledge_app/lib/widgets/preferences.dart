@@ -30,9 +30,9 @@ class PreferencesWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.1),
+        color: Colors.grey.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.withOpacity(0.3)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
       ),
       child: const Text(
         "No Preferred Categories",
@@ -56,9 +56,9 @@ class PreferencesWidget extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: categoryColor(category).withOpacity(0.1),
+        backgroundColor: categoryColor(category).withValues(alpha: 0.1),
         side: BorderSide(
-          color: categoryColor(category).withOpacity(0.3),
+          color: categoryColor(category).withValues(alpha: 0.3),
         ),
       )).toList(),
     );

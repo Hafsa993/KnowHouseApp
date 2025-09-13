@@ -67,6 +67,7 @@ class TasksScreenState extends State<TasksScreen> {
               ),
             ),
           ),
+
           // Dropdown Menu
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -93,12 +94,12 @@ class TasksScreenState extends State<TasksScreen> {
                 if (newValue != null) {
                   setState(() {
                     dropdownvalue = newValue;
-                    //filterTasks(searchQuery, newValue, allDescriptors  ?? []);
                   });
                 }
               },
             ),
           ),
+
           // Task List
           // Replace the Expanded ListView section with:
   Expanded(
@@ -158,32 +159,37 @@ class TasksScreenState extends State<TasksScreen> {
          
       ],
     ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Wrap(
-          alignment: WrapAlignment.center,
-          children: [Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: ElevatedButton.icon(
-              style: ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Color.fromARGB(255, 21, 208, 255))),
-              icon: const Icon(Icons.add, size: 20, color: Colors.white,),
-                  label: Text('Add new instruction', style: TextStyle(fontSize: 20, color: Colors.white,)),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddTaskDescriptorScreen(),
-                      ),
-                    );
-                  },
-                ),
-          ),]
-        ),
-      ),
+      bottomNavigationBar: _buildAddInstructionButton(),
     );
   }
 
+  Widget _buildAddInstructionButton() {
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 21, 208, 255),
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+          ),
+          icon: const Icon(Icons.add, size: 20),
+          label: const Text(
+            'Add new instruction',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AddTaskDescriptorScreen(),
+              ),
+            );
+          },
+        ),
+      );
+    }
 }
+
 
 Color getCategoryColor(String s) {
   if (s == 'All Categories') {
