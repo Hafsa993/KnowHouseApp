@@ -42,7 +42,7 @@ class Task {
       id: documentId,
       title: data['title'] ?? '',
       deadline: (data['deadline'] as Timestamp).toDate(),
-      completionTime: data['comletionTime'] == null? null : (data['comletionTime'] as Timestamp).toDate(),
+      completionTime: data['completionTime'] == null ? null : (data['completionTime'] as Timestamp).toDate(),
       category: data['category'] ?? '',
       difficulty: data['difficulty'] ?? '',
       description: data['description'] ?? '',

@@ -1,0 +1,2 @@
+C:/Flutter Projects/GitHub/KnowHouseApp/household_knwoledge_app/android/app/.cxx/Debug/42374m1y/x86/CMakeFiles/edit_cache.dir
+C:/Flutter Projects/GitHub/KnowHouseApp/household_knwoledge_app/android/app/.cxx/Debug/42374m1y/x86/CMakeFiles/rebuild_cache.dir
