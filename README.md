@@ -1,10 +1,38 @@
 # KnowHouseApp
 KnowHouse Mobile App for iOS and Android
->🔗 [Github of full HCI Project](https://github.com/eth-hci-course/hci-project-2024-hci2024-group-14)
 
 ## Getting Started
 
 These instructions will help you download and run the project locally on your machine.
+
+### Organization
+
+├── KnowHouseApp/household_kn.../lib/                                      # Main application code
+
+│   ├── main.dart                   # App entry point with Firebase init and routing
+
+│   ├── firebase_options.dart     # Firebase configuration
+
+│   ├── signin_page.dart          # Authentication screen
+
+│   ├── models/                   # Data models (e.g., User, Task)
+
+│   ├── providers/                # State management (e.g., UserProvider, TaskProvider)
+
+│   ├── screens/                  # UI screens (e.g., HomeScreen, RankingScreen)
+
+│   ├── widgets/                  # Reusable UI components (e.g., ToDoForm)
+
+│   └── assets/                   # Static assets (images, fonts)
+
+├── test/                         # Unit and widget tests
+
+│   ├── models/                   # Tests for data models
+
+│   ├── providers/                # Tests for providers
+
+│   └── flutter_test_config.dart  # Test configuration
+
 
 ### Prerequisites
 
@@ -95,21 +123,36 @@ From the project's root directory, run:
     flutter install
 ## About The App
 
-The KnowHouse app is supposed to be used in a household/family
-Users can join or create a Household group. 
+The KnowHouse App is designed to streamline household task management and foster family collaboration. Users can create, assign, and track tasks, earn points for contributions, and view leaderboards to encourage participation.
 
-Core Functiionalities:
+### Features
 
-  One can assign ToDos to a particular other user (in the same household) or no one (meaning this toDo has to be done, so someone should take it on)
-  
-  For each ToDo a reward in points, A category, difficulty, a name and a description have to be specified. 
-  
-  Users can earn points by completing ToDos.
-  
-  Shared hosehold calendar.
-  
-  Within a household users have a shared list of instructions, for ex. on how to do laundry etc.  Users can add/edit and delete these instructions.
+- User Authentication: Secure sign-in/sign-up using Firebase Authentication.
 
+- Family Management: Create or join families to share tasks and track contributions.
+
+- Task Management: Add, assign, accept, and complete tasks with categories like Cooking, Cleaning, Gardening, etc.
+
+- Real-Time Updates: Live synchronization of tasks and user data via Firebase Firestore.
+
+- Leaderboard & Points: Earn points for completed tasks and view family rankings.
+
+- Calendar Integration: View tasks on a calendar for better planning.
+
+- Profile Management: Customize preferences and view personal stats.
+  
+
+### Core Functiionalities
+
+  - Users can assign ToDos to a particular other user (in the same household) or no one (meaning this toDo has to be done, so someone should take it on)
+  
+  - For each ToDo a reward in points, A category, difficulty, a name and a description have to be specified. 
+  
+  - Users can earn points by completing ToDos.
+  
+  - Shared hosehold calendar.
+  
+  - Within a household users have a shared list of instructions, for ex. on how to do laundry etc.  Users can add/edit and delete these instructions.
   
 ### Home Page
   So on the upper half of The home page, there is a leaderboard showing top 3 users with most points on a podium. bottom half of home page has Open tasks: which is the toDos that have been assigned to the User but not yet accepted by them.
