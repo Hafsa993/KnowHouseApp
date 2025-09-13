@@ -37,9 +37,11 @@ class HomeScreen extends StatelessWidget {
                             ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
         } else if (completedSnapshot.hasError) {
+          debugPrint(completedSnapshot.error.toString());
                           return Center(
                               child:
-                                  Text('Error: ${completedSnapshot.error.toString()}'));
+                                  Text('Error: loading tasks'));
+                                  
         } else if (!completedSnapshot.hasData ||
                             completedSnapshot.data!.isEmpty) {
           return const Center(
@@ -402,16 +404,46 @@ class HomeScreen extends StatelessWidget {
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
-              onPressed: () {
-
-                taskProvider.acceptTask(task.id, currentUser.username);
+              onPressed: () async {
                 Navigator.pop(context);
-                //show message
-                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                  content: Text('accepted ToDo has been moved to My ToDos'),
-                                   backgroundColor: const Color.fromARGB(255, 3, 125, 3),
-                                ));
+
+              //show loading indicator
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Row(
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      SizedBox(width: 16),
+                      Text('Accepting task...'),
+                    ],
+                  ),
+                ),
+              );
+                try{
+                  await taskProvider.acceptTask(task.id, currentUser.username);
+
+                  if(context.mounted){ 
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                      content: Text('accepted ToDo has been moved to My ToDos'),
+                        backgroundColor: const Color.fromARGB(255, 3, 125, 3),
+                    ));
+                  }
+                }catch(e){
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error accepting task: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
               style: TextButton.styleFrom(
                   foregroundColor: Colors.white,

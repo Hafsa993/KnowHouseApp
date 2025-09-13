@@ -34,7 +34,7 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
+          title: const Text(
             'Pick an icon',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -51,16 +51,82 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
     }
   }
 
-  void _editTaskDescriptor() {
-    if (_formKey.currentState!.validate() && _selectedIcon != null) {
-      Provider.of<TaskDescriptorProvider>(context, listen: false)
-          .editTaskDescriptor(widget.task.id!, _titleController.text, _instructionsController.text, _category!, _selectedIcon!);
-
-      Navigator.of(context).pop(widget.task); // Navigate back after saving
-    } else if (_selectedIcon == null) {
+  Future<void> _editTaskDescriptor() async {
+    if (!_formKey.currentState!.validate()) return;
+    
+    if (_selectedIcon == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an icon for the task')),
+        const SnackBar(content: Text('Please select an icon for the task')),
       );
+      return;
+    }
+
+    if (widget.task.id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error: Invalid task ID. Cannot save changes.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Saving changes...'),
+          ],
+        ),
+      ),
+    );
+
+    try {
+      await Provider.of<TaskDescriptorProvider>(context, listen: false)
+          .editTaskDescriptor(
+            widget.task.id!,
+            _titleController.text.trim(),
+            _instructionsController.text.trim(),
+            _category!,
+            _selectedIcon!,
+          );
+
+      // Close loading dialog
+      if (mounted) Navigator.of(context).pop();
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Instruction updated successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        
+        // Navigate back
+        Navigator.of(context).pop(widget.task);
+      }
+
+    } catch (e) {
+      // Close loading dialog
+      if (mounted) Navigator.of(context).pop();
+      
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating instruction: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
@@ -82,7 +148,7 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
               children: <Widget>[
                 Text('Enter new title:',
                   style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
                 TextFormField(
                   //initialValue: widget.task.title,
                   controller: _titleController,
@@ -112,10 +178,10 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
                     return null;
                   },
                 ),
-                SizedBox(height: 40,),
-                Text('Enter new instruction description:',
+                const SizedBox(height: 40,),
+                const Text('Enter new instruction description:',
                   style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
                 TextFormField(
                   //initialValue: widget.task.instructions,
                   controller: _instructionsController,
@@ -146,10 +212,10 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
                     return null;
                   },
                 ),
-                SizedBox(height: 40,),
+                const SizedBox(height: 40,),
                 Text('Choose a new category:',
                   style: TextStyle(fontWeight: FontWeight.bold)),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
                 DropdownButtonFormField<String>(
                   
                   decoration: InputDecoration(
@@ -160,7 +226,6 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
                   items: categories.map((String category) {
                     return DropdownMenuItem<String>(
                       value: category,
-                      //child: Text(category),
                       child: Wrap(
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
@@ -168,7 +233,7 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
                                   backgroundColor: categoryColor(category),
                                   radius: 5,
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 Text(category),
                               ],
                             ),
@@ -177,12 +242,11 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
                   onChanged: (String? newValue) {
                     setState(() {
                       _category = newValue;
-                      // Reset assigned user if category changes
                     });
                   },
                   validator: (value) => value == null ? 'Please select a category' : null,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Text(
                   'Select a new Icon:',
                   style: TextStyle(fontWeight: FontWeight.bold),

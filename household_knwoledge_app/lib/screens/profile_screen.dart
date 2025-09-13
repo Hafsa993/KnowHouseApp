@@ -7,8 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:fl_chart/fl_chart.dart';
-import '../models/task_descriptions_model.dart';
 import '../providers/user_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/menu_drawer.dart';

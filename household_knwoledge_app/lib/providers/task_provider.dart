@@ -64,50 +64,72 @@ class TaskProvider extends ChangeNotifier {
 
   // Method to accept a task
   Future<void> acceptTask(String taskId, String username) async {
+  try {
     await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
       'isAccepted': true,
       'acceptedBy': username,
     });
-    notifyListeners();
+  } catch (e) {
+    debugPrint('Error accepting task: $e');
+    rethrow;
   }
+}
 
   // Method to take over a task
   Future<void> takeOverTask(String taskId, String username) async {
-    await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
-      'isAccepted': true,
-      'acceptedBy': username,
-      'assignedTo': username,
-    });
-    notifyListeners();
+    try {
+      await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
+        'isAccepted': true,
+        'acceptedBy': username,
+        'assignedTo': username,
+      });
+    } catch (e) {
+      debugPrint('Error taking over task: $e');
+      rethrow;
+    }
   }
 
   // Method to decline a task
   Future<void> declineTask(String taskId) async {
-    await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
-      'isDeclined': true,
-    });
-    notifyListeners();
+    try {
+      await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
+        'isDeclined': true,
+      });
+    } catch (e) {
+      debugPrint('Error declining task: $e');
+      rethrow;
+    }   
   }
 
   // Method to complete a task
   Future<void> completeTask(String taskId) async {
-    await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
-      'isCompleted': true,
-      'completionTime' : DateTime.now(),
-    });
-    notifyListeners();
+    try {
+      await FirebaseFirestore.instance.collection('tasks').doc(taskId).update({
+        'isCompleted': true,
+        'completionTime' : DateTime.now(),
+      });
+    } catch (e) {
+      debugPrint('Error completing task: $e');
+      rethrow;
+    }
   }
 
   // Method to add a new task
   Future<void> addTask(Task task) async {
-    await FirebaseFirestore.instance.collection('tasks').add(task.toMap());
-    notifyListeners();
+    try {
+      await FirebaseFirestore.instance.collection('tasks').add(task.toMap());
+    } catch (e) {
+      debugPrint('Error adding task: $e');
+      rethrow;
+    }
   }
 
-  // Optionally, method to remove a task
   Future<void> removeTask(String taskId) async {
-    await FirebaseFirestore.instance.collection('tasks').doc(taskId).delete();
-    notifyListeners();
+    try {
+      await FirebaseFirestore.instance.collection('tasks').doc(taskId).delete();
+    } catch (e) {
+      debugPrint('Error removing task: $e');
+      rethrow;
+    }
   }
-
 }

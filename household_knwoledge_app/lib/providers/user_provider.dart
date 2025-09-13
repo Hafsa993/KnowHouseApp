@@ -15,6 +15,11 @@ class UserProvider with ChangeNotifier {
   
   List<User> familyMembers = [];
 
+  void setCurrentUser(User user) {
+    _currentUser = user;
+    notifyListeners();
+  }
+
   void clearUser() {
     _currentUser = null;
     notifyListeners();
@@ -31,12 +36,9 @@ class UserProvider with ChangeNotifier {
     final userDoc = await FirebaseFirestore.instance.collection('users').doc(auth.FirebaseAuth.instance.currentUser!.uid).get();
     if (userDoc.exists) {
       _currentUser = User.fromMap(userDoc.data()!, userDoc.id);
-
-      notifyListeners();
     } else {
       // User document does not exist; handle accordingly
       _currentUser = null;
-      notifyListeners();
     }
   }
 
@@ -44,24 +46,34 @@ class UserProvider with ChangeNotifier {
     if (_currentUser == null) return;
     await _currentUser!.addPoints(pointsToAdd);
 
-    //also update in fireabase
-    await FirebaseFirestore.instance
-      .collection('users')
-      .doc(_currentUser!.uid)
-      .update({'rankingPoints': _currentUser!.points});
-      
-    notifyListeners();
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .update({'rankingPoints': _currentUser!.points});
+    } catch (e) {
+      debugPrint('Error updating user points: $e');
+    }
+
   }
 
   Future<void> setPreferencesForUser(List<String> newPreferences) async {
     if (_currentUser == null) return;
-    await _currentUser!.setPreferences(newPreferences);
-    notifyListeners();
+    try {
+      await _currentUser!.setPreferences(newPreferences);
+    } catch (e) {
+      debugPrint('Error setting user preferences: $e');
+    }
+    
   }
+
   Future<void> updateContributionsForUser(Map<String, int> newContributions) async {
     if (_currentUser == null) return;
-    await _currentUser!.updateContributions(newContributions);
-    notifyListeners();
+    try {
+      await _currentUser!.updateContributions(newContributions);
+    } catch (e) {
+      debugPrint('Error updating user contributions: $e');
+    }
   }
 
   Future<String?> uploadProfilePicture(String localImagePath) async {
@@ -136,26 +148,36 @@ class UserProvider with ChangeNotifier {
 
   Future<void> toggleCameraPermission() async {
     if (_currentUser == null) return;
-    await _currentUser!.toggleCameraPermissionForUser();
-    notifyListeners();
+    try {
+      await _currentUser!.toggleCameraPermissionForUser();
+    } catch (e) {
+      debugPrint('Error toggling camera permission: $e');
+    }
   }
 
   Future<void> toggleGalleryPermission() async {
     if (_currentUser == null) return;
-    //try{
+    try {
       await _currentUser!.toggleGalleryPermissionForUser();
-    //}catch(e){print(e);}
-    notifyListeners();
+    } catch (e) {
+      debugPrint('Error toggling gallery permission: $e');
+    }
   }
   Future<void> toggleGeolocationPermission() async {
     if (_currentUser == null) return;
-    await _currentUser!.toggleGeolocationPermissionForUser();
-    notifyListeners();
+    try {
+      await _currentUser!.toggleGeolocationPermissionForUser();
+    } catch (e) {
+      debugPrint('Error toggling geolocation permission: $e');
+    }
   }
   Future<void> toggleNotificationsEnabled() async {
     if (_currentUser == null) return;
-    await _currentUser!.toggleNotificationsEnabledForUser();
-    notifyListeners();
+    try {
+      await _currentUser!.toggleNotificationsEnabledForUser();
+    } catch (e) {
+      debugPrint('Error toggling notifications enabled: $e');
+    }
   }
 
   Stream<List<User>> getFamilyMembers(User currUser) {
@@ -172,30 +194,4 @@ class UserProvider with ChangeNotifier {
             .toList());
   }
   
-Future<void> fetchFamilyMembers(User currUser) async {
-    if (currUser.familyId == null) {
-      familyMembers = [];
-      notifyListeners();
-      return;
-    }
-
-    notifyListeners();
-
-    try {
-      FirebaseFirestore.instance
-          .collection('users')
-          .where('familyId', isEqualTo: currUser.familyId)
-          .snapshots()
-          .listen((snapshot) {
-        familyMembers = snapshot.docs
-            .map((doc) => User.fromMap(doc.data(), doc.id))
-            .toList();
-        notifyListeners();
-      }, onError: (error) {
-        notifyListeners();
-      });
-    } catch (e) {
-      notifyListeners();
-    }
-  }
 }

@@ -27,6 +27,15 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
     super.dispose();
   }
 
+  void _setLoadingState(bool loading, [String error = '']) {
+  if (mounted) {
+    setState(() {
+      isLoading = loading;
+      errorMessage = error;
+    });
+  }
+}
+
   String _generateSecureCode() {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final random = Random().nextInt(999999);
@@ -57,10 +66,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
       return;
     }
 
-    setState(() {
-      isLoading = true;
-      errorMessage = '';
-    });
+    _setLoadingState( true, '');  
 
     try {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -99,10 +105,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
       _goToPreferences();
       
     } catch (e) {
-      setState(() {
-        errorMessage = 'Error creating family: ${e.toString()}';
-        isLoading = false;
-      });
+      _setLoadingState( false, 'Error creating family: ${e.toString()}');
     }
   }
 
@@ -117,10 +120,8 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
       return;
     }
 
-    setState(() {
-      isLoading = true;
-      errorMessage = '';
-    });
+    
+    _setLoadingState( true, '');
 
     try {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -137,10 +138,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
         .get();
 
       if (existingUsers.docs.isEmpty) {
-        setState(() {
-          errorMessage = 'Family code "$familyCode" not found. Please check and try again.';
-          isLoading = false;
-        });
+        _setLoadingState( false, 'Family code "$familyCode" not found. Please check and try again.');
         return;
       }
       // Update user with family ID
@@ -167,16 +165,12 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
       _goToPreferences();
       
     } catch (e) {
-      setState(() {
-        errorMessage = 'Error joining family: ${e.toString()}';
-        isLoading = false;
-      });
+      _setLoadingState( false, 'Error joining family: ${e.toString()}');
     }
   }
 
   void _goToPreferences() {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final navigator = Navigator.of(context);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -184,12 +178,24 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
           allCategories: categories,
           initialSelected: [],
           onSave: (prefs) async {
-            await userProvider.setPreferencesForUser(prefs);
-
-            navigator.pushAndRemoveUntil(
-              MaterialPageRoute(builder: (_) => const HomeScreen()),
-              (route) => false,
-            );
+            try{
+              await userProvider.setPreferencesForUser(prefs);
+              if (mounted) {
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const HomeScreen()),
+                  (route) => false,
+                );
+              }
+            } catch (e) {
+              if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Error saving preferences: ${e.toString()}'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+              }
+            }
           },
         ),
       ),
