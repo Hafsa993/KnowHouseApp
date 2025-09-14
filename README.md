@@ -139,7 +139,7 @@ Users can register or sign in if they have an account with an email and password
 <img height="400" src="img/images for high fi/Screenshot_1733245428.png">
 </p>
 
-### MyTodos
+### My Todos
 The user can navigate from one page to another with the menu.
 
 The MyToDos page has the accepted, but not yet completed ToDos and also the completed ToDos in the last 30 days.
