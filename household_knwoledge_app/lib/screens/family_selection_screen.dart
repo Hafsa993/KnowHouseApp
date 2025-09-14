@@ -171,6 +171,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
 
   void _goToPreferences() {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final navigator = Navigator.of(context);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -178,24 +179,12 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
           allCategories: categories,
           initialSelected: [],
           onSave: (prefs) async {
-            try{
-              await userProvider.setPreferencesForUser(prefs);
-              if (mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  (route) => false,
-                );
-              }
-            } catch (e) {
-              if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Error saving preferences: ${e.toString()}'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-              }
-            }
+            await userProvider.setPreferencesForUser(prefs);
+
+            navigator.pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const HomeScreen()),
+              (route) => false,
+            );
           },
         ),
       ),

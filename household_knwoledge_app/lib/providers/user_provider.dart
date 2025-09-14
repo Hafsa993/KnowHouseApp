@@ -65,6 +65,7 @@ class UserProvider with ChangeNotifier {
 
   }
 
+  //sets user preferences or updates them
   Future<void> setPreferencesForUser(List<String> newPreferences) async {
     if (_currentUser == null) return;
     try {
@@ -72,9 +73,9 @@ class UserProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Error setting user preferences: $e');
     }
-    
+    notifyListeners();
   }
-
+  //updates user contributions or adds new ones
   Future<void> updateContributionsForUser(Map<String, int> newContributions) async {
     if (_currentUser == null) return;
     try {
@@ -83,7 +84,7 @@ class UserProvider with ChangeNotifier {
       debugPrint('Error updating user contributions: $e');
     }
   }
-
+  // Upload and process profile picture
   Future<String?> uploadProfilePicture(String localImagePath) async {
     try {
       final user = auth.FirebaseAuth.instance.currentUser;
@@ -129,31 +130,31 @@ class UserProvider with ChangeNotifier {
       return null;
     }
   }
-
+  // Get profile picture as ImageProvider
   ImageProvider? getProfileOfCurrUser() {
-  if (_currentUser?.profilepath == null || _currentUser!.profilepath.isEmpty) {
-    return AssetImage('lib/assets/f.jpeg'); // Default picture
-  }
-
-  final profilePath = _currentUser!.profilepath;
-  
-  if (profilePath.startsWith('data:image/jpeg;base64,')) {
-    // Base64 image stored in Firestore
-    try {
-      final base64String = profilePath.split(',')[1];
-      final bytes = base64Decode(base64String);
-      return MemoryImage(bytes);
-    } catch (e) {
-      debugPrint('Error decoding base64 image: $e');
-      return AssetImage('lib/assets/f.jpeg');
+    if (_currentUser?.profilepath == null || _currentUser!.profilepath.isEmpty) {
+      return AssetImage('lib/assets/f.jpeg'); // Default picture
     }
-  } else if (profilePath.startsWith('http')) {
-    return NetworkImage(profilePath); // Firebase URL
-  } else {
-    return AssetImage('lib/assets/f.jpeg'); // Default picture
-  }
-}
 
+    final profilePath = _currentUser!.profilepath;
+    
+    if (profilePath.startsWith('data:image/jpeg;base64,')) {
+      // Base64 image stored in Firestore
+      try {
+        final base64String = profilePath.split(',')[1];
+        final bytes = base64Decode(base64String);
+        return MemoryImage(bytes);
+      } catch (e) {
+        debugPrint('Error decoding base64 image: $e');
+        return AssetImage('lib/assets/f.jpeg');
+      }
+    } else if (profilePath.startsWith('http')) {
+      return NetworkImage(profilePath); // Firebase URL
+    } else {
+      return AssetImage('lib/assets/f.jpeg'); // Default picture
+    }
+  }
+  
   Future<void> toggleCameraPermission() async {
     if (_currentUser == null) return;
     try {
