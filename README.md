@@ -122,7 +122,7 @@ Users can register or sign in if they have an account with an email and password
 </p>
 
 ### Home Page
-  So on the upper half of The home page, there is a leaderboard showing top 3 users with most points on a podium. bottom half of home page has Open tasks: which is the toDos that have been assigned to the User but not yet accepted by them.
+  So on the upper half of The home page, there is a leaderboard showing top 3 users with most points on a podium. bottom half of home page has Open toDos: which is the toDos that have been assigned to the User but not yet accepted by them.
   
   The User can click on a toDo to see description as well and just more info about ToDo. Here the user can see the deadline, reward, category, name etc. of the toDo:
   
@@ -139,7 +139,7 @@ Users can register or sign in if they have an account with an email and password
 <img height="400" src="img/images for high fi/Screenshot_1733245428.png">
 </p>
 
-### MyTodos
+### My Todos
 The user can navigate from one page to another with the menu.
 
 The MyToDos page has the accepted, but not yet completed ToDos and also the completed ToDos in the last 30 days.
