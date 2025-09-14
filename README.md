@@ -110,6 +110,21 @@ Core Functiionalities:
   
   Within a household users have a shared list of instructions, for ex. on how to do laundry etc.  Users can add/edit and delete these instructions.
 ### Demo Video
+Here are demos of the register flow and the app more broadly:
+In the Registering demo the familycode is not displayed for security reasons.
+
+
+
+
+https://github.com/user-attachments/assets/35caf832-944c-465e-81e6-7a713fc1a89f
+
+
+
+
+https://github.com/user-attachments/assets/a67d2d62-c475-40e8-a109-8530854366bd
+
+
+
 
 
 ### Sign In & Registration
@@ -153,8 +168,8 @@ When a User completes a ToDo a small animation pops up.
 
 ### House ToDos
 House ToDos page is where all the ToDos of the household are stored. So the users ToDos as well as any that are assigned to another user, or unassigned. 
-
-A User can take over a toDo from another household member. 
+A ToDo is taken if it has been accepted by a user, it is "assigned to you" if the toDO has been assigned to you but you havent accepted it yet. If a todo is assigned to no one, "take on toDo" is displayed to encourage users to take on this toDo.
+A User can take over a toDo from another household member, that has been assigned that toDo but not yet accepted it. 
 
 The ToDos are clickable, in homeScreen, in myTodos and in HouseToDos. 
 
