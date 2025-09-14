@@ -109,8 +109,18 @@ Core Functiionalities:
   Shared hosehold calendar.
   
   Within a household users have a shared list of instructions, for ex. on how to do laundry etc.  Users can add/edit and delete these instructions.
+### Demo Video
 
-  
+
+### Sign In & Registration
+Users can register or sign in if they have an account with an email and password. After this in the registration flow, the user can join a family or create a new one and then specify their preferred household task categories.
+
+<p align="left" width="100%">
+<img height="400" src="img/images for high fi/signIn.png">
+<img height="400" src="img/images for high fi/Register.png">
+<img height="400" src="img/images for high fi/FamChoice.png">
+</p>
+
 ### Home Page
   So on the upper half of The home page, there is a leaderboard showing top 3 users with most points on a podium. bottom half of home page has Open tasks: which is the toDos that have been assigned to the User but not yet accepted by them.
   
