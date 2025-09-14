@@ -15,10 +15,12 @@ class ProfilePictureWidget extends StatelessWidget {
       onTap: onTap,
       child: Stack(
         children: [
+          // Profile picture
           CircleAvatar(
             radius: 60,
             backgroundImage: profileImage,
           ),
+          // Edit icon
           Positioned(
             bottom: -3,
             right: -3,

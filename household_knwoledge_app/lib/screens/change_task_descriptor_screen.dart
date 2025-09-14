@@ -100,8 +100,18 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
       // Close loading dialog
       if (mounted) Navigator.of(context).pop();
 
-      // Show success message
+      // Show success message and update UI
       if (mounted) {
+
+        final updatedDescriptor = TaskDescriptor(
+          id: widget.task.id,
+          title: _titleController.text.trim(),
+          instructions: _instructionsController.text.trim(),
+          category: _category!,
+          icon: _selectedIcon!, 
+          familyId: widget.task.familyId,
+        );
+        
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Instruction updated successfully!'),
@@ -110,7 +120,7 @@ class ChangeTaskDescriptorScreenState extends State<ChangeTaskDescriptorScreen> 
         );
         
         // Navigate back
-        Navigator.of(context).pop(widget.task);
+        Navigator.of(context).pop(updatedDescriptor);
       }
 
     } catch (e) {

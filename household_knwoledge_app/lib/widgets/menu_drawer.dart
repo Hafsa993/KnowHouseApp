@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:household_knwoledge_app/screens/instructions_screen.dart';
 import '../screens/ranking_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/house_todos_screen.dart';
 import '../screens/my_todos_screen.dart';
-import '../screens/instructions_screen.dart';
 import '../screens/calendar_screen.dart';
 import '../screens/profile_screen.dart';
 import '../screens/options_screen.dart';
@@ -126,7 +126,7 @@ class MenuDrawer extends StatelessWidget {
                     ),
                   title: const Text('Instructions', style: TextStyle(fontSize: 24,),),
                   onTap: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => TasksScreen()));
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => TaskDescriptorScreen()));
                   },
                   minVerticalPadding: 20,
                 ),

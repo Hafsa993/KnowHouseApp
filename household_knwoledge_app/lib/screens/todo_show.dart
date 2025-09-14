@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_descriptions_model.dart';
 import 'package:household_knwoledge_app/models/task_model.dart';
 import 'package:intl/intl.dart';
-// This screen displays the description of an instruction, accessed through instructions tab
+
+// This screen displays a task, accessed through clicking on the task
 
 class TodoShowScreen extends StatefulWidget{
   const TodoShowScreen({super.key, required this.task});
@@ -22,8 +23,8 @@ class _TodoShowScreenState extends State<TodoShowScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 226, 224, 224),
-        //title: const Text('               ToDo',textAlign: TextAlign.center,style: TextStyle(fontSize: 25) ),
-      ),
+        ),
+
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
         child: Column(
@@ -39,17 +40,19 @@ class _TodoShowScreenState extends State<TodoShowScreen> {
                 SizedBox(height: 15,),
                 Flexible(child: Text(widget.task.title, style: TextStyle(fontSize: 35),)),
                 SizedBox(height: 7,),
+
+                //category
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Flexible(child: Text('Category:', style: TextStyle(fontSize: 25, color: const Color.fromARGB(255, 37, 37, 37)),)),
-                  SizedBox(width: 15,),
-                  Flexible(
-                    child: Chip(
-                      label: Text(widget.task.category, style: TextStyle( color: categoryColor(widget.task.category)),), 
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,),
-                  )
-                ],
+                  children: [
+                    Flexible(child: Text('Category:', style: TextStyle(fontSize: 25, color: const Color.fromARGB(255, 37, 37, 37)),)),
+                    SizedBox(width: 15,),
+                    Flexible(
+                      child: Chip(
+                        label: Text(widget.task.category, style: TextStyle( color: categoryColor(widget.task.category)),), 
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,),
+                    )
+                  ],
                 ),
                 
                 SizedBox(height:20,),
@@ -72,7 +75,8 @@ class _TodoShowScreenState extends State<TodoShowScreen> {
                 ),
 
                 const SizedBox(height: 4),
-                //difficulty 
+
+                //display difficulty 
                 Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Flexible(
@@ -90,8 +94,9 @@ class _TodoShowScreenState extends State<TodoShowScreen> {
 
                 const SizedBox(height: 4),
 
-                //reward points
-                Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //display reward points
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Flexible(
                       child: Text(
@@ -107,7 +112,8 @@ class _TodoShowScreenState extends State<TodoShowScreen> {
                 ),
                 SizedBox(height: 20 ,),
                 Divider(),
-                  SizedBox(height: 10 ,),
+                SizedBox(height: 10 ,),
+                //description
                 Container(decoration: BoxDecoration(border: Border.symmetric()),child: Text(widget.task.description, style: TextStyle(fontSize: 18),),)
                 ]),
               ))),
