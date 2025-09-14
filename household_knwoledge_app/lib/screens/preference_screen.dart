@@ -24,7 +24,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
     super.initState();
     selected = List<String>.from(widget.initialSelected);
   }
-
+  //TODO: maybe change text at top of screen to "Choose your preferred household task categories" or something
   @override
   Widget build(BuildContext context) {
     return Scaffold(
