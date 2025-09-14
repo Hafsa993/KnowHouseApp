@@ -191,5 +191,5 @@ In the profile screen you can see your profile picture, you can change it and de
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/Ranklist.png">
 <img height="400" src="img/images for high fi/Options.png">
-<img height="400" src="img/images for high fi/Screenshot_1757811511">
+<img height="400" src="img/images for high fi/Screenshot_1757811511.png">
 </p>
