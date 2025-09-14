@@ -168,8 +168,8 @@ When a User completes a ToDo a small animation pops up.
 
 ### House ToDos
 House ToDos page is where all the ToDos of the household are stored. So the users ToDos as well as any that are assigned to another user, or unassigned. 
-
-A User can take over a toDo from another household member. 
+A ToDo is taken if it has been accepted by a user, it is "assigned to you" if the toDO has been assigned to you but you havent accepted it yet. If a todo is assigned to no one, "take on toDo" is displayed to encourage users to take on this toDo.
+A User can take over a toDo from another household member, that has been assigned that toDo but not yet accepted it. 
 
 The ToDos are clickable, in homeScreen, in myTodos and in HouseToDos. 
 
