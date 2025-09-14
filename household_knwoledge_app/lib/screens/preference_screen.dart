@@ -64,7 +64,7 @@ class _PreferencesScreenState extends State<PreferencesScreen> {
             ),
           ),
 
-        // Button to select< preferences
+        // Button to select preferences
         Padding(
           padding: const EdgeInsets.all(16),
           child: SizedBox(

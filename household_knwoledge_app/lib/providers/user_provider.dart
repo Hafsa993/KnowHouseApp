@@ -26,6 +26,7 @@ class UserProvider with ChangeNotifier {
   }
  
   Future<void> loadCurrentUser() async {
+    
    
      // Not signed in then..
      if (auth.FirebaseAuth.instance.currentUser == null) {
@@ -33,12 +34,19 @@ class UserProvider with ChangeNotifier {
     }
   
     // Fetch user's document from Firestore
+    try {
     final userDoc = await FirebaseFirestore.instance.collection('users').doc(auth.FirebaseAuth.instance.currentUser!.uid).get();
+    
     if (userDoc.exists) {
       _currentUser = User.fromMap(userDoc.data()!, userDoc.id);
     } else {
       // User document does not exist; handle accordingly
       _currentUser = null;
+    }
+    
+    } catch (e) {
+      debugPrint('Error loading current user: $e');
+      return;
     }
   }
 

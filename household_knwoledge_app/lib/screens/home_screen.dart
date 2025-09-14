@@ -268,7 +268,10 @@ class HomeScreen extends StatelessWidget {
                                                           ),
                                                           onPressed: () =>
                                                               _showAcceptDialog(context, task, taskProvider, currentUser),
-                                                          child: const Text('Accept'),
+                                                          child: Tooltip(
+                                                            message: 'Accept',
+                                                            child: const Icon(Icons.check, size: 22),
+                                                          ),
                                                         ),
                                                       ),
                                                       const SizedBox(width: 6),
@@ -286,7 +289,10 @@ class HomeScreen extends StatelessWidget {
                                                           ),
                                                           onPressed: () =>
                                                               _showDeclineDialog(context, task, taskProvider),
-                                                          child: const Text('Decline'),
+                                                          child: Tooltip(
+                                                            message: 'Decline',
+                                                            child: const Icon(Icons.close, size: 22),
+                                                          ),
                                                         ),
                                                       ),
                                                     ],

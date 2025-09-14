@@ -200,11 +200,11 @@ class ToDoListScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Flexible(
-                                  child: ElevatedButton(
+                                  child: ElevatedButton( 
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.white,
                                       backgroundColor: task.isAccepted ? Colors.grey : task.assignedTo == currentUser.username? 
-                                        const Color.fromARGB(255, 235, 75, 63) : (task.assignedTo == "" ? Color.fromARGB(255, 244, 146, 54) :  Colors.teal),
+                                         Color.fromARGB(255, 244, 146, 54)   : (task.assignedTo == "" ? const Color.fromARGB(255, 235, 75, 63):  Colors.teal),
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                       minimumSize: const Size(70, 40),
                                       shape: RoundedRectangleBorder(
@@ -213,8 +213,8 @@ class ToDoListScreen extends StatelessWidget {
                                     ),
                                     onPressed: () => task.isAccepted || task.assignedTo == currentUser.username ? null :  _showAcceptDialog(context, task, taskProvider, currentUser.username) ,
                                     child: task.isAccepted ? Text('ToDo is taken') : (( task.assignedTo == currentUser.username ? 
-                                      Text('ToDo is assigned to you') : (task.assignedTo == "" ? 
-                                      Text('Take on unassigned ToDo') : Text('Take over from ${task.assignedTo}')))),
+                                      Text('assigned to you') : (task.assignedTo == "" ? 
+                                      Text('Take on ToDo') : Text('Take over from ${task.assignedTo}', style: TextStyle(fontSize: 10),)))),
                                   ),
                                 ),
                               ],
