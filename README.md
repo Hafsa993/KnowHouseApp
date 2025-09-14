@@ -132,12 +132,12 @@ Core Functiionalities:
 ### MyTodos
 The user can navigate from one page to another with the menu.
 
-The myToDos page has the accepted, but not yet completed ToDos and also the completed ToDos in the last 30 days.
+The MyToDos page has the accepted, but not yet completed ToDos and also the completed ToDos in the last 30 days.
 When a User completes a ToDo a small animation pops up.
 
 <p align="left" width="100%">
-<img height="400" src="img/images for high fi/MyToDosLeer.png">
 <img height="400" src="img/images for high fi/myToDos.png">
+<img height="400" src="img/images for high fi/Screenshot_1757811490.png">
 <img height="400" src="img/images for high fi/Screenshot_1733313327.png">
 </p>
 
@@ -191,5 +191,5 @@ In the profile screen you can see your profile picture, you can change it and de
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/Ranklist.png">
 <img height="400" src="img/images for high fi/Options.png">
-<img height="400" src="img/images for high fi/Screenshot_1733316362.png">
+<img height="400" src="img/images for high fi/Screenshot_1757811511.png">
 </p>
