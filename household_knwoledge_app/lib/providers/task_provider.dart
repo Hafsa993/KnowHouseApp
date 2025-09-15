@@ -1,5 +1,3 @@
-// lib/providers/task_provider.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/task_model.dart';
@@ -123,7 +121,7 @@ class TaskProvider extends ChangeNotifier {
       rethrow;
     }
   }
-
+  // Method to remove a task
   Future<void> removeTask(String taskId) async {
     try {
       await FirebaseFirestore.instance.collection('tasks').doc(taskId).delete();

@@ -35,7 +35,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
     });
   }
 }
-
+  // Generates a secure random 6-letter family code
   String _generateSecureCode() {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final random = Random().nextInt(999999);
@@ -57,7 +57,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
     return result;
   }
 
-
+  // Method to create a new family
   Future<void> _createNewFamily() async {
     if (_familyNameController.text.trim().isEmpty) {
       setState(() {
@@ -109,6 +109,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
     }
   }
 
+  // Method to join an existing family
   Future<void> _joinFamily() async {
     
     final familyCode = _familyCodeController.text.trim().toUpperCase();
@@ -169,6 +170,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
     }
   }
 
+  // Navigate to Preferences Screen
   void _goToPreferences() {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final navigator = Navigator.of(context);

@@ -9,6 +9,7 @@ class TaskDescriptorProvider with ChangeNotifier{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Default templates for initializing a new family (possibly add this functionality in the future)
   static final List<TaskDescriptor> _defaultDescriptors = [
     
     TaskDescriptor(
@@ -69,7 +70,7 @@ class TaskDescriptorProvider with ChangeNotifier{
   ];
 
 
-    // Initialize family with default templates
+  // Initialize family with default templates (possibly add this functionality in the future)
   Future<void> initializeFamilyWithDefaults(String familyId) async {
     try {
       final existing = await _firestore
@@ -98,6 +99,7 @@ class TaskDescriptorProvider with ChangeNotifier{
       debugPrint('Error initializing default task descriptors: $e');
     }
   }
+  // Stream to fetch all task descriptors for a family
   Stream<List<TaskDescriptor>> getAllTaskDescriptors(String familyId) {
   return _firestore
         .collection('taskDescriptors')

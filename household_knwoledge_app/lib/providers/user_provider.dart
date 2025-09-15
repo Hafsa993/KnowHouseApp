@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProvider with ChangeNotifier {
-  User? _currentUser; // Your custom User model
+  User? _currentUser;
 
   User? get currentUser => _currentUser;
 

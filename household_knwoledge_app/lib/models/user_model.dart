@@ -68,6 +68,7 @@ class User {
 
 //functions for permissions
 
+  // Toggles camera permission for the user
   Future<void> toggleCameraPermissionForUser() async {
     cameraPermissionEnabled = !cameraPermissionEnabled;
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
@@ -75,6 +76,7 @@ class User {
     });
   }
 
+  // Toggles gallery permission for the user
   Future<void> toggleGalleryPermissionForUser() async{
     galleryPermissionEnabled = !galleryPermissionEnabled;
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
@@ -82,6 +84,7 @@ class User {
     });
   }
 
+  // Toggles geolocation permission for the user
   Future<void> toggleGeolocationPermissionForUser() async{
     geolocationPermissionEnabled = !geolocationPermissionEnabled;
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
@@ -89,14 +92,17 @@ class User {
     });
   }
 
+  // Toggles notifications permission for the user
   Future<void> toggleNotificationsEnabledForUser() async{
     notificationsEnabled = !notificationsEnabled;
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
       'notificationsEnabled': notificationsEnabled,
     });
   }  
+
 //functions to change fields in a User locally and on firebase as well
 
+  //adds points to a user
   Future<void> addPoints (int pointsToAdd) async {
     points += pointsToAdd;
     await FirebaseFirestore.instance.collection('users').doc(uid).update({
@@ -104,6 +110,7 @@ class User {
     });
   }
 
+  //updates role of a user
   Future<void> updateRole(String newRole) async {
     role = newRole;
      await FirebaseFirestore.instance.collection('users').doc(uid).update({
@@ -111,6 +118,7 @@ class User {
     });
   }
 
+  //updates profile pic of a user
   Future<void> updateProfilePic(String newPicPath) async {
     profilepath = newPicPath;
      await FirebaseFirestore.instance.collection('users').doc(uid).update({
@@ -118,6 +126,7 @@ class User {
     });
   }
 
+  //sets user preferences or updates them
   Future<void> setPreferences(List<String> newPreferences) async {
     preferences = newPreferences;
      await FirebaseFirestore.instance.collection('users').doc(uid).update({
@@ -125,6 +134,7 @@ class User {
     });
   }
 
+  //updates the contributions of a user
   Future<void> updateContributions(Map<String, int> newContributions) async {
     contributions = newContributions;
      await FirebaseFirestore.instance.collection('users').doc(uid).update({
