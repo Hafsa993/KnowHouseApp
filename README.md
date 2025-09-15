@@ -5,6 +5,35 @@ KnowHouse Mobile App for iOS and Android
 
 These instructions will help you download and run the project locally on your machine.
 
+### Organization
+
+├── KnowHouseApp/household_kn.../lib/                                      # Main application code
+
+│   ├── main.dart                   # App entry point with Firebase init and routing
+
+│   ├── firebase_options.dart     # Firebase configuration
+
+│   ├── signin_page.dart          # Authentication screen
+
+│   ├── models/                   # Data models (e.g., User, Task)
+
+│   ├── providers/                # State management (e.g., UserProvider, TaskProvider)
+
+│   ├── screens/                  # UI screens (e.g., HomeScreen, RankingScreen)
+
+│   ├── widgets/                  # Reusable UI components (e.g., ToDoForm)
+
+│   └── assets/                   # Static assets (images, fonts)
+
+├── test/                         # Unit and widget tests
+
+│   ├── models/                   # Tests for data models
+
+│   ├── providers/                # Tests for providers
+
+│   └── flutter_test_config.dart  # Test configuration
+
+
 ### Prerequisites
 
 - **Flutter SDK:**  
@@ -95,8 +124,8 @@ From the project's root directory, run:
     
 ## About The App
 
-KnowHouse is a mobile app designed for households and families to manage shared tasks and instructions in a collaborative, gamified, and user-friendly way.
-
+KnowHouse is a mobile app for households and families to manage shared tasks and instructions together. Users can create, assign, and track tasks, earn points for completed work, and view a family leaderboard to encourage participation.
+ 
 ### Core Features
 
 - Real-Time Collaboration:
@@ -132,7 +161,8 @@ Clean, responsive design with smooth navigation and engaging animations for a de
 - Shared household calendar.
 - Shared list of instructions (e.g., how to do laundry), with add/edit/delete.
 - Leaderboard, user profiles, and customizable preferences.
-  
+
+
 ### Demo Video
 Register Flow and App Demo:
 (Family code is hidden for security reasons)
