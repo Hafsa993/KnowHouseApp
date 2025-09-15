@@ -93,26 +93,50 @@ From the project's root directory, run:
   **Install on your device:**
 
     flutter install
+    
 ## About The App
 
-The KnowHouse app is supposed to be used in a household/family
-Users can join or create a Household group. 
+KnowHouse is a mobile app designed for households and families to manage shared tasks and instructions in a collaborative, gamified, and user-friendly way.
 
-Core Functiionalities:
+### Core Features
 
-  One can assign ToDos to a particular other user (in the same household) or no one (meaning this toDo has to be done, so someone should take it on)
-  
-  For each ToDo a reward in points, A category, difficulty, a name and a description have to be specified. 
-  
-  Users can earn points by completing ToDos.
-  
-  Shared hosehold calendar.
-  
-  Within a household users have a shared list of instructions, for ex. on how to do laundry etc.  Users can add/edit and delete these instructions.
+- Real-Time Collaboration:
+All household members see updates instantly—tasks, instructions, and points sync in real time across devices using Firebase.
+
+- Smart Task Assignment:
+Assign ToDos to specific users or leave them open for anyone to claim. Intelligent sorting highlights tasks that match user preferences.
+
+- Gamified Progress & Leaderboard:
+Earn points for completing tasks, climb the family leaderboard, and motivate everyone with friendly competition.
+
+- Shared Household Calendar:
+Visualize all ToDos and deadlines in a unified calendar view, making planning and coordination effortless.
+
+- Dynamic Instructions Library:
+Create, edit, and share household instructions (like “how to do laundry”)—searchable and filterable by category.
+
+- Personalized Experience:
+Users can set task preferences, customize profiles, and receive tailored task suggestions.
+
+- Secure Authentication:
+Robust email/password sign-in with Firebase Authentication ensures privacy and data security.
+
+- Modern, Intuitive UI:
+Clean, responsive design with smooth navigation and engaging animations for a delightful user experience.
+
+### Functionality
+
+- Join or create a household group.
+- Assign ToDos to users or leave unassigned for anyone to take.
+- Specify reward points, category, difficulty, name, and description for each ToDo.
+- Earn points by completing ToDos.
+- Shared household calendar.
+- Shared list of instructions (e.g., how to do laundry), with add/edit/delete.
+- Leaderboard, user profiles, and customizable preferences.
   
 ### Demo Video
-Here are demos of the register flow and the app more broadly:
-In the Registering demo the familycode is not displayed for security reasons.
+Register Flow and App Demo:
+(Family code is hidden for security reasons)
 
 
 
@@ -129,7 +153,7 @@ https://github.com/user-attachments/assets/a67d2d62-c475-40e8-a109-8530854366bd
 
 
 ### Sign In & Registration
-Users can register or sign in if they have an account with an email and password. After this in the registration flow, the user can join a family or create a new one and then specify their preferred household task categories.
+Users can easily register or sign in with their email and password. During registration, users can join an existing family group or create a new one, and then specify their preferred household task categories for a personalized experience.
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/signIn.png">
@@ -138,13 +162,11 @@ Users can register or sign in if they have an account with an email and password
 </p>
 
 ### Home Page
-  On the upper half of the home page, there is a leaderboard showing top 3 users with most points on a podium. The bottom half of the home page has Open ToDos: which is the toDos that have been assigned to the User but not yet accepted by them.
-  
-  The User can click on a toDo to see description as well and just more info about ToDo. Here the user can see the deadline, reward, category, name etc. of the toDo:
-  
-  The User can accept or decline, in each case a pop up pops up making sure the user really wanted this as the action cannot be reversed. For declining a toDo the User has to write a reason, else it will not work.
-  
-  When a User accepts a task, a small notification shows up at the bottom of the screen that says, accepted ToDo has now been move to myToDos so User knows.
+The Home Page features a dynamic leaderboard at the top, showcasing the top three users by points. Below, users see their open ToDos—tasks assigned to them but not yet accepted.
+Clicking a ToDo reveals detailed information, including deadline, reward, category, and description.
+Users can accept or decline tasks, with confirmation dialogs to prevent accidental actions. Declining requires a reason.
+Upon accepting a task, users receive a notification confirming the task has moved to their "My ToDos" list.
+
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/HomeScreen.png">
 <img height="400" src="img/images for high fi/DisplayToDo.png">
@@ -152,14 +174,18 @@ Users can register or sign in if they have an account with an email and password
 <img height="400" src="img/images for high fi/sureDeclineToDo.png">
 <img height="400" src="img/images for high fi/declineReason.png">
 <img height="400" src="img/images for high fi/Screenshot_1733313265.png">
+</p>
+
+### Menu
+Navigate easily between pages using the menu.
+
+<p align="left" width="100%">
 <img height="400" src="img/images for high fi/Screenshot_1733245428.png">
 </p>
 
 ### My Todos
-The user can navigate from one page to another with the menu.
-
-The MyToDos page has the accepted, but not yet completed ToDos and also the completed ToDos in the last 30 days.
-When a User completes a ToDo a small animation pops up.
+The My ToDos page displays tasks you have accepted but not yet completed, as well as those completed in the last 30 days.
+Completing a ToDo triggers a small celebratory animation for positive feedback.
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/myToDos.png">
@@ -168,15 +194,16 @@ When a User completes a ToDo a small animation pops up.
 </p>
 
 ### House ToDos
-House ToDos page is where all the ToDos of the household are stored. So the users ToDos as well as any that are assigned to another user, or unassigned. 
-A ToDo is taken if it has been accepted by a user, it is "assigned to you" if the toDO has been assigned to you but you havent accepted it yet. If a todo is assigned to no one, "take on toDo" is displayed to encourage users to take on this toDo.
-A User can take over a toDo from another household member, that has been assigned that toDo but not yet accepted it. 
+The House ToDos page lists all tasks in the household—assigned, unassigned, or assigned to others.
 
-The ToDos are clickable, in homeScreen, in myTodos and in HouseToDos. 
-
-Also in the homescreen and in my ToDos there is an add ToDo button where you can add a ToDo, you have to specify the category, which user assign to can be no one or a particular user.
-
-Here the Users that have the category in their preferences are displayed at the top and are marked appropriately. Then after you have to specify title, reward, due date, difficulty, description.
+- ToDo is taken: Already accepted by a user.
+- Assigned to you: Assigned but not yet accepted by you.
+- Take on ToDo: Unassigned tasks, open for anyone to claim.
+- Users can also take over tasks from other members if they haven't been accepted yet.
+  
+ ToDos are clickable throughout the app for detailed views.
+Adding a ToDo requires specifying category, assignee (or leave unassigned), title, reward, due date, difficulty, and description.
+Users with matching category preferences are highlighted for quick assignment.
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/HouseToDos.png">
@@ -186,9 +213,10 @@ Here the Users that have the category in their preferences are displayed at the 
 
 ### Instructions
 
-In the Instructions page are instructions on how to do stuff, as can be seen in the pictures. One can filter by category or use the searchbar to search for sth. 
-
-The Instructions are clickable, clicking on an instruction displays it. This display shows the category etc. and the description and also here you can see the delete and edit buttons. You can see in the last picture how it looks when you edit a description.
+The Instructions page provides a shared library of household instructions (e.g., how to do laundry).
+Users can filter by category or search for specific instructions.
+Instructions are clickable for detailed viewing, editing, or deletion.
+The edit screen allows users to update descriptions and categories with ease.
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/InstructionsA2.png">
@@ -198,7 +226,10 @@ The Instructions are clickable, clicking on an instruction displays it. This dis
 
 ### Calendar
 
-The calendar page is a calendar where for each date, by clicking on it you can see the household ToDos for that day. There is a button for adding ToDos at the bottom as well. The blue points indicate on which date how many ToDos are due (so you see before clicking). 
+The Calendar page displays all household ToDos by date.
+Clicking a date shows the tasks due that day.
+Blue dots indicate the number of ToDos per day at a glance.
+A button at the bottom allows users to quickly add new ToDos.
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/Calendar.png">
@@ -207,11 +238,10 @@ The calendar page is a calendar where for each date, by clicking on it you can s
 
 ### Ranklist, Options and Profile
 
-The Ranklist Screen shows the ranklist of Users, ordered by points. 
+- Ranklist: View all users ranked by points.
+- Options: Manage permissions and edit task preferences.
+- Profile: View and update your profile picture (via camera or gallery, based on permissions), see your family id, preferred task categories, task distribution, and access sign out or delete account options.
 
-The Options Screen is where the user can enable/disable permissions and edit preferences.
-
-In the profile screen you can see your profile picture, and change it by depending on your permissions taking a new picture with the camera or selecting one from your gallery. The distribution of which kind of tasks you did and the sign out and delete account buttons are at the bottom of the page as shown in picture below:
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/Ranklist.png">
