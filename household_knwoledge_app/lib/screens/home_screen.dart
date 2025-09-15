@@ -399,13 +399,14 @@ class HomeScreen extends StatelessWidget {
       ],
     );
   }
+  
   // Helper to show accept dialog
   void _showAcceptDialog(BuildContext context, Task task, TaskProvider taskProvider, User currentUser) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Are you sure you want to accept this toDo?"),
+          title: const Text("Are you sure you want to accept this ToDo?"),
           content: const Text("This is a non-reversible action.", style: TextStyle(fontWeight: FontWeight.bold ),),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
@@ -474,7 +475,7 @@ class HomeScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Are you sure you want to decline this toDo?"),
+          title: const Text("Are you sure you want to decline this ToDo?"),
           content: const Text("This is a non-reversible action.", style: TextStyle(fontWeight: FontWeight.bold ),),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
