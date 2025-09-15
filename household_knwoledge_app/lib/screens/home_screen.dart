@@ -399,7 +399,7 @@ class HomeScreen extends StatelessWidget {
       ],
     );
   }
-  
+
   // Helper to show accept dialog
   void _showAcceptDialog(BuildContext context, Task task, TaskProvider taskProvider, User currentUser) {
     showDialog(
@@ -517,7 +517,7 @@ class HomeScreen extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text("Please provide a reason for declining this toDo."),
+              const Text("Please provide a reason for declining this ToDO."),
               const SizedBox(height: 8),
               TextField(
                 controller: reasoningController,
