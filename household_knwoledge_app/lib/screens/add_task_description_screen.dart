@@ -43,25 +43,104 @@ class AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
     }
   }
 
-  void _saveTaskDescriptor(User currentUser) {
-    if (_formKey.currentState!.validate() && _selectedIcon != null) {
+  Future<void> _saveTaskDescriptor(User currentUser) async {
+    
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    if (_selectedIcon == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an icon for the task')),
+        );
+        return;
+    }
+
+    if (currentUser.familyId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error: No family ID found. Please try logging in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_selectedIcon == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an icon for the task')),
+      );
+      return;
+    }
+
+    if (currentUser.familyId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error: No family ID found. Please try logging in again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+  // Show loading state
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Saving instruction...'),
+          ],
+        ),
+      ),
+    );
+
+    try {
       final newDescriptor = TaskDescriptor(
         id: null,
-        title: _titleController.text,
-        instructions: _instructionsController.text,
+        title: _titleController.text.trim(),
+        instructions: _instructionsController.text.trim(),
         category: _category!,
         icon: _selectedIcon!,
       );
 
-      Provider.of<TaskDescriptorProvider>(context, listen: false)
+      await Provider.of<TaskDescriptorProvider>(context, listen: false)
           .addTaskDescriptor(newDescriptor, currentUser.familyId!);
 
-      Navigator.of(context).pop(); // Navigate back after saving
-    } else if (_selectedIcon == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select an icon for the task')),
-      );
-    }
+      // Close loading dialog
+      if (mounted) Navigator.of(context).pop();
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Instruction saved successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        
+        // Navigate back
+        Navigator.of(context).pop();
+      }
+
+    } catch (e) {
+      // Close loading dialog
+      if (mounted) Navigator.of(context).pop();
+      
+      // Show error message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error saving instruction: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } 
   }
 
   @override
@@ -225,7 +304,17 @@ class AddTaskDescriptorScreenState extends State<AddTaskDescriptorScreen> {
           child: ElevatedButton.icon(
             style: ButtonStyle(backgroundColor: WidgetStatePropertyAll<Color>(Color.fromARGB(255, 21, 208, 255))),
                     onPressed: () {
-                      _saveTaskDescriptor(Provider.of<UserProvider>(context, listen: false).currentUser!);
+                      final currentUser = Provider.of<UserProvider>(context, listen: false).currentUser;
+                      if (currentUser != null) {
+                        _saveTaskDescriptor(currentUser);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Error: Please log in again'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
                     },
                     label: Text('Save Instruction', style: TextStyle(fontSize: 20, color: Colors.white)),
                     icon: const Icon(Icons.add, size: 20, color: Colors.white,),

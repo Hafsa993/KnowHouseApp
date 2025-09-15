@@ -19,7 +19,30 @@ class CalendarScreen extends StatelessWidget {
     // Access TaskProvider without listening to changes directly, so listen false
     TaskProvider taskProvider = Provider.of<TaskProvider>(context, listen: false);
     final userProvider = Provider.of<UserProvider>(context);
-    User currentUser = userProvider.currentUser!;
+    User? currentUser = userProvider.currentUser;
+
+    if (currentUser == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+          title: const Text('Calendar'),
+        ),
+        drawer: const MenuDrawer(),
+        body: const Center(child: Text('User not found. Please log in again.')),
+      );
+    }
+    
+    if(currentUser.familyId == null) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 226, 224, 224),
+          title: const Text('Calendar'),
+        ),
+        drawer: const MenuDrawer(),
+        body: const Center(child: Text('No family assigned to this user. Please join or create a family.')),
+      );
+    }
+
     return Scaffold(
       //backgroundColor: Color.fromARGB(255, 220, 227, 230),
       appBar: AppBar(
@@ -35,7 +58,7 @@ class CalendarScreen extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               // While the stream is loading, show a loading indicator
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
 
             } else if (snapshot.hasError) {
               // If there's an error, display it
@@ -49,7 +72,7 @@ class CalendarScreen extends StatelessWidget {
 
               return CalendarCarousel(
                 todayButtonColor: Colors.blue,
-                headerTextStyle: TextStyle(color: Colors.black, fontSize: 20),
+                headerTextStyle: const TextStyle(color: Colors.black, fontSize: 20),
                 iconColor: Colors.black,
                 onDayPressed: (date, events) {
                   // Find tasks for the selected date

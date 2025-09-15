@@ -7,8 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
-import 'package:fl_chart/fl_chart.dart';
-import '../models/task_descriptions_model.dart';
 import '../providers/user_provider.dart';
 import '../models/user_model.dart';
 import '../widgets/menu_drawer.dart';
@@ -52,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     final XFile? image = await _picker.pickImage(source: source);
-    if (!mounted) return; // check if widget is still mounted
+    if (!mounted) return; // check if widget is still mounted before context use
 
     if (image != null) {
 
@@ -63,7 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Upload to Firebase
       final downloadUrl = await Provider.of<UserProvider>(context, listen: false)
           .uploadProfilePicture(image.path);
-      
+      //snackbar to show success or failure
       if (!mounted) return;
       ScaffoldMessenger.of(context).clearSnackBars();
 
@@ -80,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // Exit Button
+  // Exit Button confirmation dialog
   Future<void> _showExitConfirm(BuildContext parentContext) async {
   showDialog(
     context: parentContext,
@@ -113,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       },
     );
   }
-
+  // Password dialog for re-authentication to delete account
   Future<String?> _showPasswordDialog(BuildContext context) async {
     final TextEditingController passwordController = TextEditingController();
     String? password;
@@ -172,7 +170,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return password;
   }
-  // Delete Account
+  
+  // Delete Account confirmation dialog
   Future<void> _showDeleteConfirm(BuildContext parentContext) async {
     showDialog(
       context: parentContext,
@@ -239,11 +238,11 @@ Future<void> _deleteUserAccount(BuildContext context) async {
     
     final credential = auth.EmailAuthProvider.credential(
       email: auth.FirebaseAuth.instance.currentUser!.email!,
-      password: password, // You'll need to prompt user for their password
+      password: password,
     );
     await auth.FirebaseAuth.instance.currentUser!.reauthenticateWithCredential(credential);
 
-   // change user tasks (if any exist)
+   // change user tasks to be unassigned as in assigned to no one
     final userTasks = await FirebaseFirestore.instance
         .collection('tasks')
         .where('assignedTo', isEqualTo: userId)
@@ -261,13 +260,13 @@ Future<void> _deleteUserAccount(BuildContext context) async {
 
    
 
-    // Clear local data
+    // Clear user data
     final prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // Clear all data
+    await prefs.clear();
     userProvider.clearUser();
 
 
-    // Delete Firebase Auth account (this must be last!)
+    // Delete Firebase Auth account
     await auth.FirebaseAuth.instance.currentUser!.delete();
 
     // Close loading dialog
@@ -321,7 +320,7 @@ Future<void> _deleteUserAccount(BuildContext context) async {
       }
     }
   } 
-  
+    // Sum of contributions calculation method
     double sumOfContributions(BuildContext context){
       final userProvider = Provider.of<UserProvider>(context);
       if (userProvider.currentUser == null) return 0.0;
@@ -345,7 +344,7 @@ Future<void> _deleteUserAccount(BuildContext context) async {
                 onPressed: () {
                   Navigator.of(context).pop();
 
-                   try {
+                  try {
                     _pickImage(ImageSource.camera);
                   } on PlatformException catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -355,9 +354,11 @@ Future<void> _deleteUserAccount(BuildContext context) async {
                 },
                 child: const Text("Camera"),
               ),
+
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+                  
                   try {
                     _pickImage(ImageSource.gallery);
                   } on PlatformException catch (e) {
@@ -374,7 +375,7 @@ Future<void> _deleteUserAccount(BuildContext context) async {
     );
   }
 
-
+  // Copy family ID to clipboard
   void _copyFamilyId(String familyId) {
     Clipboard.setData(ClipboardData(text: familyId));
     
@@ -428,6 +429,7 @@ Future<void> _deleteUserAccount(BuildContext context) async {
 
                 const SizedBox(height: 24),
 
+                //family id + copy button
                 UserInfoWidget(
                   user: currentUser,
                   onCopyFamilyId: () => _copyFamilyId(currentUser.familyId!),
@@ -435,14 +437,16 @@ Future<void> _deleteUserAccount(BuildContext context) async {
 
                 const SizedBox(height: 32),
 
+                // Preferences
                 PreferencesWidget(preferences: currentUser.preferences),
 
                 const SizedBox(height: 32),
-
+                // Contributions Chart
                 ContributionsChartWidget(contributions: currentUser.contributions),
 
                 const SizedBox(height: 32),
 
+                //Exit and Delete Account Buttons
                 ActionButtonsWidget(
                   onExitAccount: () => _showExitConfirm(context),
                   onDeleteAccount: () => _showDeleteConfirm(context),

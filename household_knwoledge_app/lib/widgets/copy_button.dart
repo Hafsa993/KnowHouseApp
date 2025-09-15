@@ -13,7 +13,7 @@ class CopyButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: Colors.blue.withOpacity(0.1),
+          color: Colors.blue.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(4),
         ),
         child: const Icon(

@@ -27,6 +27,15 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
     super.dispose();
   }
 
+  void _setLoadingState(bool loading, [String error = '']) {
+  if (mounted) {
+    setState(() {
+      isLoading = loading;
+      errorMessage = error;
+    });
+  }
+}
+  // Generates a secure random 6-letter family code
   String _generateSecureCode() {
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final random = Random().nextInt(999999);
@@ -48,7 +57,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
     return result;
   }
 
-
+  // Method to create a new family
   Future<void> _createNewFamily() async {
     if (_familyNameController.text.trim().isEmpty) {
       setState(() {
@@ -57,10 +66,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
       return;
     }
 
-    setState(() {
-      isLoading = true;
-      errorMessage = '';
-    });
+    _setLoadingState( true, '');  
 
     try {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -99,13 +105,11 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
       _goToPreferences();
       
     } catch (e) {
-      setState(() {
-        errorMessage = 'Error creating family: ${e.toString()}';
-        isLoading = false;
-      });
+      _setLoadingState( false, 'Error creating family: ${e.toString()}');
     }
   }
 
+  // Method to join an existing family
   Future<void> _joinFamily() async {
     
     final familyCode = _familyCodeController.text.trim().toUpperCase();
@@ -117,10 +121,8 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
       return;
     }
 
-    setState(() {
-      isLoading = true;
-      errorMessage = '';
-    });
+    
+    _setLoadingState( true, '');
 
     try {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -137,10 +139,7 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
         .get();
 
       if (existingUsers.docs.isEmpty) {
-        setState(() {
-          errorMessage = 'Family code "$familyCode" not found. Please check and try again.';
-          isLoading = false;
-        });
+        _setLoadingState( false, 'Family code "$familyCode" not found. Please check and try again.');
         return;
       }
       // Update user with family ID
@@ -167,13 +166,11 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
       _goToPreferences();
       
     } catch (e) {
-      setState(() {
-        errorMessage = 'Error joining family: ${e.toString()}';
-        isLoading = false;
-      });
+      _setLoadingState( false, 'Error joining family: ${e.toString()}');
     }
   }
 
+  // Navigate to Preferences Screen
   void _goToPreferences() {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final navigator = Navigator.of(context);

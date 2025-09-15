@@ -37,9 +37,11 @@ class HomeScreen extends StatelessWidget {
                             ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
         } else if (completedSnapshot.hasError) {
+          debugPrint(completedSnapshot.error.toString());
                           return Center(
                               child:
-                                  Text('Error: ${completedSnapshot.error.toString()}'));
+                                  Text('Error: loading tasks'));
+                                  
         } else if (!completedSnapshot.hasData ||
                             completedSnapshot.data!.isEmpty) {
           return const Center(
@@ -266,7 +268,10 @@ class HomeScreen extends StatelessWidget {
                                                           ),
                                                           onPressed: () =>
                                                               _showAcceptDialog(context, task, taskProvider, currentUser),
-                                                          child: const Text('Accept'),
+                                                          child: Tooltip(
+                                                            message: 'Accept',
+                                                            child: const Icon(Icons.check, size: 22),
+                                                          ),
                                                         ),
                                                       ),
                                                       const SizedBox(width: 6),
@@ -284,7 +289,10 @@ class HomeScreen extends StatelessWidget {
                                                           ),
                                                           onPressed: () =>
                                                               _showDeclineDialog(context, task, taskProvider),
-                                                          child: const Text('Decline'),
+                                                          child: Tooltip(
+                                                            message: 'Decline',
+                                                            child: const Icon(Icons.close, size: 22),
+                                                          ),
                                                         ),
                                                       ),
                                                     ],
@@ -391,27 +399,58 @@ class HomeScreen extends StatelessWidget {
       ],
     );
   }
+
   // Helper to show accept dialog
   void _showAcceptDialog(BuildContext context, Task task, TaskProvider taskProvider, User currentUser) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Are you sure you want to accept this toDo?"),
+          title: const Text("Are you sure you want to accept this ToDo?"),
           content: const Text("This is a non-reversible action.", style: TextStyle(fontWeight: FontWeight.bold ),),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
-              onPressed: () {
-
-                taskProvider.acceptTask(task.id, currentUser.username);
+              onPressed: () async {
                 Navigator.pop(context);
-                //show message
-                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                  content: Text('accepted ToDo has been moved to My ToDos'),
-                                   backgroundColor: const Color.fromARGB(255, 3, 125, 3),
-                                ));
+
+              //show loading indicator
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Row(
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      SizedBox(width: 16),
+                      Text('Accepting task...'),
+                    ],
+                  ),
+                ),
+              );
+                try{
+                  await taskProvider.acceptTask(task.id, currentUser.username);
+
+                  if(context.mounted){ 
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                      content: Text('accepted ToDo has been moved to My ToDos'),
+                        backgroundColor: const Color.fromARGB(255, 3, 125, 3),
+                    ));
+                  }
+                }catch(e){
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error accepting task: $e'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
               },
               style: TextButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -436,7 +475,7 @@ class HomeScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Are you sure you want to decline this toDo?"),
+          title: const Text("Are you sure you want to decline this ToDo?"),
           content: const Text("This is a non-reversible action.", style: TextStyle(fontWeight: FontWeight.bold ),),
           actionsAlignment: MainAxisAlignment.center,
           actions: [
@@ -478,7 +517,7 @@ class HomeScreen extends StatelessWidget {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text("Please provide a reason for declining this toDo."),
+              const Text("Please provide a reason for declining this ToDo."),
               const SizedBox(height: 8),
               TextField(
                 controller: reasoningController,

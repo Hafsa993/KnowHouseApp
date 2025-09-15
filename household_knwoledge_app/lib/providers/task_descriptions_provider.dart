@@ -9,6 +9,7 @@ class TaskDescriptorProvider with ChangeNotifier{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Default templates for initializing a new family (possibly add this functionality in the future)
   static final List<TaskDescriptor> _defaultDescriptors = [
     
     TaskDescriptor(
@@ -69,7 +70,7 @@ class TaskDescriptorProvider with ChangeNotifier{
   ];
 
 
-    // Initialize family with default templates
+  // Initialize family with default templates (possibly add this functionality in the future)
   Future<void> initializeFamilyWithDefaults(String familyId) async {
     try {
       final existing = await _firestore
@@ -93,12 +94,12 @@ class TaskDescriptorProvider with ChangeNotifier{
         }
 
         await batch.commit();
-        //debugPrint('Initialized family with ${_defaultDescriptors.length} default descriptors');
       }
     } catch (e) {
-      //debugPrint('Error initializing family defaults: $e');
+      debugPrint('Error initializing default task descriptors: $e');
     }
   }
+  // Stream to fetch all task descriptors for a family
   Stream<List<TaskDescriptor>> getAllTaskDescriptors(String familyId) {
   return _firestore
         .collection('taskDescriptors')
@@ -125,18 +126,21 @@ class TaskDescriptorProvider with ChangeNotifier{
 
   // Method to add a new task descriptor
   Future<void> addTaskDescriptor(TaskDescriptor descriptor, String familyId) async {
-    final data = descriptor.toMap();
-    data['familyId'] = familyId;
-    data['createdBy'] = _auth.currentUser?.uid;
-    data['createdAt'] = FieldValue.serverTimestamp();
-    data['isTemplate'] = false; // User-created content
-    
+    try {
+
+      final data = descriptor.toMap();
+      data['familyId'] = familyId;
+      data['createdBy'] = _auth.currentUser?.uid;
+      data['createdAt'] = FieldValue.serverTimestamp();
+      data['isTemplate'] = false; // User-created content
+
     final docRef = await _firestore.collection('taskDescriptors').add(data);
-  
-    // Update the descriptor object with the Firebase document ID
     descriptor.id = docRef.id;
-    notifyListeners();
+
+    } catch (e) {
+      debugPrint('Error adding task descriptor: $e');
   }
+}
 
   // Method to edit a task descriptor
   Future<void> editTaskDescriptor(
@@ -154,13 +158,11 @@ class TaskDescriptorProvider with ChangeNotifier{
       'updatedAt': FieldValue.serverTimestamp(),
       'updatedBy': _auth.currentUser?.uid,
     });
-    notifyListeners();
   }
 
   // Method to remove a task descriptor
   Future<void> removeTaskDescriptor(String descriptorId) async {
     await _firestore.collection('taskDescriptors').doc(descriptorId).delete();
-    notifyListeners();
   }
 
   // Get count of descriptors for a family

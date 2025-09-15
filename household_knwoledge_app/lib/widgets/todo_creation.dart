@@ -346,6 +346,7 @@ class _ToDoFormState extends State<ToDoForm> {
                   ),
                 );
               }),
+              
               DropdownMenuItem<String>(
                 value: '',
                 child: Padding(
@@ -366,7 +367,7 @@ class _ToDoFormState extends State<ToDoForm> {
                 ),
               ),
             ],
-            // Customize the displayed item when collapsed so that prefer this doesnt peek outside
+            // Customize the displayed item when collapsed so that prefer
             selectedItemBuilder: (BuildContext context) {
               return [
                 ...sortedUsers.map((User user) {

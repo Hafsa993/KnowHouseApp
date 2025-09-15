@@ -146,7 +146,7 @@ Color categoryColor(String category){
   }
   return Colors.blue; // default Cleaning
 }
-
+// List of predefined categories
 final categories = <String>[
   "Cooking",
   "Cleaning", 
@@ -157,7 +157,7 @@ final categories = <String>[
   "Maintenance",
   "Other"
 ];
-
+// List of selectable categories including "All Categories" for filtering
 final selectableCategories = <String>[
   "Cooking",
   "Cleaning",

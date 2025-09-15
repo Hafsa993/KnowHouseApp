@@ -13,9 +13,15 @@ import 'package:household_knwoledge_app/signin_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
+  try {
+    await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  } catch (e) {
+    // Handle error, e.g., show error screen
+    debugPrint('Firebase initialization error: $e');
+  }
+
   runApp(
     MultiProvider(
       providers: [

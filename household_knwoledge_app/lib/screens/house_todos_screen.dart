@@ -15,22 +15,66 @@ class ToDoListScreen extends StatelessWidget {
     void _showAcceptDialog(BuildContext context, Task task, TaskProvider taskProvider, String name) {
       showDialog(
         context: context,
-        builder: (context) {
+        builder: (BuildContext dialogContext) {
           return AlertDialog(
              actionsAlignment: MainAxisAlignment.center,title: const Text("Are you sure you want to take over this ToDo?"),
             content: const Text("This is a non-reversible action."),
             actions: [
               TextButton(
-                onPressed: () {
-                  taskProvider.takeOverTask(task.id, name);
-                 
-                  Navigator.pop(context);
+                onPressed: () async {
+                  Navigator.of(dialogContext).pop();
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                  content: Text('accepted ToDo has been moved to My ToDos'),
-                                  backgroundColor: const Color.fromARGB(255, 3, 125, 3),
-                                  
-                                ));
+                    const SnackBar(
+                      content: Row(
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Text('Taking over task...'),
+                        ],
+                      ),
+                      duration: Duration(seconds: 2),
+                      backgroundColor: Colors.blue,
+                    ),
+                  );
+                  
+                  try {
+
+                    await taskProvider.takeOverTask(task.id, name);
+                    
+                    if (context.mounted) {
+                      // Clear loading snackbar
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      
+                      // Show success message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Task taken over successfully!'),
+                          backgroundColor: Color.fromARGB(255, 3, 125, 3),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Error taking over task: $e'),
+                          backgroundColor: Colors.red,
+                          duration: const Duration(seconds: 3),
+                        ),
+                      );
+                    }
+                  }
                 },
                 style: TextButton.styleFrom(
                     foregroundColor: Colors.white,
@@ -156,11 +200,11 @@ class ToDoListScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Flexible(
-                                  child: ElevatedButton(
+                                  child: ElevatedButton( 
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: Colors.white,
                                       backgroundColor: task.isAccepted ? Colors.grey : task.assignedTo == currentUser.username? 
-                                        const Color.fromARGB(255, 235, 75, 63) : (task.assignedTo == "" ? Color.fromARGB(255, 244, 146, 54) :  Colors.teal),
+                                         Color.fromARGB(255, 244, 146, 54)   : (task.assignedTo == "" ? const Color.fromARGB(255, 235, 75, 63):  Colors.teal),
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                       minimumSize: const Size(70, 40),
                                       shape: RoundedRectangleBorder(
@@ -169,8 +213,8 @@ class ToDoListScreen extends StatelessWidget {
                                     ),
                                     onPressed: () => task.isAccepted || task.assignedTo == currentUser.username ? null :  _showAcceptDialog(context, task, taskProvider, currentUser.username) ,
                                     child: task.isAccepted ? Text('ToDo is taken') : (( task.assignedTo == currentUser.username ? 
-                                      Text('ToDo is assigned to you') : (task.assignedTo == "" ? 
-                                      Text('Take on unassigned ToDo') : Text('Take over from ${task.assignedTo}')))),
+                                      Text('assigned to you') : (task.assignedTo == "" ? 
+                                      Text('Take on ToDo') : Text('Take over from ${task.assignedTo}', style: TextStyle(fontSize: 10),)))),
                                   ),
                                 ),
                               ],

@@ -118,8 +118,7 @@ class SignInPageState extends State<SignInPage> {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setBool('isLoggedIn', true);
         if (!mounted) return;
-        //Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
-       
+      
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

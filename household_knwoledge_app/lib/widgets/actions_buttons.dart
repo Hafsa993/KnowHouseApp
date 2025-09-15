@@ -5,7 +5,7 @@ class ActionButtonsWidget extends StatelessWidget {
   final VoidCallback onExitAccount;
   final VoidCallback onDeleteAccount;
 
-  const ActionButtonsWidget({
+  const ActionButtonsWidget({super.key, 
     required this.onExitAccount,
     required this.onDeleteAccount,
   });

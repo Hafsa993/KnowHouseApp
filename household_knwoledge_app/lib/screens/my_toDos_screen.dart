@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:household_knwoledge_app/providers/user_provider.dart';
@@ -47,282 +48,367 @@ class MyTasksScreen extends StatelessWidget {
         child: Column(
           children: [
             // Tasks To-Do Section
-            Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-      BoxShadow(
-        color: Colors.grey.withValues(),
-        //spreadRadius: 5,
-        blurRadius: 5,
-        offset: Offset(0, 3), // changes position of shadow
-      ),
-    ],
-                borderRadius: BorderRadius.all(Radius.circular(50)),
-                //color: const Color.fromARGB(255, 255, 255, 255), 
-                color: Theme.of(context).primaryColorLight,
-                      /*
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter, 
-                        end: Alignment.topCenter, 
-                        colors: [Colors.blue, Colors.white],
-                      ),
-                      */
-                    ),
-              height: 100,
-              child: Stack(
-                    children: [
-                      Positioned(
-                        top:10,
-                        left: 10,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
-                              },
-                              child: CircleAvatar(
-                                radius: 40,
-                                backgroundImage: userProvider.getProfileOfCurrUser(),
-                              ),
-                            ),
-                            SizedBox(width: 10,),
-              
-                            Column(
-                              children: [
-                                SizedBox(height: 10,),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
-                                  },
-                                  child: Text(currentUser.username, style: TextStyle(color: Colors.black, fontSize: 24))
-                                ),
-                                //SizedBox(height: 5,),
-                                Text('${currentUser.points} points', style: TextStyle(color: Colors.green, fontSize: 18)),
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-            ),
+            _buildUserProfileSection(context, currentUser, userProvider),
+
             SizedBox(height: 50,),
+
             Text(
               "Accepted but not completed ToDos:",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
             ),
             SizedBox(height: 8),
-            Flexible(
-              child: StreamBuilder<List<Task>>(
-                stream: pendingTasksStream,
-                builder: (context, completedSnapshot) {
-                  if (completedSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (completedSnapshot.hasError) {
-                    return Center(
-                        child:
-                            Text('Error: ${completedSnapshot.error.toString()}'));
-                  } else if (!completedSnapshot.hasData ||
-                      completedSnapshot.data!.isEmpty) {
-                    return const Center(
-                        child: Text('No ToDos open from the last 30 days'));
-                  }
 
-                  List<Task> pendingTasks = completedSnapshot.data!;
-                  return Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 226, 223, 231),
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(), // Shadow color
-                          blurRadius: 8.0, // Spread of the shadow
-                          offset: const Offset(0, 4), // Offset in the X and Y axis
-                        ),
-                      ],
-                    ),
-                    child: pendingTasks.isEmpty ? const Center(child: Text('No accepted ToDos')) : 
-                    ListView.builder(
-                      itemCount: pendingTasks.length,
-                      itemBuilder: (context, index) {
-                        Task task = pendingTasks[index];
-                        return Card(
-                          margin:  EdgeInsets.symmetric(vertical: 8),
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => TodoShowScreen(task: task),
-                                      ),
-                                    );
-                                  },
-                          child: Padding(
-                            padding:  EdgeInsets.all(12.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      task.title,
-                                      style:  TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                     SizedBox(height: 4),
-                                    Text(
-                                      'Due: ${DateFormat('dd-MM-yyyy HH:mm').format(task.deadline)}',
-                                      style:  TextStyle(
-                                        fontSize: 14,
-                                        color: task.deadline.difference(DateTime.now()).inHours < 24
-                                          ? Colors.red // Red if due in less than 24 hours
-                                          : Colors.black54, // Default color
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                                Text(
-                                                  'Difficulty: ${task.difficulty}',
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontStyle: FontStyle.italic,
-                                                    color: Colors.black87,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 4),
-                                  Text(
-                                    'Reward: ${task.rewardPoints}',
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.teal,
-                                    ),
-                                  ),
-                                  ],
-                                ),
-                                ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color.fromARGB(255, 139, 143, 144), // Initial button color
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    // Mark task as completed and show reward popup
-                                    taskProvider.completeTask(task.id);
-                                    currentUser.contributions.update(task.category, (value) => value + task.rewardPoints );
-                                    currentUser.updateContributions(currentUser.contributions);
-                                    currentUser.addPoints(task.rewardPoints);
-                                    // Show popup for completed Task
-                                    showCompletionDialog(context, task);
-                                  },
-                                  icon:  Icon(Icons.check_box_outline_blank),
-                                  label:  Text("Complete"),
-                                ),
-                              ],
-                            ),
-                          ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                }
-              ),
-            ),
-             SizedBox(height: 16),
+            _buildPendingTasksSection(pendingTasksStream, currentUser, taskProvider, userProvider),
+
+            SizedBox(height: 16),
 
             // Completed Tasks Section
              Text(
               "Completed ToDos in the last 30 days:",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
             ),
-             SizedBox(height: 8),
-            Flexible(
-              child: StreamBuilder<List<Task>>(
-                stream: completedTasksStream,
-                builder: (context, completedSnapshot) {
-                  if (completedSnapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (completedSnapshot.hasError) {
-                    return Center(
-                        child:
-                            Text('Error: ${completedSnapshot.error.toString()}'));
-                  } else if (!completedSnapshot.hasData ||
-                      completedSnapshot.data!.isEmpty) {
-                    return const Center(
-                        child: Text('No ToDos completed in the last 30 days'));
-                  }
+            SizedBox(height: 8),
 
-                  List<Task> completedTasks = completedSnapshot.data!;
-                  return Container(
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 226, 223, 231),
-                      borderRadius: BorderRadius.circular(12.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(), // Shadow color
-                          blurRadius: 8.0, // Spread of the shadow
-                          offset: const Offset(0, 4), // Offset in the X and Y axis
-                        ),
-                      ],
-                    ),
-                    child: completedTasks.isEmpty ? const Center(child: Text('No ToDos completed in the last 30 days')) :
-                    ListView.builder(
-                      itemCount: completedTasks.length,
-                      itemBuilder: (context, index) {
-                        Task task = completedTasks[index];
-                        return Padding(
-                          padding:  EdgeInsets.symmetric(vertical: 4.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                task.title,
-                                style:  TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey, // Completed tasks in grey
-                                ),
-                              ),
-                              Text(
-                                '+ ${task.rewardPoints}',
-                                style:  TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                }
-              ),
-            ),
+            _buildCompletedTasksSection(completedTasksStream),
           ],
         ),
       ),
-      //bottomNavigationBar:  ToDoCreator(),
     );
   }
 }
+
+  // User profile section
+  Widget _buildUserProfileSection(BuildContext context, User currentUser, UserProvider userProvider) {
+    return Container(
+      decoration: BoxDecoration(
+
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withValues(),
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+        borderRadius: BorderRadius.all(Radius.circular(50)),
+
+        color: Theme.of(context).primaryColorLight,
+      ),
+
+      height: 100,
+
+      child: Stack(
+            children: [
+              Positioned(
+                top:10,
+                left: 10,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+
+                    _buildProfileAvatar(context, userProvider),
+
+                    SizedBox(width: 10,),
+      
+                    Column(
+                    children: [
+                      SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => ProfileScreen()));
+                        },
+                        child: Text(currentUser.username, style: TextStyle(color: Colors.black, fontSize: 24))
+                      ),
+                  
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(currentUser.uid)
+                            .snapshots(),
+                        builder: (context, userSnapshot) {
+                          if (userSnapshot.hasData && userSnapshot.data!.exists) {
+                            final userData = userSnapshot.data!.data() as Map<String, dynamic>;
+                            final points = userData['rankingPoints'] ?? 0;
+                            
+                            return Text(
+                              '$points points', 
+                              style: TextStyle(color: Colors.green, fontSize: 18)
+                            );
+                          }
+                          return Text(
+                            '${currentUser.points} points', 
+                            style: TextStyle(color: Colors.green, fontSize: 18)
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  ],
+                ),
+              )
+            ],
+          ),
+    );
+  }
+
+  // Profile avatar
+  Widget _buildProfileAvatar(BuildContext context, UserProvider userProvider) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => ProfileScreen()),
+        );
+      },
+      child: CircleAvatar(
+        radius: 40,
+        backgroundImage: userProvider.getProfileOfCurrUser(),
+      ),
+    );
+  }
+
+  // Pending tasks section
+  Widget _buildPendingTasksSection(Stream<List<Task>> pendingTasksStream, User currentUser, TaskProvider taskProvider, UserProvider userProvider) {
+    return Flexible(
+      child: StreamBuilder<List<Task>>(
+        stream: pendingTasksStream,
+        builder: (context, completedSnapshot) {
+          if (completedSnapshot.connectionState ==
+              ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (completedSnapshot.hasError) {
+            return Center(
+                child:
+                    Text('Error: ${completedSnapshot.error.toString()}'));
+          } else if (!completedSnapshot.hasData ||
+              completedSnapshot.data!.isEmpty) {
+              return Container(
+                padding: const EdgeInsets.all(16.0),
+
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 226, 223, 231),
+                  borderRadius: BorderRadius.circular(12.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(), // Shadow color
+                      blurRadius: 8.0, // Spread of the shadow
+                      offset: const Offset(0, 4), // Offset in the X and Y axis
+                    ),
+                  ],
+                ),
+
+                child: const Center(
+                    child: Text('No accepted but unclompleted ToDos')
+                    )
+              );
+          }
+
+          List<Task> pendingTasks = completedSnapshot.data!;
+          return Container(
+            padding: const EdgeInsets.all(16.0),
+
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 226, 223, 231),
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(), // Shadow color
+                  blurRadius: 8.0, // Spread of the shadow
+                  offset: const Offset(0, 4), // Offset in the X and Y axis
+                ),
+              ],
+            ),
+
+            child: pendingTasks.isEmpty ? const Center(child: Text('No accepted but unclompleted ToDos')) : 
+            ListView.builder(
+              itemCount: pendingTasks.length,
+              itemBuilder: (context, index) {
+                Task task = pendingTasks[index];
+
+                return Card(
+                  margin:  EdgeInsets.symmetric(vertical: 8),
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TodoShowScreen(task: task),
+                              ),
+                            );
+                          },
+                  child: Padding(
+                    padding:  EdgeInsets.all(12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        
+                        _buildTaskInfo(task),
+
+                        _buildCompleteButton(context, task, taskProvider, currentUser)
+                      ],
+                    ),
+                  ),
+                  ),
+                );
+              },
+            ),
+          );
+        }
+      ),
+    );
+  }
+
+  // Completed tasks section
+  Widget _buildCompletedTasksSection(Stream<List<Task>> completedTasksStream) {
+    return Flexible(
+      child: StreamBuilder<List<Task>>(
+        stream: completedTasksStream,
+        builder: (context, completedSnapshot) {
+          if (completedSnapshot.connectionState ==
+              ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (completedSnapshot.hasError) {
+            return Center(
+                child:
+                    Text('Error: ${completedSnapshot.error.toString()}'));
+          } else if (!completedSnapshot.hasData ||
+              completedSnapshot.data!.isEmpty) {
+            return const Center(
+                child: Text('No ToDos completed in the last 30 days'));
+          }
+
+          List<Task> completedTasks = completedSnapshot.data!;
+          return Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 226, 223, 231),
+              borderRadius: BorderRadius.circular(12.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(), // Shadow color
+                  blurRadius: 8.0, // Spread of the shadow
+                  offset: const Offset(0, 4), // Offset in the X and Y axis
+                ),
+              ],
+            ),
+            child: completedTasks.isEmpty ? const Center(child: Text('No ToDos completed in the last 30 days')) :
+            ListView.builder(
+              itemCount: completedTasks.length,
+              itemBuilder: (context, index) {
+                Task task = completedTasks[index];
+                return _buildCompletedTaskDisplay(task);
+              },
+            ),
+          );
+        }
+      ),
+    );
+  }
+
+
+  //Task info column
+  Widget _buildTaskInfo(Task task) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          task.title,
+          style:  TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+          SizedBox(height: 4),
+        Text(
+          'Due: ${DateFormat('dd-MM-yyyy HH:mm').format(task.deadline)}',
+          style:  TextStyle(
+            fontSize: 14,
+            color: task.deadline.difference(DateTime.now()).inHours < 24
+              ? Colors.red // Red if due in less than 24 hours
+              : Colors.black54, // Default color
+          ),
+        ),
+        const SizedBox(height: 4),
+                    Text(
+                      'Difficulty: ${task.difficulty}',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+      Text(
+        'Reward: ${task.rewardPoints}',
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.teal,
+        ),
+      ),
+      ],
+    );
+  }
+
+  // Complete button with proper async handling
+  Widget _buildCompleteButton(BuildContext context, Task task, TaskProvider taskProvider, User currentUser) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color.fromARGB(255, 139, 143, 144), // Initial button color
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      onPressed: () {
+        // Mark task as completed and show reward popup
+        taskProvider.completeTask(task.id);
+        currentUser.contributions.update(task.category, (value) => value + task.rewardPoints );
+        currentUser.updateContributions(currentUser.contributions);
+        currentUser.addPoints(task.rewardPoints);
+        // Show popup for completed Task
+        showCompletionDialog(context, task);
+      },
+      icon:  Icon(Icons.check_box_outline_blank),
+      label:  Text("Complete"),
+    );
+  }
+
+  // Completed task display
+  Widget _buildCompletedTaskDisplay(Task task) {
+    return Padding(
+      padding:  EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            task.title,
+            style:  TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey, // Completed tasks in grey
+            ),
+          ),
+          Text(
+            '+ ${task.rewardPoints}',
+            style:  TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
 void showCompletionDialog(BuildContext context, Task task) {
   showDialog(
     context: context,

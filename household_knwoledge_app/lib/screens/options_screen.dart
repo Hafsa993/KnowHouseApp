@@ -109,11 +109,10 @@ class OptionsScreen extends StatelessWidget {
             ),
           ),
 
-          // Contacts Permission
        
           const Divider(),
 
-          // Language Selection (Optional)
+          // Language Selection (only english for now)
           ValueListenableBuilder<String>(
             valueListenable: selectedLanguage,
             builder: (context, value, child) {
@@ -136,7 +135,10 @@ class OptionsScreen extends StatelessWidget {
               );
             },
           ),
+
           const Divider(),
+
+          // Edit Preferences
           ListTile(
             leading: Icon(Icons.tune),
             title: Text('Edit Preferences'),
@@ -149,9 +151,24 @@ class OptionsScreen extends StatelessWidget {
                     allCategories: categories,
                     initialSelected: userProvider.currentUser?.preferences ?? [],
                     onSave: (prefs) async {
-                      await userProvider.setPreferencesForUser(prefs);
-                      if (!context.mounted) return;
-                      Navigator.pop(context); 
+                      try {
+                        await userProvider.setPreferencesForUser(prefs);
+                        if (!context.mounted) return;
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('Preferences updated successfully'),
+                          backgroundColor: Colors.green,
+                        ));
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error saving preferences: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
                     },
                   ),
                 ),

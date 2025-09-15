@@ -51,7 +51,6 @@ dependencies:
   shared_preferences: ^2.5.3
   firebase_storage: ^13.0.1
   image: ^4.3.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -62,6 +61,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  mockito: ^5.5.1
+  build_runner: ^2.8.0
+  fake_cloud_firestore: ^4.0.0
+  firebase_auth_mocks: ^0.15.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

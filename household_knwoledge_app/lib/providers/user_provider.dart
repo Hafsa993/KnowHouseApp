@@ -8,12 +8,17 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserProvider with ChangeNotifier {
-  User? _currentUser; // Your custom User model
+  User? _currentUser;
 
   User? get currentUser => _currentUser;
 
   
   List<User> familyMembers = [];
+
+  void setCurrentUser(User user) {
+    _currentUser = user;
+    notifyListeners();
+  }
 
   void clearUser() {
     _currentUser = null;
@@ -21,6 +26,7 @@ class UserProvider with ChangeNotifier {
   }
  
   Future<void> loadCurrentUser() async {
+    
    
      // Not signed in then..
      if (auth.FirebaseAuth.instance.currentUser == null) {
@@ -28,15 +34,19 @@ class UserProvider with ChangeNotifier {
     }
   
     // Fetch user's document from Firestore
+    try {
     final userDoc = await FirebaseFirestore.instance.collection('users').doc(auth.FirebaseAuth.instance.currentUser!.uid).get();
+    
     if (userDoc.exists) {
       _currentUser = User.fromMap(userDoc.data()!, userDoc.id);
-
-      notifyListeners();
     } else {
       // User document does not exist; handle accordingly
       _currentUser = null;
-      notifyListeners();
+    }
+    
+    } catch (e) {
+      debugPrint('Error loading current user: $e');
+      return;
     }
   }
 
@@ -44,26 +54,37 @@ class UserProvider with ChangeNotifier {
     if (_currentUser == null) return;
     await _currentUser!.addPoints(pointsToAdd);
 
-    //also update in fireabase
-    await FirebaseFirestore.instance
-      .collection('users')
-      .doc(_currentUser!.uid)
-      .update({'rankingPoints': _currentUser!.points});
-      
-    notifyListeners();
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(_currentUser!.uid)
+          .update({'rankingPoints': _currentUser!.points});
+    } catch (e) {
+      debugPrint('Error updating user points: $e');
+    }
+
   }
 
+  //sets user preferences or updates them
   Future<void> setPreferencesForUser(List<String> newPreferences) async {
     if (_currentUser == null) return;
-    await _currentUser!.setPreferences(newPreferences);
+    try {
+      await _currentUser!.setPreferences(newPreferences);
+    } catch (e) {
+      debugPrint('Error setting user preferences: $e');
+    }
     notifyListeners();
   }
+  //updates user contributions or adds new ones
   Future<void> updateContributionsForUser(Map<String, int> newContributions) async {
     if (_currentUser == null) return;
-    await _currentUser!.updateContributions(newContributions);
-    notifyListeners();
+    try {
+      await _currentUser!.updateContributions(newContributions);
+    } catch (e) {
+      debugPrint('Error updating user contributions: $e');
+    }
   }
-
+  // Upload and process profile picture
   Future<String?> uploadProfilePicture(String localImagePath) async {
     try {
       final user = auth.FirebaseAuth.instance.currentUser;
@@ -109,52 +130,66 @@ class UserProvider with ChangeNotifier {
       return null;
     }
   }
-
+  // Get profile picture as ImageProvider
   ImageProvider? getProfileOfCurrUser() {
-  if (_currentUser?.profilepath == null || _currentUser!.profilepath.isEmpty) {
-    return AssetImage('lib/assets/f.jpeg'); // Default picture
-  }
-
-  final profilePath = _currentUser!.profilepath;
-  
-  if (profilePath.startsWith('data:image/jpeg;base64,')) {
-    // Base64 image stored in Firestore
-    try {
-      final base64String = profilePath.split(',')[1];
-      final bytes = base64Decode(base64String);
-      return MemoryImage(bytes);
-    } catch (e) {
-      debugPrint('Error decoding base64 image: $e');
-      return AssetImage('lib/assets/f.jpeg');
+    if (_currentUser?.profilepath == null || _currentUser!.profilepath.isEmpty) {
+      return AssetImage('lib/assets/f.jpeg'); // Default picture
     }
-  } else if (profilePath.startsWith('http')) {
-    return NetworkImage(profilePath); // Firebase URL
-  } else {
-    return AssetImage('lib/assets/f.jpeg'); // Default picture
-  }
-}
 
+    final profilePath = _currentUser!.profilepath;
+    
+    if (profilePath.startsWith('data:image/jpeg;base64,')) {
+      // Base64 image stored in Firestore
+      try {
+        final base64String = profilePath.split(',')[1];
+        final bytes = base64Decode(base64String);
+        return MemoryImage(bytes);
+      } catch (e) {
+        debugPrint('Error decoding base64 image: $e');
+        return AssetImage('lib/assets/f.jpeg');
+      }
+    } else if (profilePath.startsWith('http')) {
+      return NetworkImage(profilePath); // Firebase URL
+    } else {
+      return AssetImage('lib/assets/f.jpeg'); // Default picture
+    }
+  }
+  
   Future<void> toggleCameraPermission() async {
     if (_currentUser == null) return;
-    await _currentUser!.toggleCameraPermissionForUser();
+    try {
+      await _currentUser!.toggleCameraPermissionForUser();
+    } catch (e) {
+      debugPrint('Error toggling camera permission: $e');
+    }
     notifyListeners();
   }
 
   Future<void> toggleGalleryPermission() async {
     if (_currentUser == null) return;
-    //try{
+    try {
       await _currentUser!.toggleGalleryPermissionForUser();
-    //}catch(e){print(e);}
+    } catch (e) {
+      debugPrint('Error toggling gallery permission: $e');
+    }
     notifyListeners();
   }
   Future<void> toggleGeolocationPermission() async {
     if (_currentUser == null) return;
-    await _currentUser!.toggleGeolocationPermissionForUser();
+    try {
+      await _currentUser!.toggleGeolocationPermissionForUser();
+    } catch (e) {
+      debugPrint('Error toggling geolocation permission: $e');
+    }
     notifyListeners();
   }
   Future<void> toggleNotificationsEnabled() async {
     if (_currentUser == null) return;
-    await _currentUser!.toggleNotificationsEnabledForUser();
+    try {
+      await _currentUser!.toggleNotificationsEnabledForUser();
+    } catch (e) {
+      debugPrint('Error toggling notifications enabled: $e');
+    }
     notifyListeners();
   }
 
@@ -172,30 +207,4 @@ class UserProvider with ChangeNotifier {
             .toList());
   }
   
-Future<void> fetchFamilyMembers(User currUser) async {
-    if (currUser.familyId == null) {
-      familyMembers = [];
-      notifyListeners();
-      return;
-    }
-
-    notifyListeners();
-
-    try {
-      FirebaseFirestore.instance
-          .collection('users')
-          .where('familyId', isEqualTo: currUser.familyId)
-          .snapshots()
-          .listen((snapshot) {
-        familyMembers = snapshot.docs
-            .map((doc) => User.fromMap(doc.data(), doc.id))
-            .toList();
-        notifyListeners();
-      }, onError: (error) {
-        notifyListeners();
-      });
-    } catch (e) {
-      notifyListeners();
-    }
-  }
 }
