@@ -182,13 +182,31 @@ class MyTasksScreen extends StatelessWidget {
                     Text('Error: ${completedSnapshot.error.toString()}'));
           } else if (!completedSnapshot.hasData ||
               completedSnapshot.data!.isEmpty) {
-            return const Center(
-                child: Text('No ToDos accepted in the last 30 days'));
+              return Container(
+                padding: const EdgeInsets.all(16.0),
+
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 226, 223, 231),
+                  borderRadius: BorderRadius.circular(12.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(), // Shadow color
+                      blurRadius: 8.0, // Spread of the shadow
+                      offset: const Offset(0, 4), // Offset in the X and Y axis
+                    ),
+                  ],
+                ),
+
+                child: const Center(
+                    child: Text('No accepted but unclompleted ToDos')
+                    )
+              );
           }
 
           List<Task> pendingTasks = completedSnapshot.data!;
           return Container(
             padding: const EdgeInsets.all(16.0),
+
             decoration: BoxDecoration(
               color: Color.fromARGB(255, 226, 223, 231),
               borderRadius: BorderRadius.circular(12.0),
@@ -200,11 +218,13 @@ class MyTasksScreen extends StatelessWidget {
                 ),
               ],
             ),
-            child: pendingTasks.isEmpty ? const Center(child: Text('No accepted ToDos')) : 
+
+            child: pendingTasks.isEmpty ? const Center(child: Text('No accepted but unclompleted ToDos')) : 
             ListView.builder(
               itemCount: pendingTasks.length,
               itemBuilder: (context, index) {
                 Task task = pendingTasks[index];
+
                 return Card(
                   margin:  EdgeInsets.symmetric(vertical: 8),
                   elevation: 3,
