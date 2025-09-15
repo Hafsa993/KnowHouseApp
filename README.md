@@ -6,10 +6,10 @@ KnowHouse Mobile App for iOS and Android
 These instructions will help you download and run the project locally on your machine.
 
 ### Organization
+```
+├── KnowHouseApp/househo.../lib/  # Main application code
 
-├── KnowHouseApp/household_kn.../lib/                                      # Main application code
-
-│   ├── main.dart                   # App entry point with Firebase init and routing
+│   ├── main.dart                 # App entry point with Firebase init and routing
 
 │   ├── firebase_options.dart     # Firebase configuration
 
@@ -25,14 +25,9 @@ These instructions will help you download and run the project locally on your ma
 
 │   └── assets/                   # Static assets (images, fonts)
 
-├── test/                         # Unit and widget tests
+├── test/                         # tests folder
 
-│   ├── models/                   # Tests for data models
-
-│   ├── providers/                # Tests for providers
-
-│   └── flutter_test_config.dart  # Test configuration
-
+```
 
 ### Prerequisites
 
