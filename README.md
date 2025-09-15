@@ -109,6 +109,7 @@ Core Functiionalities:
   Shared hosehold calendar.
   
   Within a household users have a shared list of instructions, for ex. on how to do laundry etc.  Users can add/edit and delete these instructions.
+  
 ### Demo Video
 Here are demos of the register flow and the app more broadly:
 In the Registering demo the familycode is not displayed for security reasons.
@@ -137,7 +138,7 @@ Users can register or sign in if they have an account with an email and password
 </p>
 
 ### Home Page
-  So on the upper half of The home page, there is a leaderboard showing top 3 users with most points on a podium. bottom half of home page has Open toDos: which is the toDos that have been assigned to the User but not yet accepted by them.
+  On the upper half of the home page, there is a leaderboard showing top 3 users with most points on a podium. The bottom half of the home page has Open ToDos: which is the toDos that have been assigned to the User but not yet accepted by them.
   
   The User can click on a toDo to see description as well and just more info about ToDo. Here the user can see the deadline, reward, category, name etc. of the toDo:
   
@@ -179,7 +180,6 @@ Here the Users that have the category in their preferences are displayed at the 
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/HouseToDos.png">
-<img height="400" src="img/images for high fi/DisplayToDo.png">
 <img height="400" src="img/images for high fi/assignToDo.png">
 <img height="400" src="img/images for high fi/Screenshot_1733314149.png">
 </p>
@@ -207,11 +207,11 @@ The calendar page is a calendar where for each date, by clicking on it you can s
 
 ### Ranklist, Options and Profile
 
-The Ranklist Screen shows the ranklist of Users by points. 
+The Ranklist Screen shows the ranklist of Users, ordered by points. 
 
-The Options Screen is where you can enable/disable permissions.
+The Options Screen is where the user can enable/disable permissions and edit preferences.
 
-In the profile screen you can see your profile picture, you can change it and depending on your permissions take a new picture with camera or take one from your gallery, you see the distribution of which kind of tasks you did and other things as shown in picture below:
+In the profile screen you can see your profile picture, and change it by depending on your permissions taking a new picture with the camera or selecting one from your gallery. The distribution of which kind of tasks you did and the sign out and delete account buttons are at the bottom of the page as shown in picture below:
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/Ranklist.png">
