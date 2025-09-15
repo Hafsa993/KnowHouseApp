@@ -179,7 +179,6 @@ Here the Users that have the category in their preferences are displayed at the 
 
 <p align="left" width="100%">
 <img height="400" src="img/images for high fi/HouseToDos.png">
-<img height="400" src="img/images for high fi/DisplayToDo.png">
 <img height="400" src="img/images for high fi/assignToDo.png">
 <img height="400" src="img/images for high fi/Screenshot_1733314149.png">
 </p>
