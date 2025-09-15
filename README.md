@@ -162,6 +162,7 @@ Clean, responsive design with smooth navigation and engaging animations for a de
 Register Flow and App Demo:
 (Family code is hidden for security reasons)
 
+(the demo videos can also be found as mp4 files in the img folder)
 
 
 
