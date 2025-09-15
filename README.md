@@ -187,9 +187,9 @@ The My ToDos page displays tasks you have accepted but not yet completed, as wel
 Completing a ToDo triggers a small celebratory animation for positive feedback.
 
 <p align="left" width="100%">
-<img height="400" src="img/images for high fi/myToDos.png">
 <img height="400" src="img/images for high fi/Screenshot_1757811490.png">
 <img height="400" src="img/images for high fi/Screenshot_1733313327.png">
+<img height="400" src="img/images for high fi/myToDos.png">
 </p>
 
 ### House ToDos
