@@ -1,6 +1,5 @@
 # KnowHouseApp
 KnowHouse Mobile App for iOS and Android
->🔗 [Github of full HCI Project](https://github.com/eth-hci-course/hci-project-2024-hci2024-group-14)
 
 ## Getting Started
 
