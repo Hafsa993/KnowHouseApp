@@ -232,6 +232,9 @@ Future<void> _deleteUserAccount(BuildContext context) async {
     final password = await _showPasswordDialog(context);
     if (password == null || password.isEmpty) {
       // User cancelled password entry
+      if (context.mounted) {
+        Navigator.of(context).pop(); // Close loading dialog
+      }
       return;
     }
     
