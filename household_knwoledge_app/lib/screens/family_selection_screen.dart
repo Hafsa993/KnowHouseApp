@@ -76,8 +76,22 @@ class _FamilySelectionScreenState extends State<FamilySelectionScreen> {
         throw Exception('No current user found');
       }
      
-      // Generate unique family code
-      final familyCode = _generateSecureCode();
+      
+      String familyCode;
+      QuerySnapshot<Map<String, dynamic>> existingUsers;
+      
+      // Generate unique family code and check if family code exists
+      //if it does, generate a new one
+       do {
+        //generate new code
+        familyCode = _generateSecureCode();
+        // Check if family code exists
+        existingUsers = await FirebaseFirestore.instance
+          .collection('users')
+          .where('familyId', isEqualTo: familyCode)
+          .limit(1)
+          .get();
+      } while (existingUsers.docs.isNotEmpty);
 
       // Update user with family ID
       await FirebaseFirestore.instance
