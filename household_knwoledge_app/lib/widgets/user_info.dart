@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
-import 'copy_button.dart';
+import 'buttons/copy_button.dart';
 
 class UserInfoWidget extends StatelessWidget {
   final User user;

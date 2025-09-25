@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:household_knwoledge_app/models/user_model.dart';
 import 'package:household_knwoledge_app/providers/user_provider.dart';
 import 'package:household_knwoledge_app/screens/todo_show.dart';
-import 'package:household_knwoledge_app/widgets/todo_creator_button.dart';
+import 'package:household_knwoledge_app/widgets/buttons/todo_creator_button.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../models/task_model.dart';
@@ -121,7 +121,9 @@ class ToDoListScreen extends StatelessWidget {
             backgroundColor: const Color.fromARGB(255, 226, 224, 224),
             title: const Text('House ToDos'),
           ),
+
           drawer: const MenuDrawer(),
+
           body: ListView.builder(
             itemCount: toDoList.length,
             itemBuilder: (context, index) {
@@ -132,8 +134,8 @@ class ToDoListScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: InkWell(
 
+                child: InkWell(
                   onTap: () {
                     Navigator.push(
                       context,
@@ -142,7 +144,6 @@ class ToDoListScreen extends StatelessWidget {
                       ),
                     );
                   },
-
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
